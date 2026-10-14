@@ -24,7 +24,8 @@ Route::middleware(['auth', 'verified'])
         Route::post('/cart/store', [CartController::class, 'store'])->name('cart.store');
         Route::post('/increment-session', [CartController::class, 'incrementSession'])->name('increment.session');
         Route::post('/decrement-session', [CartController::class, 'decrementSession'])->name('decrement.session');
-
+        Route::post('/cart/remove', [CartController::class, 'remove']) ->name('cart.remove');
+        
         // Profile
         Route::get('profile', [ProfileController::class, 'showProfile'])->name('profile');
         Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');

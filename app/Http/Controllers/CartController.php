@@ -106,4 +106,27 @@ class CartController extends Controller
 
         return response()->json(['message' => 'Product quantity decremented successfully', 'quantity' => $cart[$productId]['quantity'] ?? 0, 'total' => $newTotal, 'grandTotal' => $grandTotal]);
     }
+    public function remove(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|integer',
+        ]);
+
+        $productId = $request->input('product_id');
+
+        $cart = session()->get('cart', []);
+
+        if (!isset($cart[$productId])) {
+            return redirect()->back()
+                ->with('error', 'Product not found in your cart.');
+        }
+
+        unset($cart[$productId]);
+
+        session()->put('cart', $cart);
+
+        return redirect()->back()
+            ->with('success', 'Product removed from your cart.');
+    }
+
 }

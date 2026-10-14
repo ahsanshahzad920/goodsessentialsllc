@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@source "../views";
+/* Pastel tone safelist so components can build classes like bg-{{ $tone }}-100 */
+@source inline("{bg,text}-{lavender,blush,mint,sun,peach,sky,lilac,leaf,mist}-{100,600}");
+
+@theme {
+    --font-display: "Fredoka", ui-rounded, system-ui, sans-serif;
+    --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+
+    --color-cream: #fffbf5;
+    --color-ink: #2b2a4c;
+    --color-muted: #6f6d8c;
+    --color-line: #ece9f5;
+    --color-star: #f59e0b;
+
+    --color-brand-50: #f3f1fc;
+    --color-brand-100: #ece7fb;
+    --color-brand-500: #7b6cd0;
+    --color-brand-600: #6a5bc2;
+
+    /* pastel tones: -100 = background, -600 = foreground/icon/title */
+    --color-lavender-100: #ece7fb;  --color-lavender-600: #7b6cd0;
+    --color-blush-100:    #fbe1e7;  --color-blush-600:    #e5547a;
+    --color-mint-100:     #dcf1e7;  --color-mint-600:     #2e9a6b;
+    --color-sun-100:      #fff0c9;  --color-sun-600:      #d99a0b;
+    --color-peach-100:    #ffe4d9;  --color-peach-600:    #ee7b4d;
+    --color-sky-100:      #dbeafb;  --color-sky-600:      #3b82d6;
+    --color-lilac-100:    #f0e6fa;  --color-lilac-600:    #9b6fd0;
+    --color-leaf-100:     #e2f3df;  --color-leaf-600:     #4aa04a;
+    --color-mist-100:     #f1effa;  --color-mist-600:     #2b2a4c;
+}
+
+@layer base {
+    html { scroll-behavior: smooth; }
+    body { @apply bg-cream font-sans text-ink antialiased; }
+    h1, h2, h3, h4 { @apply font-display; }
+    :focus-visible { @apply outline-2 outline-offset-2 outline-brand-500; }
+}
+
+@layer components {
+    .container-shop { @apply mx-auto w-full max-w-7xl px-4 sm:px-6; }
+}
