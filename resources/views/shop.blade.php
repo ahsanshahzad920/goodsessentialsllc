@@ -1,305 +1,178 @@
 @extends('layouts.guest')
+
 @php
-
     use App\Models\Wishlist;
+    use Illuminate\Support\Str;
 
+    $wishlistIds = Auth::check()
+        ? Wishlist::where('user_id', Auth::id())->pluck('product_id')->all()
+        : [];
+
+    $sorts = [
+        'latest'     => 'Latest',
+        'price_asc'  => 'Price: Low to High',
+        'price_desc' => 'Price: High to Low',
+        'name'       => 'Name: A to Z',
+    ];
+    $currentSort    = request('sort', 'latest');
+    $activeCategory = request()->category_name;
+    $total          = $products->total();
+
+    $input = 'w-full rounded-full border border-line bg-white px-4 py-2.5 text-xs text-ink placeholder:text-muted focus:border-brand-500 focus:outline-none';
 @endphp
+
+@section('pageTitle', ($activeCategory ?: 'Shop') . ' | ' . config('app.name'))
+
 @section('content')
-    <!-- Start Banner Area -->
-    <section class="shop-banner-area banner-area d-flex align-items-center" id="hero">
-        <div class="container">
-            <div class="single-slide">
-                <div class="banner-content text-center">
-                    <h1 class="text-white">
-                        {{ request()->category_name ?? 'Products Catalog' }}
-                    </h1>
-                    {{-- <p class="fs-5 text-white">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi ab
-                        <br class="d-none d-md-block" />
-                        repellat, a iste voluptate porro at accusantium. Vero doloremque
-                        <br class="d-none d-md-block" />
-                        repudiandae ipsa, labore ratione quasi distinctio ipsum maxime
-                        <br class="d-none d-md-block" />
-                        blanditiis voluptates similique!
-                    </p> --}}
-                </div>
-            </div>
+
+{{-- Page header --}}
+<section class="border-b border-line bg-white/70">
+    <div class="container-shop flex flex-wrap items-end justify-between gap-4 py-6">
+        <div>
+            <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-500">Shop</p>
+            <h1 class="mt-1 text-3xl font-bold">{{ $activeCategory ?: 'Shop' }}</h1>
+            <p class="mt-0.5 text-xs text-muted">{{ number_format($total) }} {{ Str::plural('product', $total) }}</p>
         </div>
-    </section>
 
-    <!-- End Banner Area -->
-    <div class="container">
-        <div class="row">
-            <div class="col-xl-3 col-lg-4 col-md-4">
-                <div class="sidebar-categories">
-                    <div class="head">Categories</div>
-                    <ul class="main-categories shadow-none">
-                        @forelse ($categories as $category)
-                            <li class="main-nav-list">
-                                <a href="{{ route('shop', $category->name) }}">
-                                    {{ $category->name ?? '' }}
-                                    <span class="number">
-                                        ({{ $category->products_count ?? 0 }})
-                                    </span>
-                                </a>
-                            </li>
-                        @empty
-                            No Category Found.
-                        @endforelse
+        {{-- Quick sort: keeps the current category + filters --}}
+        <form method="GET" action="{{ url()->current() }}" class="flex items-end gap-2">
+            @foreach (request()->except(['sort', 'page']) as $key => $value)
+                @if (is_scalar($value))
+                    <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                @endif
+            @endforeach
 
-                    </ul>
+            <div class="w-36">
+                <x-shop.select name="sort" id="sort-top" label="Sort">
+                    @foreach ($sorts as $value => $label)
+                        <option value="{{ $value }}" @selected($currentSort === $value)>{{ $label }}</option>
+                    @endforeach
+                </x-shop.select>
+            </div>
+
+            <button type="submit"
+                    class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-2.5 text-xs font-extrabold text-white shadow-md shadow-brand-500/30 transition hover:bg-brand-600">
+                <x-shop.icon name="refresh" class="size-3.5" /> Update
+            </button>
+        </form>
+    </div>
+</section>
+
+<div class="container-shop py-8">
+    {{-- Mobile filter toggle --}}
+    <button id="filters-toggle" type="button" aria-expanded="false" aria-controls="filters-panel"
+            class="mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-xs font-bold lg:hidden">
+        <x-shop.icon name="filter" class="size-4" /> Filters
+    </button>
+
+    <div class="grid gap-6 lg:grid-cols-[16.5rem_minmax(0,1fr)] lg:items-start">
+
+        {{-- Filters --}}
+        <aside id="filters-panel" aria-label="Product filters"
+               class="hidden rounded-2xl border border-line bg-white p-4 shadow-sm lg:sticky lg:top-28 lg:block">
+            <form id="filters-form" method="GET" action="{{ url()->current() }}" class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-semibold">Filters</h2>
+                    <a href="{{ route('shop') }}" class="text-[11px] font-semibold text-muted hover:text-brand-500">Reset</a>
                 </div>
-                <div class="sidebar-filter mt-50">
-                    <!-- <div class="top-filter-head">Product Filters</div> -->
-                    <div class="common-filter">
-                        <div class="head">Color</div>
-                        <form action="#">
-                            <ul>
-                                <li class="filter-list">
-                                    <input class="pixel-radio" type="radio" id="black" name="color" /><label
-                                        for="black">Black<span>(29)</span></label>
-                                </li>
-                                <li class="filter-list">
-                                    <input class="pixel-radio" type="radio" id="balckleather" name="color" /><label
-                                        for="balckleather">Black Leather<span>(29)</span></label>
-                                </li>
-                                <li class="filter-list">
-                                    <input class="pixel-radio" type="radio" id="blackred" name="color" /><label
-                                        for="blackred">Black with
-                                        red<span>(19)</span></label>
-                                </li>
-                                <li class="filter-list">
-                                    <input class="pixel-radio" type="radio" id="gold" name="color" /><label
-                                        for="gold">Gold<span>(19)</span></label>
-                                </li>
-                                <li class="filter-list">
-                                    <input class="pixel-radio" type="radio" id="spacegrey" name="color" /><label
-                                        for="spacegrey">Spacegrey<span>(19)</span></label>
-                                </li>
-                            </ul>
-                        </form>
+
+                <div>
+                    <label for="f-search" class="mb-1.5 block text-xs font-bold">Search</label>
+                    <input id="f-search" type="search" name="search" value="{{ request('search') }}"
+                           placeholder="Search products..." autocomplete="off" class="{{ $input }}">
+                </div>
+
+                <x-shop.select name="category" id="f-category" label="Category">
+                    <option value="" data-url="{{ route('shop') }}">All categories</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->name }}" data-url="{{ route('shop', $category->name) }}"
+                                @selected($activeCategory === $category->name)>
+                            {{ $category->name }} ({{ $category->products_count ?? 0 }})
+                        </option>
+                    @endforeach
+                </x-shop.select>
+
+                {{-- Shown only if your controller passes $collections (id + name) --}}
+                @if (isset($collections) && $collections->isNotEmpty())
+                    <x-shop.select name="collection" label="Collection">
+                        <option value="">All collections</option>
+                        @foreach ($collections as $collection)
+                            <option value="{{ $collection->id }}" @selected((string) request('collection') === (string) $collection->id)>{{ $collection->name }}</option>
+                        @endforeach
+                    </x-shop.select>
+                @endif
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="f-min" class="mb-1.5 block text-xs font-bold">Min Price</label>
+                        <input id="f-min" type="number" min="0" step="any" name="min_price" value="{{ request('min_price') }}" placeholder="0" class="{{ $input }}">
+                    </div>
+                    <div>
+                        <label for="f-max" class="mb-1.5 block text-xs font-bold">Max Price</label>
+                        <input id="f-max" type="number" min="0" step="any" name="max_price" value="{{ request('max_price') }}" placeholder="9999" class="{{ $input }}">
                     </div>
                 </div>
-            </div>
-            <div class="col-xl-9 col-lg-8 col-md-8">
-                <div class="form-group">
-                    <form method="GET" action="{{ route('shop') }}">
-                        <input type="search" name="search" class="form-control py-2" placeholder="Search your product"
-                            value="{{ request('search') }}" autocomplete="off" />
-                    </form>
+
+                <x-shop.select name="sort" id="f-sort" label="Sort">
+                    @foreach ($sorts as $value => $label)
+                        <option value="{{ $value }}" @selected($currentSort === $value)>{{ $label }}</option>
+                    @endforeach
+                </x-shop.select>
+
+                <button type="submit"
+                        class="flex w-full items-center justify-center gap-2 rounded-full bg-brand-500 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-600">
+                    <x-shop.icon name="filter" class="size-4" /> Apply Filters
+                </button>
+            </form>
+        </aside>
+
+        {{-- Products --}}
+        <div>
+            @if ($products->count())
+                <div class="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+                    @foreach ($products as $product)
+                        <x-shop.product-tile :product="$product" :wishlisted="in_array($product->id, $wishlistIds)" />
+                    @endforeach
                 </div>
 
-                <!-- Start Best Seller -->
-                <section class="lattest-product-area pb-40 category-list">
-                    <div class="row">
-                        @forelse ($products as $product)
-                            <div class="col-lg-4 col-md-6">
-                                <a href="{{ route('productDetails', $product->id) }}" class="text-decoration-none">
-                                    <div class="single-product">
-                                        <div class="image-container">
-                                            <img class="img-fluid" src="{{ asset('storage/' . $product->product_image) }}"
-                                                alt="" />
-                                        </div>
-                                        <div class="product-details">
-                                            <h6 class="product-title">
-                                                {{ $product->product_title ?? '' }}
-                                            </h6>
-                                            <div class="price">
-                                                <h6>$
-                                                    {{ calculateDiscountPrice($product->price, $product->dis_price) ?? 0 }}
-                                                </h6>
-                                                <h6 class="l-through">$ {{ $product->price ?? 0 }}</h6>
-                                            </div>
-                                            <div class="prd-bottom">
-                                                {{-- <a href="#" class="social-info">
-                                                    <span><i class="fa-solid fa-cart-shopping"></i></span>
-                                                    <p class="hover-text">add to bag</p>
-                                                </a> --}}
-                                                {{-- <a href="#" class="social-info">
-                                                    <span><i class="fa-solid fa-heart"></i></span>
-                                                    <p class="hover-text">Wishlist</p>
-                                                </a> --}}
-                                                @php
-                                                    $isInWishList = Wishlist::where('user_id', Auth::id())
-                                                        ->where('product_id', $product->id)
-                                                        ->exists();
-                                                @endphp
-                                                <a href="#" class="social-info wishlist-icon"
-                                                    data-product-id="{{ $product->id }}"
-                                                    data-in-wishlist="{{ $isInWishList ? 'true' : 'false' }}">
-                                                    <span class="{{ $isInWishList ? 'active' : '' }}">
-                                                        <i
-                                                            class="fa-solid fa-heart {{ $isInWishList ? 'active' : '' }}"></i>
-                                                    </span>
-                                                    <p class="hover-text">Wishlist</p>
-                                                </a>
-
-                                                <a href="{{ route('productDetails', $product->id) }}" class="social-info">
-                                                    <span><i class="fa-solid fa-eye"></i></span>
-                                                    <p class="hover-text">view more</p>
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </a>
-                            </div>
-                        @empty
-                            No Product Found.
-                        @endforelse
-                    </div>
-                </section>
-                <!-- End Best Seller -->
-                <!-- Start Filter Bar -->
-                <div class="mb-5">
-                    {{-- <div class="form-group">
-                        <select class="form-control form-select" aria-label="Default select example"
-                            id="exampleFormControlSelect1">
-                            <option>Show 5</option>
-                            <option>Show 10</option>
-                            <option>Show 15</option>
-                        </select>
-                    </div> --}}
-                    {{-- <div> --}}
-                    {{ $products->links() }}
-                    {{-- </div> --}}
-                    {{-- <div class="pagination">
-                        <a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
-                        <a href="#" class="active">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#" class="dot-dot"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
-                        <a href="#">6</a>
-                        <a href="#" class="next-arrow"><i class="fa fa-long-arrow-right"
-                                aria-hidden="true"></i></a>
-                    </div> --}}
+                <div class="mt-8">
+                    {{ $products->links('vendor.pagination.shop') }}
                 </div>
-                <!-- End Filter Bar -->
-            </div>
+            @else
+                <div class="rounded-2xl border border-line bg-white p-10 text-center">
+                    <p class="text-lg font-semibold">No products found</p>
+                    <p class="mt-1 text-sm text-muted">Try changing or clearing your filters.</p>
+                    <a href="{{ route('shop') }}" class="mt-4 inline-flex rounded-full bg-brand-500 px-5 py-2.5 text-xs font-extrabold text-white hover:bg-brand-600">Reset filters</a>
+                </div>
+            @endif
         </div>
     </div>
+</div>
 @endsection
 
-@push('style')
-    <style>
-        .product-title {
-            font-size: 1.2rem;
-            /* Default font size */
-            white-space: nowrap;
-            /* Prevent wrapping */
-            overflow: hidden;
-            /* Hide overflowed text */
-            text-overflow: ellipsis;
-            /* Add ellipsis for long titles */
-        }
-
-        /* Media queries for responsiveness */
-        @media (max-width: 768px) {
-            .product-title {
-                font-size: 1rem;
-                /* Smaller font size on tablet */
-            }
-        }
-
-        @media (max-width: 576px) {
-            .product-title {
-                font-size: 0.9rem;
-                /* Smaller font size on mobile */
-            }
-        }
-    </style>
-    <style>
-        .product-title {
-            font-size: 1.2rem;
-            /* Default font size */
-            white-space: nowrap;
-            /* Prevent wrapping */
-            overflow: hidden;
-            /* Hide overflowed text */
-            text-overflow: ellipsis;
-            /* Add ellipsis for long titles */
-        }
-
-        /* Media queries for responsiveness */
-        @media (max-width: 768px) {
-            .product-title {
-                font-size: 1rem;
-                /* Smaller font size on tablet */
-            }
-        }
-
-        @media (max-width: 576px) {
-            .product-title {
-                font-size: 0.9rem;
-                /* Smaller font size on mobile */
-            }
-        }
-    </style>
-    <style>
-        .social-info i.active {
-            color: white;
-        }
-
-        .social-info span.active {
-            background: red !important;
-        }
-    </style>
-@endpush
-
-
 @push('script')
-    <script>
-        // Pass user login status to JavaScript
-        var isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
-    </script>
+<script>
+    (function () {
+        var form = document.getElementById('filters-form');
+        var cat  = document.getElementById('f-category');
 
-    <script>
-        document.querySelectorAll('.wishlist-icon').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-
-                // Check if the user is logged in
-                if (!isLoggedIn) {
-                    // Redirect to login page if the user is not logged in
-                    window.location.href = '/login';
-                    return;
-                }
-
-                let productId = this.getAttribute('data-product-id');
-                let inWishlist = this.getAttribute('data-in-wishlist') === 'true';
-                let icon = this.querySelector('i');
-
-                fetch('/wishlist/toggle', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            product_id: productId
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.success);
-                        location.reload();
-
-                        // Toggle the icon class based on the action
-                        if (data.action === 'added') {
-                            icon.classList.add(
-                                'active'); // Change the icon to indicate it’s in the wishlist
-                            this.setAttribute('data-in-wishlist', 'true');
-                        } else {
-                            icon.classList.remove(
-                                'active'); // Change the icon to indicate it’s not in the wishlist
-                            this.setAttribute('data-in-wishlist', 'false');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+        // Category lives in the URL path (route('shop', $name)), so point the form at it on submit.
+        if (form && cat) {
+            form.addEventListener('submit', function () {
+                var opt = cat.selectedOptions[0];
+                if (opt && opt.dataset.url) form.action = opt.dataset.url;
             });
-        });
-    </script>
+        }
+
+        // Mobile: show/hide the filters panel
+        var toggle = document.getElementById('filters-toggle');
+        var panel  = document.getElementById('filters-panel');
+        if (toggle && panel) {
+            toggle.addEventListener('click', function () {
+                panel.classList.toggle('hidden');
+                toggle.setAttribute('aria-expanded', String(!panel.classList.contains('hidden')));
+            });
+        }
+    })();
+</script>
 @endpush

@@ -2,38 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Support\Price;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    private const MAX_QTY = 99;
+
     public function store(Request $request)
     {
-        // Validate product ID and quantity
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
+            'quantity'   => 'required|integer|min:1|max:' . self::MAX_QTY,
         ]);
 
-        // Fetch the product
-        $product = Product::findOrFail($request->product_id);
+        $product  = Product::findOrFail($request->product_id);
+        $quantity = (int) $request->quantity;
+        $price    = Price::final($product);
 
-        // Add product to the cart (use session, database, or a cart package like Laravel Shopping Cart)
-        // For simplicity, let's assume you're using a session-based cart
         $cart = session()->get('cart', []);
 
-        $productId = $request->product_id;
-        $quantity = $request->quantity;
-
-        if (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] += $quantity;
+        if (isset($cart[$product->id])) {
+            $cart[$product->id]['quantity'] = min(self::MAX_QTY, $cart[$product->id]['quantity'] + $quantity);
+            $cart[$product->id]['product_price'] = $price; // keep price fresh
         } else {
-            $cart[$productId] = [
-                'product_id' => $product->id,
+            $cart[$product->id] = [
+                'product_id'    => $product->id,
                 'product_title' => $product->product_title,
-                'product_price' => $product->dis_price ?? $product->price,
-                'quantity' => $quantity,
+                'product_price' => $price,
+                'quantity'      => $quantity,
                 'product_image' => $product->product_image,
             ];
         }
@@ -45,65 +43,71 @@ class CartController extends Controller
 
     public function incrementSession(Request $request)
     {
-        $productId = $request->product_id;
+        $request->validate(['product_id' => 'required|integer']);
 
-        // Check if product exists in session
+        $productId = (int) $request->product_id;
         $cart = session()->get('cart', []);
 
-        if (isset($cart[$productId])) {
-            $cart[$productId]['quantity']++;
-        } else {
-            // If product doesn't exist, you can initialize it
-            $cart[$productId] = [
-                'quantity' => 1,
-                // Add other product details if needed
-            ];
+        if (! isset($cart[$productId])) {
+            return response()->json(['message' => 'Item is not in your cart.'], 404);
         }
 
-        // Total
-        $newTotal = $cart[$productId]['product_price'] *  $cart[$productId]['quantity'];
-
-        // Grand Total
-        $grandTotal = 0;
-        foreach ($cart as $details) {
-            $grandTotal += $details['quantity'] * $details['product_price'];
-        }
-
+        $cart[$productId]['quantity'] = min(self::MAX_QTY, $cart[$productId]['quantity'] + 1);
         session()->put('cart', $cart);
 
-        return response()->json(['message' => 'Product quantity updated successfully', 'quantity' => $cart[$productId]['quantity'], 'total' => $newTotal, 'grandTotal' => $grandTotal]);
+        return $this->cartResponse($cart, $productId, 'Product quantity updated successfully');
     }
 
     public function decrementSession(Request $request)
     {
-        $productId = $request->product_id;
+        $request->validate(['product_id' => 'required|integer']);
 
-        // Retrieve cart from session
+        $productId = (int) $request->product_id;
         $cart = session()->get('cart', []);
 
-        // Check if product exists in the session
-        if (isset($cart[$productId])) {
-            // Decrease the quantity, but don't allow it to go below 1
-            if ($cart[$productId]['quantity'] > 1) {
-                $cart[$productId]['quantity']--;
-            } else {
-                // Optionally, you can remove the product from the cart if quantity is 1
-                unset($cart[$productId]);
-            }
+        if (! isset($cart[$productId])) {
+            return response()->json(['message' => 'Item is not in your cart.'], 404);
         }
 
-        // Total
-        $newTotal = $cart[$productId]['product_price'] *  $cart[$productId]['quantity'];
+        // Never below 1 here; removing an item is done with the Remove button.
+        if ($cart[$productId]['quantity'] > 1) {
+            $cart[$productId]['quantity']--;
+        }
 
-        // Grand Total
+        session()->put('cart', $cart);
+
+        return $this->cartResponse($cart, $productId, 'Product quantity updated successfully');
+    }
+
+    public function remove(Request $request)
+    {
+        $request->validate(['product_id' => 'required|integer']);
+
+        $productId = (int) $request->input('product_id');
+        $cart = session()->get('cart', []);
+
+        if (! isset($cart[$productId])) {
+            return redirect()->back()->with('error', 'Product not found in your cart.');
+        }
+
+        unset($cart[$productId]);
+        session()->put('cart', $cart);
+
+        return redirect()->back()->with('success', 'Product removed from your cart.');
+    }
+
+    private function cartResponse(array $cart, int $productId, string $message)
+    {
         $grandTotal = 0;
         foreach ($cart as $details) {
             $grandTotal += $details['quantity'] * $details['product_price'];
         }
 
-        // Update session
-        session()->put('cart', $cart);
-
-        return response()->json(['message' => 'Product quantity decremented successfully', 'quantity' => $cart[$productId]['quantity'] ?? 0, 'total' => $newTotal, 'grandTotal' => $grandTotal]);
+        return response()->json([
+            'message'    => $message,
+            'quantity'   => $cart[$productId]['quantity'],
+            'total'      => $cart[$productId]['quantity'] * $cart[$productId]['product_price'],
+            'grandTotal' => $grandTotal,
+        ]);
     }
 }

@@ -17,3 +17,23 @@ if (!function_exists('calculateDiscountPrice')) {
         return $discountedPrice;
     }
 }
+
+if (!function_exists('money')) {
+    /**
+     * Format an amount using the currency set in config/shop.php.
+     * money(1299) => "Rs. 1,299.00"
+     */
+    function money($amount): string
+    {
+        $c = config('shop.currency', [
+            'symbol' => '$', 'position' => 'before', 'decimals' => 2, 'space' => false,
+        ]);
+
+        $number = number_format((float) str_replace(',', '', (string) $amount), $c['decimals'], '.', ',');
+        $gap    = ($c['space'] ?? true) ? ' ' : '';
+
+        return ($c['position'] ?? 'before') === 'after'
+            ? $number . $gap . $c['symbol']
+            : $c['symbol'] . $gap . $number;
+    }
+}

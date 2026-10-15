@@ -3,27 +3,31 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        Role::firstOrCreate(['name' => 'Super Admin']);
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        $user = User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@gmail.com',
+        // The two roles the site uses
+        Role::findOrCreate('admin', 'web');
+        Role::findOrCreate('customer', 'web');
+
+        // Admin user (safe to run more than once)
+        $admin = User::firstOrNew(['email' => 'admin@gmail.com']);
+        $admin->forceFill([
+            'name'              => 'Admin',
             'email_verified_at' => now(),
-            'password' => '12345678',
-        ]);
+            'password'          => '12345678', // hashed automatically by the model cast
+        ])->save();
 
-        // Assign the Super Admin role to the user
-        $user->assignRole('Super Admin');
+        $admin->syncRoles(['admin']);
+
+        // Anyone else without a role becomes a customer
+        User::whereDoesntHave('roles')->each(fn (User $user) => $user->assignRole('customer'));
     }
 }
