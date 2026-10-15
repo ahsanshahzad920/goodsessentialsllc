@@ -313,8 +313,8 @@
                         NC
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-gray-900">Naurine Chaurania</h3>
-                        <p class="mt-1 text-xs text-gray-500">USA</p>
+                        <h3 class="text-sm font-bold text-gray-900">Sarah</h3>
+                        <p class="mt-1 text-xs text-gray-500">Pakpatan</p>
                     </div>
                 </div>
             </article>
@@ -329,7 +329,7 @@
                 <i class="fa-solid fa-quote-left mt-5 text-2xl text-purple-200"></i>
 
                 <p class="mt-3 flex-1 text-sm leading-7 text-gray-600">
-                    I had a wonderful experience with Flareoncorp. Their customer service was awesome and patient while I added and removed items from my order. They made sure everything was perfect.
+                    I had a wonderful experience with GoodsEssentials. Their customer service was awesome and patient while I added and removed items from my order. They made sure everything was perfect.
                 </p>
 
                 <div class="mt-6 flex items-center gap-3 border-t border-gray-100 pt-5">
@@ -337,8 +337,8 @@
                         RS
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-gray-900">Richard Susan</h3>
-                        <p class="mt-1 text-xs text-gray-500">USA</p>
+                        <h3 class="text-sm font-bold text-gray-900">Ayesha Khan</h3>
+                        <p class="mt-1 text-xs text-gray-500">Gujranwala</p>
                     </div>
                 </div>
             </article>
@@ -353,7 +353,7 @@
                 <i class="fa-solid fa-quote-left mt-5 text-2xl text-amber-200"></i>
 
                 <p class="mt-3 flex-1 text-sm leading-7 text-gray-600">
-                    I had a delightful shopping experience. The products were affordable, and I was satisfied with their originality. The staff were friendly and comforting.
+                    Mera shopping experience bht bht axha rha. Products ky rates bht munasib hn, must buy thanks.
                 </p>
 
                 <div class="mt-6 flex items-center gap-3 border-t border-gray-100 pt-5">
@@ -361,8 +361,8 @@
                         RP
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-gray-900">Robert Patricia</h3>
-                        <p class="mt-1 text-xs text-gray-500">USA</p>
+                        <h3 class="text-sm font-bold text-gray-900">Guest-amir665</h3>
+                        <p class="mt-1 text-xs text-gray-500">Pattoki</p>
                     </div>
                 </div>
             </article>

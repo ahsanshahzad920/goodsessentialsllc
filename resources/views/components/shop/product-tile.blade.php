@@ -1,7 +1,6 @@
 @props(['product', 'wishlisted' => false])
 
 @php
-    // calculateDiscountPrice() is your existing helper.
     $price = (float) str_replace(',', '', (string) ($product->price ?? 0));
     $final = (float) str_replace(',', '', (string) (calculateDiscountPrice($product->price, $product->dis_price) ?? $price));
     $onSale = $final > 0 && $final < $price;
@@ -18,11 +17,10 @@
 
     $image   = $product->product_image ? asset('storage/' . $product->product_image) : asset('images/product-placeholder.svg');
     $url     = route('productDetails', $product->id);
-    $rating  = $product->rating ?? null;         // optional column
-    $reviews = $product->reviews_count ?? null;  // optional column
+    $rating  = $product->rating ?? null;
+    $reviews = $product->reviews_count ?? null;
 
-    // Change 'cart.add' to your real add-to-cart route name (POST, expects product_id + quantity).
-    $canAddToCart = \Illuminate\Support\Facades\Route::has('cart.add');
+    $canAddToCart = \Illuminate\Support\Facades\Route::has('cart.store');
     $btn = 'flex w-full items-center justify-center gap-1.5 rounded-full border border-brand-500/30 bg-lavender-100 py-2.5 text-[11px] font-extrabold text-brand-500 transition hover:bg-brand-500 hover:text-white';
 @endphp
 
@@ -53,10 +51,10 @@
             <a href="{{ $url }}">{{ $product->product_title }}</a>
         </h3>
 
-        <p class="mt-3 flex items-baseline gap-1.5">
-            <span class="text-[15px] font-extrabold">${{ number_format($final ?: $price, 2) }}</span>
+        <p class="mt-3 flex flex-wrap items-baseline gap-x-1.5">
+            <span class="text-[15px] font-extrabold">{{ money($final ?: $price) }}</span>
             @if ($onSale)
-                <span class="text-[11px] text-muted line-through">${{ number_format($price, 2) }}</span>
+                <span class="text-[11px] text-muted line-through">{{ money($price) }}</span>
             @endif
         </p>
 
@@ -74,7 +72,7 @@
 
         <div class="mt-auto pt-3">
             @if ($canAddToCart)
-                <form method="POST" action="{{ route('cart.add') }}">
+                <form method="POST" action="{{ route('cart.store') }}">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                     <input type="hidden" name="quantity" value="1">

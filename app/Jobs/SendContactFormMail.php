@@ -28,9 +28,9 @@ class SendContactFormMail implements ShouldQueue
      */
     public function handle(): void
     {
+        
         Mail::to($this->data['email'])->send(new ContactFormMail($this->data));
-
-        $superAdmins = User::role('Super Admin')->get();
+        $superAdmins = User::role('admin')->get();
         foreach ($superAdmins as $admin) {
             Mail::to($admin->email)->send(new AdminContactFormMail($this->data));
         }

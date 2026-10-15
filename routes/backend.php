@@ -1,33 +1,56 @@
 <?php
 
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\Account\OrderController as AccountOrderController;
 use App\Http\Controllers\Backend\Category\CategoryController;
+use App\Http\Controllers\Backend\Order\OrderController;
 use App\Http\Controllers\Backend\Product\ProductController;
+use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Role-aware landing: route('dashboard') still works everywhere.
+| Admin -> /admin/dashboard, customer -> /account/orders
+|--------------------------------------------------------------------------
+*/
+Route::get('dashboard', DashboardRedirectController::class)
+    ->middleware('auth')
+    ->name('dashboard');
 
-
-Route::middleware(['auth', 'verified'])
+/*
+|--------------------------------------------------------------------------
+| ADMIN AREA  (/admin/...)  - admins only
+| Route NAMES are unchanged (products.index, categories.create, ...), only URLs gain /admin
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified', 'area:admin'])
+    ->prefix('admin')
     ->group(function () {
 
-        // Dashboard Route
-        Route::view('dashboard', 'backend.dashboard')->name('dashboard');
+        Route::view('dashboard', 'backend.dashboard')->name('admin.dashboard');
 
-        // Categories Route
         Route::resource('categories', CategoryController::class);
-
-        // Products Route
         Route::resource('products', ProductController::class);
+        Route::resource('orders', OrderController::class)->only(['index', 'show', 'update']);
 
-        // Cart Route
-        Route::post('/cart/store', [CartController::class, 'store'])->name('cart.store');
-        Route::post('/increment-session', [CartController::class, 'incrementSession'])->name('increment.session');
-        Route::post('/decrement-session', [CartController::class, 'decrementSession'])->name('decrement.session');
-        Route::post('/cart/remove', [CartController::class, 'remove']) ->name('cart.remove');
-        
-        // Profile
+        // Admin profile
         Route::get('profile', [ProfileController::class, 'showProfile'])->name('profile');
-        Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    });
 
+/*
+|--------------------------------------------------------------------------
+| CUSTOMER AREA  (/account/...)  - customers only (admins are redirected away)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified', 'area:customer'])
+    ->prefix('account')
+    ->group(function () {
+
+        Route::get('orders', [AccountOrderController::class, 'index'])->name('account.orders.index');
+        Route::get('orders/{order}', [AccountOrderController::class, 'show'])->name('account.orders.show');
+
+        Route::get('profile', [ProfileController::class, 'edit'])->name('user.profile.show');
+        Route::put('profile', [ProfileController::class, 'updateUserProfile'])->name('user.profile.update');
     });

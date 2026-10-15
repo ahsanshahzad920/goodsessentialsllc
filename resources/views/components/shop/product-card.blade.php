@@ -48,10 +48,10 @@
             <a href="{{ $url }}">{{ $product->product_title }}</a>
         </h3>
 
-        <p class="mt-2 flex items-baseline gap-1.5">
-            <span class="text-base font-extrabold">${{ number_format($final ?: $price, 2) }}</span>
+        <p class="mt-2 flex flex-wrap items-baseline gap-x-1.5">
+            <span class="text-base font-extrabold">{{ money($final ?: $price) }}</span>
             @if ($onSale)
-                <span class="text-[11px] text-muted line-through">${{ number_format($price, 2) }}</span>
+                <span class="text-[11px] text-muted line-through">{{ money($price) }}</span>
             @endif
         </p>
 
@@ -67,7 +67,7 @@
                 @endif
             </div>
 
-            {{-- Goes to product page (your add-to-cart lives there). Swap for a POST form if you have a direct add-to-cart route. --}}
+            {{-- Goes to product page (your add-to-cart lives there). --}}
             <a href="{{ $url }}"
                class="grid size-8 place-items-center rounded-full bg-lavender-100 text-brand-500 hover:bg-brand-500 hover:text-white"
                aria-label="View {{ $product->product_title }}">

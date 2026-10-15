@@ -5,7 +5,7 @@
     $items    = collect(session('cart', []));
     $count    = $items->sum('quantity');
     $subtotal = $items->sum(fn ($i) => $i['quantity'] * $i['product_price']);
-    $money    = fn ($v) => '$' . number_format($v, 2);
+    $money    = fn ($v) => money($v);
     $canRemove = \Illuminate\Support\Facades\Route::has('cart.remove'); // change to your real remove route name
 @endphp
 
@@ -141,8 +141,15 @@
             decrement: "{{ route('decrement.session') }}"
         };
 
+        var currency = @json(config('shop.currency'));
+
         function money(n) {
-            return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            var num = Number(n).toLocaleString('en-US', {
+                minimumFractionDigits: currency.decimals,
+                maximumFractionDigits: currency.decimals
+            });
+            var gap = currency.space ? ' ' : '';
+            return currency.position === 'after' ? num + gap + currency.symbol : currency.symbol + gap + num;
         }
 
         // Sum quantities / totals from the DOM (used as fallback and for the item counters)

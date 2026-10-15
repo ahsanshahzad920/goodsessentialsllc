@@ -39,7 +39,7 @@
 
                     <a href="tel:+18325186347"
                         class="text-gray-600 transition hover:text-pink-600">
-                        +1 (832) 518-6347
+                        +92 (311) 327-0228
                     </a>
                 </div>
 
@@ -55,7 +55,7 @@
 
                     <a href="mailto:megamerchantinc01@gmail.com"
                         class="break-all text-gray-600 transition hover:text-purple-600">
-                        megamerchantinc01@gmail.com
+                        info@goodsessentialsllc.com
                     </a>
                 </div>
 
@@ -70,7 +70,7 @@
                     </h3>
 
                     <p class="text-gray-600">
-                        811 Avenue D #170, Katy, TX 7749
+                        Majeed Abad Colony, Bahawalpur
                     </p>
                 </div>
 
@@ -220,12 +220,13 @@
                         </p>
                     </div>
 
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621"
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1461.2844368167343!2d71.67079331901073!3d29.41301872652528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2s!4v1792066303105!5m2!1sen!2s"
+                        
                         title="Our location on Google Maps"
                         class="h-80 w-full border-0 lg:h-[510px]"
-                        loading="lazy"
                         allowfullscreen
+                        loading="lazy" 
                         referrerpolicy="no-referrer-when-downgrade"
                     ></iframe>
 
@@ -236,7 +237,7 @@
                             <div>
                                 <h4 class="font-bold text-gray-900">Visit Our Location</h4>
                                 <p class="mt-1 text-sm leading-6 text-gray-600">
-                                    811 Avenue D #170, Katy, TX 7749
+                                    Majeed Abad Colony, Bahawalpur
                                 </p>
                             </div>
                         </div>

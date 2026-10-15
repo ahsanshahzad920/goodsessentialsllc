@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
@@ -53,5 +54,79 @@ class ProfileController extends Controller
         $user->save(); // Save the user profile
 
         return redirect()->back()->with('success', 'Profile updated successfully.');
+    }
+
+    public function edit()
+    {
+        return view('profile', [
+            'user' => auth()->user(),
+        ]);
+    }
+
+    public function updateUserProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            // Profile information
+            'name' => ['required', 'string', 'max:255'],
+
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+
+            'phone' => ['nullable', 'string', 'max:30'],
+
+            'image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+
+            // Password fields are optional unless a new password is entered
+            'current_password' => [
+                'nullable',
+                'required_with:password',
+                'current_password',
+            ],
+
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+                'confirmed',
+                'required_with:current_password',
+            ],
+        ]);
+
+        // Update profile information
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->phone = $validated['phone'] ?? null;
+
+        // Update profile image only when a new one is uploaded
+        if ($request->hasFile('image')) {
+            if ($user->image) {
+                Storage::disk('public')->delete($user->image);
+            }
+
+            $user->image = $request->file('image')
+                ->store('profile-images', 'public');
+        }
+
+        // Update password only when a new password is provided
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
+
+        return redirect()
+            ->route('user.profile.show')
+            ->with('success', 'Your profile has been updated successfully.');
     }
 }
