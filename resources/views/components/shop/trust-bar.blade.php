@@ -1,6 +1,6 @@
 @php
     $items = [
-        ['truck',   'Free Shipping', 'On all orders'],
+        ['truck',   'Fast Shipping', 'On all orders'],
         ['shield',  'Safe Payments', '100% secure checkout'],
         ['refresh', 'Easy Returns',  '30 days return policy'],
         ['headset', '24/7 Support',  "We're here to help"],

@@ -67,7 +67,10 @@
                                         </td>
                                         <td class="text-center">{{ $order->items_count }}</td>
                                         <td>${{ number_format($order->total, 2) }}</td>
-                                        <td><span class="badge {{ $order->paymentBadge() }}">{{ ucfirst($order->payment_status) }}</span></td>
+                                        <td>
+                                            <span class="badge {{ $order->paymentBadge() }}">{{ ucfirst($order->payment_status) }}</span>
+                                            <div class="small text-muted">{{ $order->payment_method_label }}</div>
+                                        </td>
                                         <td><span class="badge {{ $order->statusBadge() }}">{{ ucfirst($order->status) }}</span></td>
                                         <td class="small">{{ $order->created_at->format('M j, Y g:i A') }}</td>
                                         <td class="text-end">

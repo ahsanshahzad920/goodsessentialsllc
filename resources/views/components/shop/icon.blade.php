@@ -37,6 +37,8 @@ $icons = [
     'gift' => '<rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8H7.5a2.5 2.5 0 1 1 2.5-2.5V8zM12 8h4.5A2.5 2.5 0 1 0 14 5.5V8z"/>',
     'leadies_handbag' => '<path d="M5 8h14l1 13H4L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
     'toys' => '<path d="M12 8a4 4 0 1 0-4-4 4 4 0 0 0 4 4z"/><path d="M5 14a3 3 0 1 0-3-3 3 3 0 0 0 3 3zM19 14a3 3 0 1 0-3-3 3 3 0 0 0 3 3z"/><path d="M7 16h10l2 6H5l2-6zM9 16v-2a3 3 0 0 1 6 0v2"/>',
+    'banknote'    => '<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+    'credit-card' => '<rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/>',
 
 ];
 @endphp

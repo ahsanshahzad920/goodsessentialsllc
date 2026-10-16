@@ -33,6 +33,10 @@ return new class extends Migration
 
             $table->string('status')->default('pending');
             $table->string('payment_status')->default('unpaid');
+
+            $table->string('payment_method', 20)->default('cod')->after('total'); // cod | card
+            $table->string('payment_reference')->nullable()->after('payment_status'); // gateway transaction id
+            $table->timestamp('paid_at')->nullable()->after('payment_reference');
             $table->timestamps();
         });
     }

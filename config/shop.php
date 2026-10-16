@@ -16,18 +16,18 @@ return [
         ['name' => 'automotive', 'icon' => 'car','tone' => 'sky'],
         ['name' => 'Home and Kitchen','icon' => 'utensils', 'tone' => 'sun'],
         ['name' => 'Books','icon' => 'book', 'tone' => 'sun'],
-        ['name' => 'Clothes','icon' => 'clothing', 'tone' => 'sun'],
+        ['name' => 'Clothes','icon' => 'clothing', 'tone' => 'sky'],
         ['name' => 'Gift Boxes','icon' => 'gift', 'tone' => 'sun'],
-        ['name' => 'Ladies Bags','icon' => 'leadies_handbag', 'tone' => 'sun'],
-        ['name' => 'Toys','icon' => 'toys', 'tone' => 'sun'],
+        ['name' => 'Ladies Bags','icon' => 'leadies_handbag', 'tone' => 'lavender'],
+        ['name' => 'Toys','icon' => 'toys', 'tone' => 'blush'],
         ],
 
     // Four coloured promo cards under the category row. category = null links to the full shop.
     'promos' => [
         ['title' => 'Baby Products', 'text' => 'Fresh picks just for you',    'tone' => 'lavender', 'category' => 'Baby Products', 'image' => 'assets/img/product-4.webp'],
         ['title' => 'Beauty Products', 'text' => 'Everything for little ones', 'tone' => 'sun',      'category' => 'Beauty Products', 'image' => 'assets/img/category-3.jpg'],
-        ['title' => 'Books', 'text' => 'Make home feel good',         'tone' => 'mint',     'category' => 'Books', 'image' => 'assets/img/category-1.webp'],
-        ['title' => 'Clothes', 'text' => 'Gentle, everyday care',       'tone' => 'blush',    'category' => 'Clothes', 'image' => 'assets/img/category-2.jpg'],
+        ['title' => 'Gift Boxes', 'text' => 'Make home feel good',         'tone' => 'mint',     'category' => 'Books', 'image' => 'assets/img/category-1.webp'],
+        ['title' => 'Toys', 'text' => 'Gentle, everyday care',       'tone' => 'blush',    'category' => 'Clothes', 'image' => 'assets/img/category-2.jpg'],
     ],
     'shipping_flat' => 70.00,
 

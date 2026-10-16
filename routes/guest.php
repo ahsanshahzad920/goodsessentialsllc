@@ -7,9 +7,15 @@ use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Frontend\CheckoutController;
+use App\Http\Controllers\Frontend\PaymentController;
 
 // Route::view('/', 'index')->name('index');
 Route::view('about', 'about')->name('about');
+Route::view('/privacy-policy', 'policies.privacy-policy')->name('privacy-policy');
+Route::view('/return-refund-policy', 'policies.return-refund-policy')->name('return-refund-policy');
+Route::view('/shipping-policy', 'policies.shipping-policy')->name('shipping-policy');
+Route::view('/terms-and-conditions', 'policies.terms-and-conditions')->name('terms-and-conditions');
+
 
 Route::controller(ShopController::class)->group(function () {
     // Products List
@@ -43,3 +49,9 @@ Route::get('order/success/{order_number}', [CheckoutController::class, 'success'
 
 Route::view('cart',   'cart')->name('cart');
 Route::view('wishlist', 'wishlist')->name('wishlist');
+
+// Payment Routes
+Route::get('payment/start/{order_number}', [PaymentController::class, 'start'])->name('payment.start');
+Route::match(['get', 'post'], 'payment/callback/{order_number}', [PaymentController::class, 'callback'])->name('payment.callback');
+Route::post('payment/webhook', [PaymentController::class, 'webhook'])->name('payment.webhook');
+Route::get('payment/fake/{order_number}', [PaymentController::class, 'fake'])->name('payment.fake');
