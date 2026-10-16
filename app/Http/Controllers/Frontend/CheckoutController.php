@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Payments\PaymentManager;
 use App\Support\Area;
 use App\Support\Price;
 use Illuminate\Auth\Events\Registered;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -24,16 +26,19 @@ class CheckoutController extends Controller
         [$lines, $subtotal, $removed] = $this->cartLines(session('cart', []));
 
         $shipping = $this->shippingFor($lines);
+        $methods  = PaymentManager::methods();
 
         if ($removed) {
             session()->flash('error', 'Some items in your cart are no longer available and were removed.');
         }
 
         return view('checkout', [
-            'lines'    => $lines,
-            'subtotal' => $subtotal,
-            'shipping' => $shipping,
-            'total'    => round($subtotal + $shipping, 2),
+            'lines'          => $lines,
+            'subtotal'       => $subtotal,
+            'shipping'       => $shipping,
+            'total'          => round($subtotal + $shipping, 2),
+            'paymentMethods' => $methods,
+            'defaultMethod'  => array_key_first($methods),
         ]);
     }
 
@@ -54,17 +59,19 @@ class CheckoutController extends Controller
         }
 
         $wantsAccount = ! Auth::check() && $request->boolean('create_account');
+        $methods      = PaymentManager::methods();
 
         $rules = [
-            'first_name' => ['required', 'string', 'max:100'],
-            'last_name'  => ['required', 'string', 'max:100'],
-            'phone'      => ['required', 'string', 'max:30'],
-            'email'      => ['required', 'email', 'max:255'],
-            'address'    => ['required', 'string', 'max:255'],
-            'city'       => ['required', 'string', 'max:120'],
-            'zip_code'   => ['required', 'string', 'max:20'],
-            'notes'      => ['nullable', 'string', 'max:1000'],
-            'terms'      => ['accepted'],
+            'first_name'     => ['required', 'string', 'max:100'],
+            'last_name'      => ['required', 'string', 'max:100'],
+            'phone'          => ['required', 'string', 'max:30'],
+            'email'          => ['required', 'email', 'max:255'],
+            'address'        => ['required', 'string', 'max:255'],
+            'city'           => ['required', 'string', 'max:120'],
+            'zip_code'       => ['required', 'string', 'max:20'],
+            'notes'          => ['nullable', 'string', 'max:1000'],
+            'payment_method' => ['required', Rule::in(array_keys($methods))],
+            'terms'          => ['accepted'],
         ];
 
         if ($wantsAccount) {
@@ -73,8 +80,10 @@ class CheckoutController extends Controller
         }
 
         $data = $request->validate($rules, [
-            'email.unique'   => 'An account with this email already exists. Please log in, or untick "Create an account" to check out as a guest.',
-            'terms.accepted' => 'Please accept the Terms & Conditions to place your order.',
+            'email.unique'            => 'An account with this email already exists. Please log in, or untick "Create an account" to check out as a guest.',
+            'terms.accepted'          => 'Please accept the Terms & Conditions to place your order.',
+            'payment_method.required' => 'Please choose a payment method.',
+            'payment_method.in'       => 'That payment method is not available right now.',
         ]);
 
         $shipping = $this->shippingFor($lines);
@@ -90,6 +99,7 @@ class CheckoutController extends Controller
                     'password' => Hash::make($data['password']),
                 ];
 
+                // Only fill these if your users table has the columns
                 if (Schema::hasColumn('users', 'first_name')) {
                     $attributes['first_name'] = $data['first_name'];
                     $attributes['last_name']  = $data['last_name'];
@@ -98,7 +108,7 @@ class CheckoutController extends Controller
                 $user = new User();
                 $user->forceFill($attributes)->save();
 
-                Area::heal($user);
+                Area::heal($user); // gives the new account the `customer` role
             }
 
             $order = Order::create([
@@ -115,8 +125,9 @@ class CheckoutController extends Controller
                 'subtotal'       => $subtotal,
                 'shipping'       => $shipping,
                 'total'          => $total,
+                'payment_method' => $data['payment_method'],
                 'status'         => 'pending',
-                'payment_status' => 'unpaid',
+                'payment_status' => 'unpaid', // COD: becomes "paid" when the cash is collected; card: when the gateway confirms
             ]);
 
             foreach ($lines as $line) {
@@ -136,7 +147,7 @@ class CheckoutController extends Controller
         // Sign the new account in (after the transaction succeeded)
         if ($wantsAccount && $user) {
             try {
-                event(new Registered($user)); // sends the verification email if your User implements MustVerifyEmail
+                event(new Registered($user)); // sends the verification email
             } catch (\Throwable $e) {
                 report($e); // never lose a placed order because of a mail problem
             }
@@ -147,12 +158,14 @@ class CheckoutController extends Controller
 
         session()->forget('cart');
         session()->put('last_order_id', $order->id);
+        session()->put('account_created', $wantsAccount);
 
-        // >>> Payment gateway hook: start payment for $order here if/when you add one. <<<
+        // Card orders go to the gateway; cash on delivery is complete.
+        if ($order->payment_method === 'card') {
+            return redirect()->route('payment.start', $order->order_number);
+        }
 
-        return redirect()
-            ->route('order.success', $order->order_number)
-            ->with('account_created', $wantsAccount);
+        return redirect()->route('order.success', $order->order_number);
     }
 
     /** GET /order/success/{order_number} */
@@ -166,7 +179,10 @@ class CheckoutController extends Controller
 
         abort_unless($isJustPlaced || $isOwner, 404);
 
-        return view('order-success', compact('order'));
+        return view('order-success', [
+            'order'          => $order,
+            'accountCreated' => (bool) session()->pull('account_created', false),
+        ]);
     }
 
     /**

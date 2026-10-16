@@ -9,6 +9,8 @@
     $nameParts = explode(' ', trim($user->name ?? ''), 2);
     $firstName = $user->first_name ?? ($nameParts[0] ?? '');
     $lastName  = $user->last_name  ?? ($nameParts[1] ?? '');
+
+    $selectedMethod = old('payment_method', $defaultMethod ?? 'cod');
 @endphp
 
 @section('pageTitle', 'Checkout | ' . config('app.name'))
@@ -84,6 +86,67 @@
                             @error('notes') <p class="mt-1 text-xs font-semibold text-blush-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
+                </section>
+
+                {{-- Payment method --}}
+                <section class="rounded-2xl border border-line bg-white p-5 shadow-sm sm:p-7">
+                    <h2 class="text-lg font-semibold">Payment method</h2>
+                    <p class="mt-0.5 text-xs text-muted">Choose how you'd like to pay.</p>
+
+                    @php
+                        // Look of each method: idle icon colours + what changes when it is selected
+                        $paymentStyles = [
+                            'cod' => [
+                                'card'  => 'hover:border-mint-600/40 peer-checked:border-mint-600 peer-checked:bg-mint-100 peer-checked:shadow-mint-600/20',
+                                'idle'  => 'bg-mint-100 text-mint-600',
+                                'icon'  => 'group-has-[:checked]/pay:bg-mint-600 group-has-[:checked]/pay:text-white',
+                                'title' => 'group-has-[:checked]/pay:text-mint-600',
+                                'dot'   => 'group-has-[:checked]/pay:border-mint-600 group-has-[:checked]/pay:bg-mint-600',
+                                'hint'  => "You'll pay " . $money($total) . " in cash when your order arrives.",
+                            ],
+                            'card' => [
+                                'card'  => 'hover:border-brand-500/40 peer-checked:border-brand-500 peer-checked:bg-lavender-100 peer-checked:shadow-brand-500/20',
+                                'idle'  => 'bg-lavender-100 text-brand-500',
+                                'icon'  => 'group-has-[:checked]/pay:bg-brand-500 group-has-[:checked]/pay:text-white',
+                                'title' => 'group-has-[:checked]/pay:text-brand-600',
+                                'dot'   => 'group-has-[:checked]/pay:border-brand-500 group-has-[:checked]/pay:bg-brand-500',
+                                'hint'  => "You'll be taken to our secure payment page next.",
+                            ],
+                        ];
+                    @endphp
+
+                    <div class="mt-5 grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Payment method">
+                        @foreach ($paymentMethods as $key => $method)
+                            @php $s = $paymentStyles[$key] ?? $paymentStyles['card']; @endphp
+
+                            <label class="group/pay relative block cursor-pointer">
+                                <input type="radio" name="payment_method" value="{{ $key }}" required
+                                    data-hint="{{ $s['hint'] ?? ($method['description'] ?? '') }}"
+                                    class="peer sr-only" @checked($selectedMethod === $key)>
+
+                                <span class="flex h-full items-start gap-3 rounded-2xl border-2 border-line bg-white p-4 transition duration-200 peer-checked:shadow-lg peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500/40 {{ $s['card'] }}">
+
+                                    <span class="grid size-11 shrink-0 place-items-center rounded-xl transition duration-200 {{ $s['idle'] }} {{ $s['icon'] }}">
+                                        <x-shop.icon :name="$method['icon'] ?? 'cart'" class="size-5" />
+                                    </span>
+
+                                    <span class="min-w-0 flex-1">
+                                        <span class="block text-sm font-extrabold transition {{ $s['title'] }}">{{ $method['label'] }}</span>
+                                        <span class="mt-0.5 block text-xs text-muted">{{ $method['description'] ?? '' }}</span>
+                                    </span>
+
+                                    {{-- selected tick --}}
+                                    <span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border-2 border-line bg-white text-transparent transition duration-200 group-has-[:checked]/pay:text-white {{ $s['dot'] }}">
+                                        <x-shop.icon name="check" class="size-3" />
+                                    </span>
+                                </span>
+                            </label>
+                        @endforeach
+                    </div>
+
+                    @error('payment_method')
+                        <p class="mt-3 text-xs font-semibold text-blush-600">{{ $message }}</p>
+                    @enderror
                 </section>
 
                 {{-- Optional account (guests only) --}}
@@ -168,8 +231,10 @@
 
                     <button type="submit" id="place-order"
                             class="flex w-full items-center justify-center gap-2 rounded-full bg-brand-500 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-600 disabled:cursor-wait disabled:opacity-70">
-                        Place Order <x-shop.icon name="arrow-right" class="size-4" />
+                        <span id="place-order-label">Place Order</span>
+                        <x-shop.icon name="arrow-right" class="size-4" />
                     </button>
+                    <p id="payment-hint" class="text-center text-xs text-muted" aria-live="polite"></p>
 
                     <a href="{{ route('cart') }}" class="block text-center text-xs font-bold text-muted hover:text-brand-500">Back to cart</a>
                 </div>
@@ -194,12 +259,24 @@
             sync();
         }
 
+        // Button text follows the chosen payment method
+        var label  = document.getElementById('place-order-label');
+        var radios = document.querySelectorAll('input[name="payment_method"]');
+        var hint = document.getElementById('payment-hint');
+        function syncLabel() {
+            var checked = document.querySelector('input[name="payment_method"]:checked');
+            if (label && checked) label.textContent = (checked.value === 'card') ? 'Continue to Payment' : 'Place Order';
+            if (hint && checked) hint.textContent = checked.dataset.hint || '';
+        }
+        radios.forEach(function (r) { r.addEventListener('change', syncLabel); });
+        syncLabel();
+
         // Prevent double submit
         var form = document.getElementById('checkout-form');
         var btn  = document.getElementById('place-order');
         if (form && btn) {
             form.addEventListener('submit', function () {
-                if (form.checkValidity()) { btn.disabled = true; btn.firstChild.textContent = 'Placing order... '; }
+                if (form.checkValidity()) { btn.disabled = true; if (label) label.textContent = 'Processing...'; }
             });
         }
     })();

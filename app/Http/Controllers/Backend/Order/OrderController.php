@@ -56,6 +56,10 @@ class OrderController extends Controller
             'status'         => ['required', Rule::in(Order::STATUSES)],
             'payment_status' => ['required', Rule::in(Order::PAYMENT_STATUSES)],
         ]);
+        
+        if ($data['payment_status'] === 'paid' && ! $order->paid_at) {
+            $data['paid_at'] = now();
+        }
 
         $order->update($data);
 
