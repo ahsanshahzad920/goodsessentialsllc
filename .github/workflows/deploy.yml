@@ -26,7 +26,13 @@ jobs:
 
             export PATH=/opt/alt/alt-nodejs20/root/usr/bin:$PATH
 
+            # Clear stale framework caches while dev packages are still
+            # installed, so no cached manifest can reference a class that
+            # is about to be removed by --no-dev.
+            php artisan optimize:clear
+
             composer install --no-dev --optimize-autoloader --no-interaction
+            php artisan package:discover --ansi
 
             npm ci
             npm run build
