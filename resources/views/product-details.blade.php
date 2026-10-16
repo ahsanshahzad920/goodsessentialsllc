@@ -81,12 +81,12 @@
             {{-- Price --}}
             <div class="flex flex-wrap items-center gap-3">
                 <span class="text-3xl font-extrabold text-gray-900">
-                    ${{ number_format((float) $currentPrice, 2) }}
+                    {{ money((float) $currentPrice, 2) }}
                 </span>
 
                 @if ($product->dis_price && $product->price > $currentPrice)
                     <span class="text-lg text-gray-400 line-through">
-                        ${{ number_format((float) $product->price, 2) }}
+                        {{ money((float) $product->price, 2) }}
                     </span>
                 @endif
             </div>
