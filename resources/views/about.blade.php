@@ -8,7 +8,7 @@
         <div class="relative z-10 max-w-2xl">
             <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-pink-600 shadow-sm">
                 <i class="fa-solid fa-heart"></i>
-                Welcome to Flareoncorp
+                Welcome to Goods Essentials
             </span>
 
             <h1 class="mt-5 text-4xl font-extrabold leading-tight tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
@@ -17,7 +17,7 @@
             </h1>
 
             <p class="mt-5 max-w-xl text-base leading-8 text-gray-600 sm:text-lg">
-                Flareoncorp is your one-stop destination for quality products across baby essentials,
+                Goods Essentials is your one-stop destination for quality products across baby essentials,
                 automotive accessories, beauty, and home and kitchen.
             </p>
 
@@ -55,7 +55,7 @@
             <div class="overflow-hidden rounded-3xl bg-pink-50 p-3 sm:p-5">
                 <img
                     src="{{ asset('assets/img/about.jpg') }}"
-                    alt="Discover the Flareoncorp shopping experience"
+                    alt="Discover the Goods Essentials shopping experience"
                     class="h-72 w-full rounded-2xl object-cover sm:h-96"
                     loading="lazy"
                 >
@@ -87,7 +87,7 @@
             </h2>
 
             <p class="text-sm leading-7 text-gray-600 sm:text-base">
-                At Flareoncorp, we've combined years of dedication and passion to bring you a diverse range of products that cater to your everyday needs. Our journey is built on hard work and a commitment to quality, ensuring that every item we offer meets our standards.
+                At Goods Essentials, we've combined years of dedication and passion to bring you a diverse range of products that cater to your everyday needs. Our journey is built on hard work and a commitment to quality, ensuring that every item we offer meets our standards.
             </p>
 
             <p class="text-sm leading-7 text-gray-600 sm:text-base">
@@ -95,7 +95,7 @@
             </p>
 
             <p class="text-sm leading-7 text-gray-600 sm:text-base">
-                With a focus on customer satisfaction, our team continuously works to source and deliver products across various categories. Whether you're shopping for your home, family, or personal use, Flareoncorp is here to make your experience smooth and enjoyable.
+                With a focus on customer satisfaction, our team continuously works to source and deliver products across various categories. Whether you're shopping for your home, family, or personal use, Goods Essentials is here to make your experience smooth and enjoyable.
             </p>
 
             <a href="{{ route('shop') }}"
@@ -235,7 +235,7 @@
     <section class="rounded-3xl bg-purple-50 px-5 py-10 sm:px-10 sm:py-12">
         <div class="mx-auto max-w-2xl text-center">
             <span class="text-sm font-bold uppercase tracking-wider text-purple-600">
-                The Flareoncorp Experience
+                The Goods Essentials Experience
             </span>
             <h2 class="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">
                 Why Shop With Us?
@@ -305,7 +305,7 @@
                 <i class="fa-solid fa-quote-left mt-5 text-2xl text-pink-200"></i>
 
                 <p class="mt-3 flex-1 text-sm leading-7 text-gray-600">
-                    I received my suit today, and I'm so happy with the fabric quality. The stitching is excellent and professional, and the delivery was fast. I'll be buying my suits for future events from Flareoncorp.
+                    I received my suit today, and I'm so happy with the fabric quality. The stitching is excellent and professional, and the delivery was fast. I'll be buying my suits for future events from Goods Essentials.
                 </p>
 
                 <div class="mt-6 flex items-center gap-3 border-t border-gray-100 pt-5">
