@@ -18,6 +18,7 @@
 
     @vite(['resources/css/app.css'])
     @stack('style')
+    
 </head>
 <body data-auth="{{ Auth::check() ? '1' : '0' }}">
     <div class="z-40 md:sticky md:top-0">
@@ -75,5 +76,10 @@
         });
     </script>
     @stack('script')
+
+
+
+    <!-- Floating WhatsApp Button -->
+    <x-shop.whatsapp-chat />
 </body>
 </html>
