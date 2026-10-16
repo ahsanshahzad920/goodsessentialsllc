@@ -17,6 +17,9 @@ return [
         ['name' => 'Home and Kitchen','icon' => 'utensils', 'tone' => 'sun'],
         ['name' => 'Books','icon' => 'book', 'tone' => 'sun'],
         ['name' => 'Clothes','icon' => 'clothing', 'tone' => 'sun'],
+        ['name' => 'Gift Boxes','icon' => 'gift', 'tone' => 'sun'],
+        ['name' => 'Ladies Bags','icon' => 'leadies_handbag', 'tone' => 'sun'],
+        ['name' => 'Toys','icon' => 'toys', 'tone' => 'sun'],
         ],
 
     // Four coloured promo cards under the category row. category = null links to the full shop.
