@@ -32,7 +32,6 @@ jobs:
             php artisan optimize:clear
 
             composer install --no-dev --optimize-autoloader --no-interaction
-            php artisan package:discover --ansi
 
             npm ci
             npm run build
