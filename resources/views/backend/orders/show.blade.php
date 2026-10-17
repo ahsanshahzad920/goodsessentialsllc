@@ -104,6 +104,15 @@
                         @else
                             <span class="badge bg-light text-dark border">Guest checkout</span>
                         @endif
+                        <p class="small text-muted mt-2 mb-0">
+                            IP address:
+                            @if ($order->ip_address)
+                                <code>{{ $order->ip_address }}</code>
+                                <a href="https://ipinfo.io/{{ $order->ip_address }}" target="_blank" rel="noopener noreferrer">Look up location</a>
+                            @else
+                                N/A
+                            @endif
+                        </p>
 
                         <hr>
                         <h6>Delivery address</h6>
