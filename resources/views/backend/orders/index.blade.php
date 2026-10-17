@@ -66,7 +66,7 @@
                                             @endif
                                         </td>
                                         <td class="text-center">{{ $order->items_count }}</td>
-                                        <td>${{ number_format($order->total, 2) }}</td>
+                                        <td>{{ money($order->total) }}</td>
                                         <td>
                                             <span class="badge {{ $order->paymentBadge() }}">{{ ucfirst($order->payment_status) }}</span>
                                             <div class="small text-muted">{{ $order->payment_method_label }}</div>

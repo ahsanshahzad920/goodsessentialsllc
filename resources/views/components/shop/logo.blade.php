@@ -6,7 +6,7 @@
 
 <a href="{{ route('index') }}" {{ $attributes->merge(['class' => 'inline-flex flex-col leading-none']) }} aria-label="{{ $name }} home">
     @if ($image)
-        <img src="{{ asset($image) }}" alt="{{ $name }}" class="h-12 w-auto">
+        <img src="{{ asset($image) }}" alt="{{ $name }}" class="h-15 w-auto">
     @else
         <span class="font-display text-3xl font-bold tracking-wide">
             @foreach (str_split(strtoupper($name)) as $i => $char)<span class="{{ $tones[$i % count($tones)] }}">{{ $char }}</span>@endforeach

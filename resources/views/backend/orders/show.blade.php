@@ -39,9 +39,9 @@
                                                     <span>{{ $item->product_title }}</span>
                                                 </div>
                                             </td>
-                                            <td>${{ number_format($item->price, 2) }}</td>
+                                            <td>{{ money($item->price) }}</td>
                                             <td class="text-center">{{ $item->quantity }}</td>
-                                            <td class="text-end">${{ number_format($item->total, 2) }}</td>
+                                            <td class="text-end">{{ money($item->total) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -49,10 +49,19 @@
                         </div>
 
                         <div class="ms-auto mt-3" style="max-width: 320px;">
-                            <div class="d-flex justify-content-between"><span class="text-muted">Subtotal</span><span>${{ number_format($order->subtotal, 2) }}</span></div>
-                            <div class="d-flex justify-content-between"><span class="text-muted">Shipping</span><span>${{ number_format($order->shipping, 2) }}</span></div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Subtotal</span>
+                                <span>{{ money($order->subtotal) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Shipping</span>
+                                <span>{{ money($order->shipping) }}</span>
+                            </div>
                             <hr>
-                            <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span>${{ number_format($order->total, 2) }}</span></div>
+                            <div class="d-flex justify-content-between fw-bold fs-5">
+                                <span>Total</span>
+                                <span>{{ money($order->total) }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>

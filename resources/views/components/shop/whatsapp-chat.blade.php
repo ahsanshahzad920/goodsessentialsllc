@@ -1,213 +1,131 @@
+<div id="whatsapp-chat-widget" class="font-['Nunito']">
 
-<div id="whatsapp-chat-widget">
-    <!-- Floating button -->
-    <button id="wa-toggle" type="button"
+    <!-- Floating WhatsApp Button -->
+    <button
+        id="wa-toggle"
+        type="button"
         aria-label="Open customer support chat"
-        aria-expanded="false">
+        aria-expanded="false"
+        class="fixed bottom-4 right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-green-200 sm:bottom-6 sm:right-6 sm:h-[60px] sm:w-[60px]"
+    >
         <i class="fa-brands fa-whatsapp"></i>
     </button>
 
-    <!-- Chat popup -->
-    <div id="wa-panel" class="wa-panel" hidden>
-        <div class="wa-header">
+    <!-- Chat Popup -->
+    <div
+        id="wa-panel"
+        hidden
+        class="fixed bottom-[84px] left-3 right-3 z-[9999] flex h-[514px] max-h-[calc(100dvh-104px)] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:bottom-[100px] sm:left-auto sm:right-6 sm:h-[514px] sm:w-[360px] sm:max-w-[calc(100vw-48px)] sm:max-h-[calc(100dvh-120px)]"
+    >
+
+        <!-- Header -->
+        <div class="flex shrink-0 items-center justify-between gap-3 bg-[#159447] px-4 py-4 text-white sm:p-[18px]">
             <div>
-                <strong>Good Essentials</strong>
-                <small>Customer Support</small>
+                <strong class="block text-base font-bold">Good Essentials</strong>
+                <small class="mt-1 block text-xs opacity-90">
+                    Customer Support
+                </small>
             </div>
-            <button id="wa-close" type="button"
-                aria-label="Close chat">&times;</button>
+
+            <button
+                id="wa-close"
+                type="button"
+                aria-label="Close chat"
+                class="rounded-lg px-2 py-1 text-3xl leading-none transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white"
+            >
+                &times;
+            </button>
         </div>
 
-        <div class="wa-body">
-            <div class="wa-message">
+        <!-- Scrollable Body -->
+        <div class="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-[18px]">
+
+            <!-- Welcome Message -->
+            <div class="rounded-xl bg-[#f1f5f0] p-3 text-sm leading-6 text-gray-800">
                 Hi there! 👋 Welcome to Good Essentials.
                 How can we help you today?
             </div>
 
-            <p class="wa-label">Choose an option:</p>
+            <div>
+                <p class="mb-3 text-xs font-semibold text-gray-500">
+                    Choose an option:
+                </p>
 
-            <button class="wa-option"
-                data-message="Hi! I need help finding a product.">
-                🧸 Product Inquiry
-            </button>
+                <!-- Options -->
+                <div class="space-y-2">
 
-            <button class="wa-option"
-                data-message="Hi! I need help with my order.">
-                📦 Order Support
-            </button>
+                    <button
+                        type="button"
+                        class="wa-option w-full rounded-xl border border-gray-200 bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                        data-message="Hi! I need help finding a product."
+                    >
+                        🧸 Product Inquiry
+                    </button>
 
-            <button class="wa-option"
-                data-message="Hi! I have a question about shipping.">
-                🚚 Shipping Information
-            </button>
+                    <button
+                        type="button"
+                        class="wa-option w-full rounded-xl border border-gray-200 bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                        data-message="Hi! I need help with my order."
+                    >
+                        📦 Order Support
+                    </button>
 
-            <button class="wa-option"
-                data-message="Hi! I have a question about returns or refunds.">
-                ↩️ Returns & Refunds
-            </button>
+                    <button
+                        type="button"
+                        class="wa-option w-full rounded-xl border border-gray-200 bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                        data-message="Hi! I have a question about shipping."
+                    >
+                        🚚 Shipping Information
+                    </button>
 
-            <a id="wa-start-chat"
+                    <button
+                        type="button"
+                        class="wa-option w-full rounded-xl border border-gray-200 bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                        data-message="Hi! I have a question about returns or refunds."
+                    >
+                        ↩️ Returns &amp; Refunds
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- WhatsApp Link -->
+            <a
+                id="wa-start-chat"
                 href="#"
                 target="_blank"
-                rel="noopener noreferrer">
-                <i class="fa-brands fa-whatsapp"></i>
+                rel="noopener noreferrer"
+                class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#1fbd5a] focus:outline-none focus:ring-4 focus:ring-green-200"
+            >
+                <i class="fa-brands fa-whatsapp text-xl"></i>
                 Chat with us on WhatsApp
             </a>
 
-            <small class="wa-note">
+            <p class="pb-1 text-center text-xs leading-5 text-gray-500">
                 WhatsApp will open so you can send your message.
-            </small>
+            </p>
+
         </div>
     </div>
 </div>
 
-<style>
-    #whatsapp-chat-widget {
-        font-family: 'Nunito', sans-serif;
-    }
-
-    #wa-toggle {
-        position: fixed;
-        right: 24px;
-        bottom: 24px;
-        width: 60px;
-        height: 60px;
-        border: 0;
-        border-radius: 50%;
-        background: #25D366;
-        color: white;
-        font-size: 34px;
-        cursor: pointer;
-        box-shadow: 0 4px 14px #0003;
-        z-index: 9998;
-    }
-
-    .wa-panel {
-        position: fixed;
-        right: 24px;
-        height: 514px;
-        bottom: 55px;
-        width: 340px;
-        max-width: calc(100vw - 32px);
-        background: white;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 8px 35px #0002;
-        z-index: 9999;
-    }
-
-    .wa-panel[hidden] {
-        display: none !important;
-    }
-
-    .wa-header {
-        background: #159447;
-        color: white;
-        padding: 18px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .wa-header strong,
-    .wa-header small {
-        display: block;
-    }
-
-    .wa-header small {
-        margin-top: 4px;
-        opacity: .9;
-    }
-
-    #wa-close {
-        background: transparent;
-        border: 0;
-        color: white;
-        font-size: 28px;
-        cursor: pointer;
-    }
-
-    .wa-body {
-        padding: 18px;
-    }
-
-    .wa-message {
-        background: #f1f5f0;
-        padding: 13px;
-        border-radius: 12px;
-        line-height: 1.6;
-        font-size: 14px;
-    }
-
-    .wa-label {
-        font-size: 13px;
-        color: #666;
-        margin: 16px 0 10px;
-    }
-
-    .wa-option {
-        display: block;
-        width: 100%;
-        padding: 11px;
-        margin-bottom: 8px;
-        text-align: left;
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 9px;
-        cursor: pointer;
-        font: inherit;
-        font-size: 14px;
-    }
-
-    .wa-option:hover {
-        background: #f0fff5;
-        border-color: #25D366;
-    }
-
-    #wa-start-chat {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 13px;
-        margin-top: 14px;
-        background: #25D366;
-        color: white;
-        text-decoration: none;
-        font-weight: 700;
-        border-radius: 9px;
-    }
-
-    .wa-note {
-        display: block;
-        text-align: center;
-        color: #777;
-        font-size: 11px;
-        margin-top: 10px;
-    }
-
-    @media (max-width: 480px) {
-        #wa-toggle {
-            right: 16px;
-            bottom: 16px;
-        }
-
-        .wa-panel {
-            right: 16px;
-            bottom: 88px;
-            width: 360px;
-        }
-    }
-</style>
-
 <script>
     (() => {
-        const toggle = document.getElementById('wa-toggle');
-        const panel = document.getElementById('wa-panel');
-        const close = document.getElementById('wa-close');
-        const startChat = document.getElementById('wa-start-chat');
+        const widget = document.getElementById('whatsapp-chat-widget');
 
-        // Replace with your actual WhatsApp number.
+        if (!widget || widget.dataset.initialized === 'true') {
+            return;
+        }
+
+        widget.dataset.initialized = 'true';
+
+        const toggle = widget.querySelector('#wa-toggle');
+        const panel = widget.querySelector('#wa-panel');
+        const close = widget.querySelector('#wa-close');
+        const startChat = widget.querySelector('#wa-start-chat');
+        const options = widget.querySelectorAll('.wa-option');
+
+        // WhatsApp number in international format without + or spaces.
         const phone = '923060974495';
 
         let message = 'Hello! I need help with Good Essentials.';
@@ -238,14 +156,19 @@
 
         close.addEventListener('click', closePanel);
 
-        document.querySelectorAll('#wa-panel .wa-option')
-            .forEach(button => {
-                button.addEventListener('click', () => {
-                    message = button.dataset.message;
-                    updateLink();
-                    startChat.click();
-                });
+        options.forEach(button => {
+            button.addEventListener('click', () => {
+                message = button.dataset.message;
+                updateLink();
+
+                // Open WhatsApp with the selected message.
+                window.open(
+                    startChat.href,
+                    '_blank',
+                    'noopener,noreferrer'
+                );
             });
+        });
 
         updateLink();
     })();
