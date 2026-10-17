@@ -37,6 +37,8 @@ return new class extends Migration
             $table->string('payment_method', 20)->default('cod')->after('total'); // cod | card
             $table->string('payment_reference')->nullable()->after('payment_status'); // gateway transaction id
             $table->timestamp('paid_at')->nullable()->after('payment_reference');
+
+            $table->string('ip_address', 45)->nullable()->index();
             $table->timestamps();
         });
     }

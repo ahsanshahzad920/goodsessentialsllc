@@ -19,6 +19,7 @@ class Order extends Model
         'address', 'city', 'zip_code', 'notes',
         'subtotal', 'shipping', 'total',
         'payment_method', 'status', 'payment_status', 'payment_reference', 'paid_at',
+        'ip_address',
     ];
 
     protected $casts = [

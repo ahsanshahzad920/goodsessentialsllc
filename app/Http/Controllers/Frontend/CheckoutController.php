@@ -89,8 +89,8 @@ class CheckoutController extends Controller
         $shipping = $this->shippingFor($lines);
         $total    = round($subtotal + $shipping, 2);
         $user     = Auth::user(); // null for guests
-
-        $order = DB::transaction(function () use ($data, $lines, $subtotal, $shipping, $total, $wantsAccount, &$user) {
+        $ip = $request->ip(); //  user ip
+        $order = DB::transaction(function () use ($data, $lines, $subtotal, $shipping, $total, $wantsAccount, $ip, &$user) {
             if ($wantsAccount) {
                 $attributes = [
                     'name'     => trim($data['first_name'] . ' ' . $data['last_name']),
@@ -128,6 +128,7 @@ class CheckoutController extends Controller
                 'payment_method' => $data['payment_method'],
                 'status'         => 'pending',
                 'payment_status' => 'unpaid', // COD: becomes "paid" when the cash is collected; card: when the gateway confirms
+                'ip_address'     => $ip,
             ]);
 
             foreach ($lines as $line) {
