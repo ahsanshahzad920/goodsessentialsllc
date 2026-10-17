@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
+
 class ProfileController extends Controller
 {
     public function showProfile()
@@ -61,6 +62,44 @@ class ProfileController extends Controller
         return view('profile', [
             'user' => auth()->user(),
         ]);
+    }
+    public function updateProfileImage(Request $request)
+    {
+        $user = auth()->user();
+
+        if ($request->boolean('remove_image')) {
+            if ($user->image) {
+                Storage::disk('public')->delete($user->image);
+                $user->image = null;
+                $user->save();
+            }
+
+            return redirect()
+                ->route('profile')
+                ->with('success', 'Profile picture removed successfully.');
+        }
+
+        $request->validate([
+            'image' => [
+                'required',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+        ]);
+
+        $path = $request->file('image')->store('profiles', 'public');
+
+        if ($user->image) {
+            Storage::disk('public')->delete($user->image);
+        }
+
+        $user->image = $path;
+        $user->save();
+
+        return redirect()
+            ->route('profile')
+            ->with('success', 'Profile picture updated successfully.');
     }
 
     public function updateUserProfile(Request $request)

@@ -36,8 +36,8 @@
 
                                             {{-- <td>{!! $product->product_description ?? 'N/A' !!}</td> --}}
                                             <td>{{ $product->category->name ?? 'N/A' }}</td>
-                                            <td>${{ $product->price ?? 'N/A' }}</td>
-                                            <td>${{ calculateDiscountPrice($product->price, $product->dis_price) ?? 'N/A' }}</td>
+                                            <td>{{ money($product->price) }}</td>
+                                            <td>{{ money(calculateDiscountPrice($product->price, $product->dis_price)) }}</td>
                                             <td>
                                                 @if ($product->product_image)
                                                     <img src="{{ asset('storage/' . $product->product_image) }}"

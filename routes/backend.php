@@ -7,6 +7,7 @@ use App\Http\Controllers\Backend\Product\ProductController;
 use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Backend\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +29,8 @@ Route::middleware(['auth', 'verified', 'area:admin'])
     ->prefix('admin')
     ->group(function () {
 
-        Route::view('dashboard', 'backend.dashboard')->name('admin.dashboard');
+        //Route::view('dashboard', 'backend.dashboard')->name('admin.dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
         Route::resource('categories', CategoryController::class);
         Route::resource('products', ProductController::class);
@@ -37,6 +39,8 @@ Route::middleware(['auth', 'verified', 'area:admin'])
         // Admin profile
         Route::get('profile', [ProfileController::class, 'showProfile'])->name('profile');
         Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('profile/image', [ProfileController::class, 'updateProfileImage'])
+        ->name('profile.image.update');
     });
 
 /*

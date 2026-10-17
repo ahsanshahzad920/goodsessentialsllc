@@ -1,11 +1,13 @@
 @php
     $pendingOrders = \App\Models\Order::where('status', 'pending')->count();
+    $image = config('shop.logo_image');
+    $name  = config('shop.name', config('app.name'));
 @endphp
 
 <div class="sidebar pb-3">
     <nav class="navbar navbar-light">
         <a href="{{ route('admin.dashboard') }}" class="navbar-brand mx-4 mb-3">
-            <img src="{{ asset('dashasset/img/SVG-NavBar-Logo.svg') }}" alt="" class="img-fluid w-100" />
+            <img src="{{ asset($image) }}" alt="" class="img-fluid w-100" />
         </a>
 
         <div class="navbar-nav w-100">
