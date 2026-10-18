@@ -22,11 +22,6 @@ class Category extends Model
         'og_image',
     ];
 
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
     // Relations
 
     // Define a relationship to get subcategories

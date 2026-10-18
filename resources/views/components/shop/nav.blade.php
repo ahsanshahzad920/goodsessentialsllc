@@ -1,4 +1,4 @@
-@php 
+@php
 $configuredCategories = collect(config('shop.categories', []))
         ->keyBy(fn ($category) => strtolower($category['name']));
 $categories = \App\Models\Category::orderBy('name')
@@ -8,6 +8,7 @@ $categories = \App\Models\Category::orderBy('name')
 
             return [
                 'name' => $category->name,
+                'slug' => $category->slug,
                 'label' => $settings['label'] ?? $category->name,
                 'icon' => $settings['icon'] ?? 'tag',
                 'tone' => $settings['tone'] ?? 'lavender',
@@ -29,7 +30,7 @@ $categories = \App\Models\Category::orderBy('name')
 
         @foreach ($categories as $c)
             @php
-                $href = route('shop', $c['name']);
+                $href = route('shop.category', $c['slug']);
                 $active = request()->url() === $href;
             @endphp
             <li class="shrink-0">

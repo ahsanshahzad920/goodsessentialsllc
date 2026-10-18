@@ -33,11 +33,6 @@ class Product extends Model
         'suggested_max_age_months',
     ];
 
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
     // Relationship with Category
     public function category()
     {

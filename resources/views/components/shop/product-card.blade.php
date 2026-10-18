@@ -17,7 +17,7 @@
     }
 
     $image  = $product->product_image ? asset('storage/' . $product->product_image) : asset('images/product-placeholder.svg');
-    $url    = route('productDetails', $product->id);
+    $url    = route('productDetails', $product->slug);
     $rating = $product->rating ?? null;          // optional: shown only if your products have a rating column
     $reviews = $product->reviews_count ?? null;  // optional
 @endphp
