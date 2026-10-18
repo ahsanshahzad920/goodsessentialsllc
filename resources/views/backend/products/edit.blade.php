@@ -69,21 +69,10 @@
                                 @enderror
                             </div>
 
-                            {{-- Product Image --}}
-                            <div class="form-group mb-4 fw-bold">
-                                <label for="product_image">Product Image</label>
-                                <input type="file" name="product_image" class="form-control">
-                                <small class="form-text text-muted">Leave blank to keep the current image.</small>
-                                @error('product_image')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                                @if ($product->product_image)
-                                    <div class="mt-2">
-                                        <img src="{{ asset('storage/' . $product->product_image) }}" alt="Current Image"
-                                            style="max-width: 200px;">
-                                    </div>
-                                @endif
-                            </div>
+                            {{-- Product color picker --}}
+                                @include('backend.products._color-picker', ['product' => $product])
+                            {{-- Product Images (current + add more) --}}
+                            @include('backend.products._image-uploader', ['product' => $product])
 
                             <button type="submit" class="btn btn-success">Update Product</button>
                         </form>

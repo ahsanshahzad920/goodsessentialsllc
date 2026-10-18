@@ -14,7 +14,8 @@
 
     // Check whether the product is already in the cart.
     $cart = session('cart', []);
-    $isInCart = array_key_exists($product->id, $cart);
+    $hasColors = ! empty($product->colors);
+    $isInCart = ! $hasColors && collect($cart)->contains(fn ($item) => (int) ($item['product_id'] ?? 0) === $product->id);
 
     $currentPrice = calculateDiscountPrice(
         $product->price,
@@ -45,17 +46,8 @@
     <section aria-label="Product details"
              class="grid grid-cols-1 items-start gap-8 md:grid-cols-2 lg:gap-12">
 
-        {{-- Product image --}}
-        <div class="overflow-hidden rounded-3xl border border-gray-100 bg-white p-4 sm:p-6">
-            <div class="flex min-h-[320px] items-center justify-center rounded-2xl bg-gray-50 p-4 sm:min-h-[460px]">
-                <img
-                    src="{{ asset('storage/' . $product->product_image) }}"
-                    alt="{{ $product->product_title ?? 'Product image' }}"
-                    class="max-h-[440px] w-full object-contain"
-                    fetchpriority="high"
-                >
-            </div>
-        </div>
+        {{-- Product images (main image + thumbnails) --}}
+        <x-shop.product-gallery :product="$product" />
 
         {{-- Product information --}}
         <div class="space-y-5 py-2">
@@ -113,7 +105,7 @@
                 @csrf
 
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
-
+                <x-shop.color-picker :colors="$product->colors ?? []" />
                 <div>
                     <label for="quantityInput"
                            class="mb-3 block text-sm font-semibold text-gray-800">

@@ -68,14 +68,11 @@
                                 @enderror
                             </div>
 
-                            {{-- Product Image --}}
-                            <div class="form-group mb-4 fw-bold">
-                                <label for="product_image">Product Image</label>
-                                <input type="file" name="product_image" class="form-control">
-                                @error('product_image')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            {{-- Product color picker --}}
+                            @include('backend.products._color-picker', ['product' => null])
+
+                            {{-- Product Images (multiple) --}}
+                            @include('backend.products._image-uploader', ['product' => null])
 
                             <button type="submit" class="btn btn-success">Create Product</button>
                         </form>

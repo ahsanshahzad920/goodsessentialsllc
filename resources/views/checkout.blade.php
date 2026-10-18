@@ -203,6 +203,9 @@
                                 <div class="min-w-0 flex-1">
                                     <p class="line-clamp-2 text-sm font-bold leading-snug">{{ $p->product_title }}</p>
                                     <p class="mt-0.5 text-xs text-muted">Qty {{ $line['quantity'] }} × {{ $money($line['price']) }}</p>
+                                    @if (! empty($line['color_name']))
+                                        <x-shop.color-dot :name="$line['color_name']" :hex="$line['color_hex']" />
+                                    @endif
                                 </div>
                                 <span class="shrink-0 text-sm font-extrabold">{{ $money($line['total']) }}</span>
                             </li>

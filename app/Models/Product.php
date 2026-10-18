@@ -20,7 +20,9 @@ class Product extends Model
         'updated_by',
         'price',
         'dis_price',
+        'colors',
     ];
+    protected $casts = ['colors' => 'array'];
 
     // Relationship with Category
     public function category()
@@ -44,5 +46,9 @@ class Product extends Model
         static::addGlobalScope('latest', function (Builder $builder) {
             $builder->latest();
         });
+    }
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('sort_order')->orderBy('id');
     }
 }

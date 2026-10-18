@@ -139,6 +139,8 @@ class CheckoutController extends Controller
                     'price'         => $line['price'],
                     'quantity'      => $line['quantity'],
                     'total'         => $line['total'],
+                    'color_name' => $line['color_name'] ?? null,
+                    'color_hex'  => $line['color_hex'] ?? null,
                 ]);
             }
 
@@ -215,6 +217,8 @@ class CheckoutController extends Controller
                 'quantity' => $quantity,
                 'price'    => $price,
                 'total'    => round($price * $quantity, 2),
+                'color_name' => $item['color_name'] ?? null,
+                'color_hex'  => $item['color_hex'] ?? null,
             ];
         }
 

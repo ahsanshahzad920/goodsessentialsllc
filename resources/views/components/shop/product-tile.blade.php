@@ -20,7 +20,7 @@
     $rating  = $product->rating ?? null;
     $reviews = $product->reviews_count ?? null;
 
-    $canAddToCart = \Illuminate\Support\Facades\Route::has('cart.store');
+    $canAddToCart = \Illuminate\Support\Facades\Route::has('cart.store') && empty($product->colors);
     $btn = 'flex w-full items-center justify-center gap-1.5 rounded-full border border-brand-500/30 bg-lavender-100 py-2.5 text-[11px] font-extrabold text-brand-500 transition hover:bg-brand-500 hover:text-white';
 @endphp
 
