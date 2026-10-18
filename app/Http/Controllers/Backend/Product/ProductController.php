@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -38,6 +39,7 @@ class ProductController extends Controller
         DB::transaction(function () use ($request) {
             $product = Product::create([
                 'product_title'       => $request->product_title,
+                'slug'                => $this->uniqueSlug($request->product_title),
                 'product_description' => $request->product_description,
                 'product_image'       => null, // set below from the main gallery image
                 'category_id'         => $request->category_id,
@@ -101,6 +103,7 @@ class ProductController extends Controller
 
             $product->update([
                 'product_title'       => $request->product_title,
+                'slug'                => $product->slug ?: $this->uniqueSlug($request->product_title),
                 'product_description' => $request->product_description,
                 'category_id'         => $request->category_id,
                 'price'               => $request->price,
@@ -222,5 +225,19 @@ class ProductController extends Controller
         }
 
         $product->update(['product_image' => $main->path]);
+    }
+
+    private function uniqueSlug(string $title): string
+    {
+        $base = Str::slug($title) ?: 'product';
+        $slug = $base;
+        $suffix = 2;
+
+        while (Product::where('slug', $slug)->exists()) {
+            $slug = "{$base}-{$suffix}";
+            $suffix++;
+        }
+
+        return $slug;
     }
 }
