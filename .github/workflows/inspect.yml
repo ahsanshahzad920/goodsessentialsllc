@@ -1,0 +1,23 @@
+name: Inspect
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'Shell command to run in public_html (read-only use only)'
+        required: true
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run command
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd ~/domains/goodsessentialsllc.com/public_html
+            ${{ github.event.inputs.command }}
