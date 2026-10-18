@@ -3,6 +3,8 @@
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\LlmsTxtController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
@@ -15,6 +17,9 @@ Route::view('/privacy-policy', 'policies.privacy-policy')->name('privacy-policy'
 Route::view('/return-refund-policy', 'policies.return-refund-policy')->name('return-refund-policy');
 Route::view('/shipping-policy', 'policies.shipping-policy')->name('shipping-policy');
 Route::view('/terms-and-conditions', 'policies.terms-and-conditions')->name('terms-and-conditions');
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/llms.txt', [LlmsTxtController::class, 'index'])->name('llms-txt');
 
 
 Route::controller(ShopController::class)->group(function () {
