@@ -19,7 +19,7 @@ $configuredCategories = collect(config('shop.categories', []))
     <div class="container-shop grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
         <div>
             <x-shop.logo />
-            <p class="mt-3 max-w-xs text-sm text-muted">Quality everyday essentials for babies, kids and home.</p>
+            <p class="mt-3 max-w-xs text-sm text-muted">Baby & mom essentials, delivered across Pakistan.</p>
         </div>
 
         <div>

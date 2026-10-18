@@ -24,8 +24,8 @@
             </h1>
 
             <p class="mt-5 max-w-xl text-base leading-8 text-gray-600 sm:text-lg">
-                Goods Essentials is your one-stop destination for quality products across baby essentials,
-                automotive accessories, beauty, and home and kitchen.
+                Goods Essentials is your one-stop destination for baby clothing, feeding essentials,
+                baby care, toys and gift sets for moms across Pakistan.
             </p>
 
             <div class="mt-8 flex flex-wrap gap-3">
@@ -98,11 +98,11 @@
             </p>
 
             <p class="text-sm leading-7 text-gray-600 sm:text-base">
-                From baby essentials to automotive accessories, beauty products, and home goods, we strive to provide reliable solutions for your life.
+                From newborn clothing to feeding essentials, baby care and gift sets, we focus on one thing: making it easy for Pakistani families to find safe, quality products for their little ones.
             </p>
 
             <p class="text-sm leading-7 text-gray-600 sm:text-base">
-                With a focus on customer satisfaction, our team continuously works to source and deliver products across various categories. Whether you're shopping for your home, family, or personal use, Goods Essentials is here to make your experience smooth and enjoyable.
+                With a focus on customer satisfaction, our team continuously works to source and deliver baby and mom essentials you can trust. Whether you're shopping for a newborn, a toddler, or a gift for a new mom, Goods Essentials is here to make your experience smooth and enjoyable.
             </p>
 
             <a href="{{ route('shop') }}"
@@ -138,101 +138,38 @@
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
-            {{-- Baby products --}}
-            <a href="{{ route('shop', 'Baby Products') }}"
-               class="group relative isolate min-h-64 overflow-hidden rounded-3xl bg-pink-50">
-                <img
-                    src="{{ asset('assets/img/category-3.jpg') }}"
-                    alt="Baby products"
-                    class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    loading="lazy"
-                >
-                <div class="absolute inset-0 -z-10 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+            @php
+                $aboutCategories = [
+                    ['slug' => 'baby-clothing', 'name' => 'Baby Clothing', 'tagline' => 'Little essentials, lots of love.', 'image' => 'category-3.jpg', 'icon' => 'fa-baby', 'bg' => 'bg-pink-50', 'iconColor' => 'text-pink-600'],
+                    ['slug' => 'feeding', 'name' => 'Feeding', 'tagline' => 'Breast pumps, bottles & bibs.', 'image' => 'category-2.jpg', 'icon' => 'fa-bottle-water', 'bg' => 'bg-sky-50', 'iconColor' => 'text-sky-600'],
+                    ['slug' => 'mom-care', 'name' => 'Mom Care', 'tagline' => 'Maternity & postpartum essentials.', 'image' => 'category-4.jpg', 'icon' => 'fa-wand-magic-sparkles', 'bg' => 'bg-purple-50', 'iconColor' => 'text-purple-600'],
+                    ['slug' => 'gift-boxes', 'name' => 'Gift Boxes', 'tagline' => 'Newborn gifts & aqiqa sets.', 'image' => 'category-1.webp', 'icon' => 'fa-gift', 'bg' => 'bg-amber-50', 'iconColor' => 'text-amber-600'],
+                ];
+            @endphp
+            @foreach ($aboutCategories as $cat)
+                <a href="{{ route('shop.category', $cat['slug']) }}"
+                   class="group relative isolate min-h-64 overflow-hidden rounded-3xl {{ $cat['bg'] }}">
+                    <img
+                        src="{{ asset('assets/img/' . $cat['image']) }}"
+                        alt="{{ $cat['name'] }}"
+                        class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        loading="lazy"
+                    >
+                    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
 
-                <div class="absolute inset-x-0 bottom-0 p-5">
-                    <span class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-pink-600">
-                        <i class="fa-solid fa-baby"></i>
-                    </span>
-                    <h3 class="text-xl font-bold text-white">Baby Products</h3>
-                    <p class="mt-1 text-sm text-white/85">Little essentials, lots of love.</p>
-                    <span class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white">
-                        Explore Category
-                        <i class="fa-solid fa-arrow-right transition group-hover:translate-x-1"></i>
-                    </span>
-                </div>
-            </a>
-
-            {{-- Beauty --}}
-            <a href="{{ route('shop', 'Beauty Products') }}"
-               class="group relative isolate min-h-64 overflow-hidden rounded-3xl bg-purple-50">
-                <img
-                    src="{{ asset('assets/img/category-2.jpg') }}"
-                    alt="Beauty products"
-                    class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    loading="lazy"
-                >
-                <div class="absolute inset-0 -z-10 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-
-                <div class="absolute inset-x-0 bottom-0 p-5">
-                    <span class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-purple-600">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    </span>
-                    <h3 class="text-xl font-bold text-white">Beauty Products</h3>
-                    <p class="mt-1 text-sm text-white/85">Everyday self-care favorites.</p>
-                    <span class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white">
-                        Explore Category
-                        <i class="fa-solid fa-arrow-right transition group-hover:translate-x-1"></i>
-                    </span>
-                </div>
-            </a>
-
-            {{-- Automotive --}}
-            <a href="{{ route('shop', 'Automotive') }}"
-               class="group relative isolate min-h-64 overflow-hidden rounded-3xl bg-blue-50">
-                <img
-                    src="{{ asset('assets/img/category-4.jpg') }}"
-                    alt="Automotive accessories"
-                    class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    loading="lazy"
-                >
-                <div class="absolute inset-0 -z-10 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-
-                <div class="absolute inset-x-0 bottom-0 p-5">
-                    <span class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-blue-600">
-                        <i class="fa-solid fa-car"></i>
-                    </span>
-                    <h3 class="text-xl font-bold text-white">Automotive</h3>
-                    <p class="mt-1 text-sm text-white/85">Accessories for your journey.</p>
-                    <span class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white">
-                        Explore Category
-                        <i class="fa-solid fa-arrow-right transition group-hover:translate-x-1"></i>
-                    </span>
-                </div>
-            </a>
-
-            {{-- Home and kitchen --}}
-            <a href="{{ route('shop', 'Home and Kitchen') }}"
-               class="group relative isolate min-h-64 overflow-hidden rounded-3xl bg-amber-50">
-                <img
-                    src="{{ asset('assets/img/category-1.webp') }}"
-                    alt="Home and kitchen products"
-                    class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    loading="lazy"
-                >
-                <div class="absolute inset-0 -z-10 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-
-                <div class="absolute inset-x-0 bottom-0 p-5">
-                    <span class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-amber-600">
-                        <i class="fa-solid fa-house"></i>
-                    </span>
-                    <h3 class="text-xl font-bold text-white">Home & Kitchen</h3>
-                    <p class="mt-1 text-sm text-white/85">Make your space feel like home.</p>
-                    <span class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white">
-                        Explore Category
-                        <i class="fa-solid fa-arrow-right transition group-hover:translate-x-1"></i>
-                    </span>
-                </div>
-            </a>
+                    <div class="absolute inset-x-0 bottom-0 p-5">
+                        <span class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 {{ $cat['iconColor'] }}">
+                            <i class="fa-solid {{ $cat['icon'] }}"></i>
+                        </span>
+                        <h3 class="text-xl font-bold text-white">{{ $cat['name'] }}</h3>
+                        <p class="mt-1 text-sm text-white/85">{{ $cat['tagline'] }}</p>
+                        <span class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white">
+                            Explore Category
+                            <i class="fa-solid fa-arrow-right transition group-hover:translate-x-1"></i>
+                        </span>
+                    </div>
+                </a>
+            @endforeach
 
         </div>
     </section>
