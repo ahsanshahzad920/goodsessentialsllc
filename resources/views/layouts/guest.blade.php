@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    {!! SEOMeta::generate() !!}
-    {!! OpenGraph::generate() !!}
-    {!! TwitterCard::generate() !!}
-    {!! JsonLdMulti::generate() !!}
+    {!! \Artesaos\SEOTools\Facades\SEOMeta::generate() !!}
+    {!! \Artesaos\SEOTools\Facades\OpenGraph::generate() !!}
+    {!! \Artesaos\SEOTools\Facades\TwitterCard::generate() !!}
+    {!! \Artesaos\SEOTools\Facades\JsonLdMulti::generate() !!}
     <link rel="shortcut icon" href="{{ asset('img/fav.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
