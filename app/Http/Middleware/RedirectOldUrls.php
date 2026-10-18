@@ -12,7 +12,9 @@ class RedirectOldUrls
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->isMethod('get')) {
-            $redirect = DB::table('redirects')->where('old_path', $request->path())->first();
+            $path = rawurldecode($request->path());
+
+            $redirect = DB::table('redirects')->where('old_path', $path)->first();
 
             if ($redirect) {
                 return redirect('/' . ltrim($redirect->new_path, '/'), $redirect->status_code);
