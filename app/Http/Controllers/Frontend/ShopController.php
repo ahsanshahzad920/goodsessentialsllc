@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\SeoService;
 use Illuminate\Http\Request;
 
 class ShopController extends Controller
@@ -30,6 +31,12 @@ class ShopController extends Controller
             })
             ->paginate(12);
 
+        SeoService::set(
+            $search ? "Search results for \"{$search}\" | " . config('app.name') : 'Shop All Baby & Mom Products Online in Pakistan | ' . config('app.name'),
+            'Browse baby clothes, feeding essentials, baby care, toys and gift sets online in Pakistan. Cash on Delivery, fast delivery & easy returns.',
+            index: ! $search,
+        );
+
         return view('shop', compact('categories', 'products', 'category'));
     }
 
@@ -49,12 +56,17 @@ class ShopController extends Controller
             })
             ->paginate(12);
 
+        SeoService::forCategory($category);
+
         return view('shop', compact('categories', 'products', 'category'));
     }
 
     public function productDetails(Product $product)
     {
         $products = Product::where('category_id', $product->category_id)->get();
+
+        SeoService::forProduct($product);
+
         return view('product-details', compact('product', 'products'));
     }
 }

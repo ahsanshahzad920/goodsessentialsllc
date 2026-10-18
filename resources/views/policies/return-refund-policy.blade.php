@@ -1,5 +1,12 @@
 @extends('layouts.guest')
 
+@php
+    \App\Services\SeoService::set(
+        'Return, Refund & Exchange Policy | ' . config('app.name'),
+        'Goods Essentials return policy: 14 days to report a return, refund or exchange, with details on eligibility, damaged items and Cash on Delivery refunds.',
+    );
+@endphp
+
 @section('content')
 <div class="container-shop mx-auto max-w-4xl px-4 py-10 sm:py-14">
     <header class="mb-8 rounded-3xl bg-pink-50 px-6 py-8 sm:px-10">

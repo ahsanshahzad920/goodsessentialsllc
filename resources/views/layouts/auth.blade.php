@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zxx" class="no-js">
+<html lang="en-PK" class="no-js">
 
 <head>
     <!-- Mobile Specific Meta -->
@@ -14,8 +14,10 @@
     <meta name="keywords" content="" />
     <!-- meta character set -->
     <meta charset="UTF-8" />
+    <!-- Account pages (login/register/password reset) should never be indexed. -->
+    <meta name="robots" content="noindex, nofollow" />
     <!-- Site Title -->
-    <title> @yield('pageTitle', env('APP_NAME')) </title>
+    <title> @yield('pageTitle', config('app.name')) </title>
 
     {{-- Style Section --}}
     <x-frontend.guest-layout-style />

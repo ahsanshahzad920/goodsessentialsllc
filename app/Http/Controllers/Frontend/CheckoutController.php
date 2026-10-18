@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use App\Payments\PaymentManager;
+use App\Services\SeoService;
 use App\Support\Area;
 use App\Support\Price;
 use Illuminate\Auth\Events\Registered;
@@ -23,6 +24,8 @@ class CheckoutController extends Controller
     /** GET /checkout */
     public function show()
     {
+        SeoService::set('Checkout | ' . config('app.name'), 'Secure checkout.', index: false);
+
         [$lines, $subtotal, $removed] = $this->cartLines(session('cart', []));
 
         $defaultMethod = array_key_first(PaymentManager::methods());

@@ -1,5 +1,12 @@
 @extends('layouts.guest')
 
+@php
+    \App\Services\SeoService::set(
+        'About Us | ' . config('app.name'),
+        'Learn about Goods Essentials, a Pakistan-based baby and mom essentials store offering quality products with Cash on Delivery and fast delivery.',
+    );
+@endphp
+
 @section('content')
 <div class="container-shop space-y-12 py-8 sm:space-y-16">
 

@@ -1,5 +1,12 @@
 @extends('layouts.guest')
 
+@php
+    \App\Services\SeoService::set(
+        'Terms & Conditions | ' . config('app.name'),
+        'Terms and conditions for ordering, payments, pricing, shipping and cancellations when you shop at Goods Essentials online in Pakistan.',
+    );
+@endphp
+
 @section('content')
 <div class="container-shop mx-auto max-w-4xl px-4 py-10 sm:py-14">
     <header class="mb-8 rounded-3xl bg-pink-50 px-6 py-8 sm:px-10">

@@ -4,6 +4,8 @@
     use App\Models\Wishlist;
     use App\Models\Product;
 
+    \App\Services\SeoService::set('My Wishlist | ' . config('app.name'), 'Your saved favorite products.', index: false);
+
     $wishlistProductIds = auth()->check()
         ? Wishlist::where('user_id', auth()->id())->pluck('product_id')
         : collect();

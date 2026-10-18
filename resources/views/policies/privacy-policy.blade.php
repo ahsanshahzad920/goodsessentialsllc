@@ -1,5 +1,12 @@
 @extends('layouts.guest')
 
+@php
+    \App\Services\SeoService::set(
+        'Privacy Policy | ' . config('app.name'),
+        'How Goods Essentials collects, uses and protects your personal information when you shop for baby products online in Pakistan.',
+    );
+@endphp
+
 @section('content')
 <div class="container-shop mx-auto max-w-4xl px-4 py-10 sm:py-14">
     <header class="mb-8 rounded-3xl bg-pink-50 px-6 py-8 sm:px-10">
@@ -37,7 +44,7 @@
             <h2 class="mb-2 text-xl font-bold text-gray-900">Your Choices and Contact</h2>
             <p>You may contact us to ask about personal information associated with your account or order, or to request a correction where appropriate. For privacy questions, please use the contact details shown on our website's Contact Us page.</p>
         </section>
-        
+
     </div>
 </div>
 @endsection

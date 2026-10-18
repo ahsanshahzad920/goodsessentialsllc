@@ -1,5 +1,12 @@
 @extends('layouts.guest')
 
+@php
+    \App\Services\SeoService::set(
+        'Shipping Policy & Delivery Times | ' . config('app.name'),
+        'Delivery across Pakistan: 1-2 working days in Karachi, 4-5 days elsewhere. Cash on Delivery available under Rs. 40,000. See full shipping charges and timelines.',
+    );
+@endphp
+
 @section('content')
 <div class="container-shop mx-auto max-w-4xl px-4 py-10 sm:py-14">
     <header class="mb-8 rounded-3xl bg-pink-50 px-6 py-8 sm:px-10">
@@ -12,8 +19,8 @@
         <section>
             <h2 class="mb-2 text-xl font-bold text-gray-900">Delivery Charges</h2>
             <ul class="list-disc space-y-1 pl-6">
-                <li>Prepaid orders: PKR {{config('shop.shipping_online_payment')}} delivery charge.</li>
-                <li>Cash on Delivery (COD) orders: PKR {{config('shop.shipping_cod_payment')}} delivery charge.</li>
+                <li>Prepaid orders: PKR 200 delivery charge.</li>
+                <li>Cash on Delivery (COD) orders: PKR 250 delivery charge.</li>
             </ul>
             <p class="mt-2">Any applicable delivery charges will be shown during checkout before you place your order.</p>
         </section>

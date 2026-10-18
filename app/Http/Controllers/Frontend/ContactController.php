@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\SendContactFormMail;
+use App\Services\SeoService;
 use App\Traits\HandleErrors;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,6 +18,11 @@ class ContactController extends Controller
      */
     public function index()
     {
+        SeoService::set(
+            'Contact Us | ' . config('app.name'),
+            'Get in touch with Goods Essentials for questions about baby products, your order, Cash on Delivery or returns. We reply fast.',
+        );
+
         return view('contact');
     }
 
