@@ -35,6 +35,7 @@ $configuredCategories = collect(config('shop.categories', []))
             <h3 class="text-base font-semibold">Help</h3>
             <ul class="mt-3 space-y-2 text-sm text-muted">
                 <li><a href="{{ route('about') }}" class="hover:text-brand-500">About us</a></li>
+                <li><a href="{{ route('blog.index') }}" class="hover:text-brand-500">Mom's Guide</a></li>
                 <li><a href="{{ route('contacts.index') }}" class="hover:text-brand-500">Contact us</a></li>
                 <li><a href="{{ route('privacy-policy') }}">Privacy Policy</a></li>
                 <li><a href="{{ route('return-refund-policy') }}">Return & Refund Policy</a></li>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\IndexController;
@@ -20,6 +21,11 @@ Route::view('/terms-and-conditions', 'policies.terms-and-conditions')->name('ter
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/llms.txt', [LlmsTxtController::class, 'index'])->name('llms-txt');
+
+Route::controller(BlogController::class)->prefix('blog')->group(function () {
+    Route::get('/', 'index')->name('blog.index');
+    Route::get('/{post:slug}', 'show')->name('blog.show');
+});
 
 
 Route::controller(ShopController::class)->group(function () {

@@ -110,7 +110,7 @@ class SeoService
         self::addSchema(Schema::fAQPage()->mainEntity($entities));
     }
 
-    protected static function addSchema($schema): void
+    public static function addSchema($schema): void
     {
         static::$schemas[] = $schema;
     }
