@@ -20,9 +20,25 @@ class Product extends Model
         'updated_by',
         'price',
         'dis_price',
+        'slug',
+        'sku',
+        'meta_title',
+        'meta_description',
+        'og_image',
+        'brand',
+        'color',
+        'size',
+        'material',
+        'suggested_min_age_months',
+        'suggested_max_age_months',
         'colors',
     ];
     protected $casts = ['colors' => 'array'];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     // Relationship with Category
     public function category()

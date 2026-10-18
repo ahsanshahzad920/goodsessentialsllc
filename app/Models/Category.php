@@ -17,7 +17,15 @@ class Category extends Model
         'created_by',
         'updated_by',
         'parent_id',
+        'meta_title',
+        'meta_description',
+        'og_image',
     ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     // Relations
 
