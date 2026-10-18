@@ -19,11 +19,11 @@
     <div data-gallery-stage @if ($multi) tabindex="0" @endif
          style="touch-action: pan-y;"
          aria-roledescription="carousel" aria-label="Product images"
-         class="relative overflow-hidden rounded-3xl border border-line bg-white p-4 outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 sm:p-6">
+         class="relative overflow-hidden rounded-2xl border border-line bg-white p-2 outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 sm:p-3">
 
-        <div class="flex min-h-[320px] items-center justify-center rounded-2xl bg-mist-100 p-4 sm:min-h-[460px]">
+        <div class="flex min-h-[240px] items-center justify-center rounded-2xl bg-mist-100 p-3 sm:min-h-[320px] lg:min-h-[350px]">
             <img data-gallery-main src="{{ $images->first() }}" alt="{{ $alt }}" draggable="false"
-                 class="max-h-[440px] w-full select-none object-contain transition-opacity duration-150" fetchpriority="high">
+                class="max-h-[280px] w-full select-none object-contain transition-opacity duration-150 sm:max-h-[320px] lg:max-h-[340px]" fetchpriority="high">
         </div>
 
         @if ($multi)

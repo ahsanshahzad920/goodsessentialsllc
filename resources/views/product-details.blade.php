@@ -24,7 +24,7 @@
 @endphp
 
 @section('content')
-<div class="container-shop space-y-10 py-8">
+<div class="container-shop space-y-8 py-5">
 
     {{-- Breadcrumbs --}}
     <nav aria-label="Breadcrumb" class="text-sm text-muted">
@@ -43,14 +43,13 @@
     </nav>
 
     {{-- Product details --}}
-    <section aria-label="Product details"
-             class="grid grid-cols-1 items-start gap-8 md:grid-cols-2 lg:gap-12">
+    <section aria-label="Product details" class="grid grid-cols-1 items-start gap-5 md:grid-cols-2 lg:gap-8">
 
         {{-- Product images (main image + thumbnails) --}}
         <x-shop.product-gallery :product="$product" />
 
         {{-- Product information --}}
-        <div class="space-y-5 py-2">
+        <div class="space-y-4 py-1">
 
             {{-- Category --}}
             <div class="flex flex-wrap items-center gap-3">
@@ -66,13 +65,13 @@
             </div>
 
             {{-- Title --}}
-            <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900 sm:text-4xl">
+            <h1 class="text-2xl font-bold leading-tight tracking-tight text-gray-900 sm:text-3xl">
                 {{ $product->product_title ?? 'Product Details' }}
             </h1>
 
             {{-- Price --}}
             <div class="flex flex-wrap items-center gap-3">
-                <span class="text-3xl font-extrabold text-gray-900">
+                <span class="text-2xl font-extrabold text-gray-900">
                     {{ money((float) $currentPrice, 2) }}
                 </span>
 
@@ -83,13 +82,13 @@
                 @endif
             </div>
 
-            <p class="text-sm leading-6 text-muted">
+            <!-- <p class="text-sm leading-6 text-muted">
                 A lovely addition to your little one's collection.
                 Explore the product details below and add it to your cart.
-            </p>
+            </p> -->
 
             {{-- Product description --}}
-            <div class="border-t border-gray-100 pt-5">
+            <div class="border-t border-gray-100 pt-2">
                 <h2 class="mb-3 text-lg font-bold text-gray-900">
                     Product Description
                 </h2>

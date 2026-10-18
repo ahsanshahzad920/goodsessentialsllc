@@ -12,8 +12,8 @@
         <section>
             <h2 class="mb-2 text-xl font-bold text-gray-900">Delivery Charges</h2>
             <ul class="list-disc space-y-1 pl-6">
-                <li>Prepaid orders: PKR 200 delivery charge.</li>
-                <li>Cash on Delivery (COD) orders: PKR 250 delivery charge.</li>
+                <li>Prepaid orders: PKR {{config('shop.shipping_online_payment')}} delivery charge.</li>
+                <li>Cash on Delivery (COD) orders: PKR {{config('shop.shipping_cod_payment')}} delivery charge.</li>
             </ul>
             <p class="mt-2">Any applicable delivery charges will be shown during checkout before you place your order.</p>
         </section>
