@@ -37,12 +37,13 @@ return [
         'space'    => true,                                    // "Rs. 1,299" vs "Rs.1,299"
     ],
 
-    // Used by Organization/WebSite JSON-LD and the WhatsApp button.
-    // TODO(owner): fill these in — omitted from schema/UI entirely while null,
-    // never rendered as a placeholder value.
+    // Used by Organization JSON-LD and the WhatsApp button.
+    // Phone/WhatsApp default to the number already hardcoded in the WhatsApp
+    // widget (components/shop/whatsapp-chat.blade.php). Still TODO(owner):
+    // support email + hours — omitted entirely while null, never a placeholder.
     'contact' => [
-        'phone'    => env('SHOP_PHONE'),
-        'whatsapp' => env('SHOP_WHATSAPP'),
+        'phone'    => env('SHOP_PHONE', '+923060974495'),
+        'whatsapp' => env('SHOP_WHATSAPP', '+923060974495'),
         'email'    => env('SHOP_SUPPORT_EMAIL'),
         'hours'    => env('SHOP_SUPPORT_HOURS'),
     ],

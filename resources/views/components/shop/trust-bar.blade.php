@@ -1,12 +1,11 @@
 @php
     $items = [
-        ['truck',   'Fast Shipping', 'On all orders'],
+        ['truck',   'Fast Shipping', '1-2 days in Karachi'],
         ['shield',  'Safe Payments', '100% secure checkout'],
-        ['refresh', 'Easy Returns',  '30 days return policy'],
-        ['headset', '24/7 Support',  "We're here to help"],
+        ['refresh', 'Easy Returns',  '14 day return policy'],
+        ['headset', 'Here to Help',  'Reach us via Contact Us'],
     ];
 @endphp
-
 <section class="rounded-3xl bg-brand-500 p-2 text-white" aria-label="Store promises">
     <ul class="grid gap-4 rounded-[1.25rem] border border-dashed border-white/40 px-5 py-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
         @foreach ($items as $i => [$icon, $title, $text])
