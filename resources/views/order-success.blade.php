@@ -38,6 +38,9 @@
                     <div class="min-w-0 flex-1">
                         <p class="line-clamp-2 text-sm font-bold">{{ $item->product_title }}</p>
                         <p class="mt-0.5 text-xs text-muted">Qty {{ $item->quantity }} × {{ money($item->price) }}</p>
+                        @if ($item->color_name)
+                            <x-shop.color-dot :name="$item->color_name" :hex="$item->color_hex" />
+                        @endif
                     </div>
                     <span class="text-sm font-extrabold">{{ money($item->total) }}</span>
                 </li>

@@ -36,7 +36,15 @@
                                                     @if ($item->product_image)
                                                         <img src="{{ asset('storage/' . $item->product_image) }}" alt="" width="50" height="50" style="object-fit: cover; border-radius: 6px;">
                                                     @endif
-                                                    <span>{{ $item->product_title }}</span>
+                                                    <div>
+                                                        <span>{{ $item->product_title }}</span>
+                                                        @if ($item->color_name)
+                                                            <div class="small text-muted d-flex align-items-center gap-1">
+                                                                <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:{{ $item->color_hex }};border:1px solid #ccc;"></span>
+                                                                {{ $item->color_name }}
+                                                            </div>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td>{{ money($item->price) }}</td>

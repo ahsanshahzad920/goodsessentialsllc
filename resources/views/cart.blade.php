@@ -51,7 +51,8 @@
 
                     <li class="js-row flex gap-4 rounded-2xl border border-line bg-white p-3 shadow-sm transition aria-busy:opacity-60 sm:p-4"
                         data-product-id="{{ $details['product_id'] }}"
-                        data-price="{{ $details['product_price'] }}">
+                        data-price="{{ $details['product_price'] }}"
+                        data-key="{{ $key }}">
 
                         <a href="{{ $url }}" class="shrink-0">
                             <img src="{{ $image }}" alt="{{ $details['product_title'] }}" loading="lazy"
@@ -66,6 +67,9 @@
                                 <p class="js-line-total shrink-0 text-base font-extrabold">{{ $money($details['quantity'] * $details['product_price']) }}</p>
                             </div>
                             <p class="mt-0.5 text-xs text-muted">{{ $money($details['product_price']) }} each</p>
+                            @if (! empty($details['color_name']))
+                                <x-shop.color-dot :name="$details['color_name']" :hex="$details['color_hex'] ?? null" class="mt-1" />
+                            @endif
 
                             <div class="mt-auto flex items-center justify-between gap-3 pt-3">
                                 {{-- Quantity stepper --}}
@@ -87,7 +91,7 @@
                                 @if ($canRemove)
                                     <form method="POST" action="{{ route('cart.remove') }}">
                                         @csrf
-                                        <input type="hidden" name="product_id" value="{{ $details['product_id'] }}">
+                                        <input type="hidden" name="item_key" value="{{ $key }}">
                                         <button type="submit" class="inline-flex items-center gap-1 text-xs font-semibold text-muted hover:text-blush-600">
                                             <x-shop.icon name="trash" class="size-3.5" /> Remove
                                         </button>
@@ -187,7 +191,7 @@
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': csrf
                     },
-                    body: JSON.stringify({ product_id: row.dataset.productId })
+                    body: JSON.stringify({ item_key: row.dataset.key })
                 });
                 if (!res.ok) throw new Error('Request failed: ' + res.status);
                 var data = await res.json();

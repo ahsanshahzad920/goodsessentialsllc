@@ -55,8 +55,12 @@
             </div>
         @endif
 
-        <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST"
-              class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
+        <form id="checkout-form"
+            action="{{ route('checkout.store') }}"
+            method="POST"
+            data-shipping-cod="{{ config('shop.shipping_cod_payment', 50) }}"
+            data-shipping-online="{{ config('shop.shipping_online_payment', 0) }}"
+            class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
             @csrf
 
             <div class="space-y-6">
@@ -203,6 +207,9 @@
                                 <div class="min-w-0 flex-1">
                                     <p class="line-clamp-2 text-sm font-bold leading-snug">{{ $p->product_title }}</p>
                                     <p class="mt-0.5 text-xs text-muted">Qty {{ $line['quantity'] }} × {{ $money($line['price']) }}</p>
+                                    @if (! empty($line['color_name']))
+                                        <x-shop.color-dot :name="$line['color_name']" :hex="$line['color_hex']" />
+                                    @endif
                                 </div>
                                 <span class="shrink-0 text-sm font-extrabold">{{ $money($line['total']) }}</span>
                             </li>
@@ -210,11 +217,25 @@
                     </ul>
 
                     <dl class="space-y-3 border-t border-dashed border-line pt-4 text-sm">
-                        <div class="flex justify-between"><dt class="text-muted">Subtotal</dt><dd class="font-bold">{{ $money($subtotal) }}</dd></div>
-                        <div class="flex justify-between"><dt class="text-muted">Shipping</dt><dd class="font-bold">{{ $money($shipping) }}</dd></div>
+                        <div class="flex justify-between">
+                            <dt class="text-muted">Subtotal</dt>
+                            <dd class="font-bold">{{ $money($subtotal) }}
+                            </dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-muted">Shipping</dt>
+                            <dd id="shipping-amount" class="font-bold">{{ $money($shipping) }}</dd>
+                        </div>
                         <div class="flex items-center justify-between border-t border-line pt-3">
                             <dt class="text-base font-bold">Total</dt>
-                            <dd class="text-2xl font-extrabold text-brand-500">{{ $money($total) }}</dd>
+                            <div class="flex items-center justify-between border-t border-line pt-3">
+                            <dt class="text-base font-bold">Total</dt>
+                            <dd id="total-amount"
+                                class="text-2xl font-extrabold text-brand-500"
+                                data-subtotal="{{ $subtotal }}">
+                                {{ $money($total) }}
+                            </dd>
+                        </div>
                         </div>
                     </dl>
 
@@ -248,37 +269,102 @@
 <script>
     (function () {
         // Show password fields only when "Create an account" is ticked
-        var cb  = document.getElementById('create_account');
+        var cb = document.getElementById('create_account');
         var box = document.getElementById('account-fields');
+
         if (cb && box) {
-            var sync = function () {
+            var syncAccountFields = function () {
                 box.hidden = !cb.checked;
-                box.querySelectorAll('input').forEach(function (i) { i.disabled = !cb.checked; });
+
+                box.querySelectorAll('input').forEach(function (input) {
+                    input.disabled = !cb.checked;
+                });
             };
-            cb.addEventListener('change', sync);
-            sync();
+
+            cb.addEventListener('change', syncAccountFields);
+            syncAccountFields();
         }
 
-        // Button text follows the chosen payment method
-        var label  = document.getElementById('place-order-label');
-        var radios = document.querySelectorAll('input[name="payment_method"]');
+        // Payment method elements
+        var label = document.getElementById('place-order-label');
+        var radios = document.querySelectorAll(
+            'input[name="payment_method"]'
+        );
         var hint = document.getElementById('payment-hint');
-        function syncLabel() {
-            var checked = document.querySelector('input[name="payment_method"]:checked');
-            if (label && checked) label.textContent = (checked.value === 'card') ? 'Continue to Payment' : 'Place Order';
-            if (hint && checked) hint.textContent = checked.dataset.hint || '';
-        }
-        radios.forEach(function (r) { r.addEventListener('change', syncLabel); });
-        syncLabel();
 
-        // Prevent double submit
+        // Shipping and total elements
         var form = document.getElementById('checkout-form');
-        var btn  = document.getElementById('place-order');
+        var shippingAmount = document.getElementById('shipping-amount');
+        var totalAmount = document.getElementById('total-amount');
+
+        // Format amounts in Pakistani Rupees
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('en-PK', {
+                style: 'currency',
+                currency: 'PKR',
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+
+        // Update button text, payment hint, shipping and total
+        function syncPaymentDetails() {
+            var checked = document.querySelector(
+                'input[name="payment_method"]:checked'
+            );
+
+            if (!checked) return;
+
+            // Update button text
+            if (label) {
+                label.textContent = checked.value === 'card'
+                    ? 'Continue to Payment'
+                    : 'Place Order';
+            }
+
+            // Update payment hint
+            if (hint) {
+                hint.textContent = checked.dataset.hint || '';
+            }
+
+            // Update shipping and total
+            if (form && shippingAmount && totalAmount) {
+                var shipping = checked.value === 'card'
+                    ? Number(form.dataset.shippingOnline)
+                    : Number(form.dataset.shippingCod);
+
+                var subtotal = Number(totalAmount.dataset.subtotal);
+
+                if (!Number.isFinite(shipping)) shipping = 0;
+                if (!Number.isFinite(subtotal)) subtotal = 0;
+
+                shippingAmount.textContent = formatMoney(shipping);
+                totalAmount.textContent = formatMoney(subtotal + shipping);
+            }
+        }
+
+        // Listen for payment method changes
+        radios.forEach(function (radio) {
+            radio.addEventListener('change', syncPaymentDetails);
+        });
+
+        // Set correct values on initial page load
+        syncPaymentDetails();
+
+        // Prevent double submission
+        var btn = document.getElementById('place-order');
+
         if (form && btn) {
             form.addEventListener('submit', function () {
-                if (form.checkValidity()) { btn.disabled = true; if (label) label.textContent = 'Processing...'; }
+                if (form.checkValidity()) {
+                    btn.disabled = true;
+
+                    if (label) {
+                        label.textContent = 'Processing...';
+                    }
+                }
             });
         }
     })();
 </script>
+
 @endpush

@@ -29,7 +29,8 @@ return [
         ['title' => 'Gift Boxes', 'text' => 'Make home feel good',         'tone' => 'mint',     'category' => 'Books', 'image' => 'assets/img/category-1.webp'],
         ['title' => 'Toys', 'text' => 'Gentle, everyday care',       'tone' => 'blush',    'category' => 'Clothes', 'image' => 'assets/img/category-2.jpg'],
     ],
-    'shipping_flat' => 70.00,
+    'shipping_online_payment' => 200.00,
+    'shipping_cod_payment' => 250.00,
 
     'currency' => [
         'code'     => env('SHOP_CURRENCY_CODE', 'PKR'),

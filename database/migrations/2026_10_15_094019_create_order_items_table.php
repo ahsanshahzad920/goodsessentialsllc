@@ -19,6 +19,8 @@ return new class extends Migration
             // Snapshot of the product at purchase time
             $table->string('product_title');
             $table->string('product_image')->nullable();
+            $table->string('color_name', 40)->nullable();
+            $table->string('color_hex', 7)->nullable();
             $table->decimal('price', 10, 2);
             $table->unsignedInteger('quantity');
             $table->decimal('total', 10, 2);

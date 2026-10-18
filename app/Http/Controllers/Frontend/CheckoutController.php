@@ -25,7 +25,8 @@ class CheckoutController extends Controller
     {
         [$lines, $subtotal, $removed] = $this->cartLines(session('cart', []));
 
-        $shipping = $this->shippingFor($lines);
+        $defaultMethod = array_key_first(PaymentManager::methods());
+        $shipping = $this->shippingFor($lines, $defaultMethod);
         $methods  = PaymentManager::methods();
 
         if ($removed) {
@@ -38,7 +39,7 @@ class CheckoutController extends Controller
             'shipping'       => $shipping,
             'total'          => round($subtotal + $shipping, 2),
             'paymentMethods' => $methods,
-            'defaultMethod'  => array_key_first($methods),
+            'defaultMethod' => $defaultMethod,
         ]);
     }
 
@@ -86,7 +87,7 @@ class CheckoutController extends Controller
             'payment_method.in'       => 'That payment method is not available right now.',
         ]);
 
-        $shipping = $this->shippingFor($lines);
+        $shipping = $this->shippingFor($lines, $data['payment_method']);
         $total    = round($subtotal + $shipping, 2);
         $user     = Auth::user(); // null for guests
         $ip = $request->ip(); //  user ip
@@ -139,6 +140,8 @@ class CheckoutController extends Controller
                     'price'         => $line['price'],
                     'quantity'      => $line['quantity'],
                     'total'         => $line['total'],
+                    'color_name' => $line['color_name'] ?? null,
+                    'color_hex'  => $line['color_hex'] ?? null,
                 ]);
             }
 
@@ -215,6 +218,8 @@ class CheckoutController extends Controller
                 'quantity' => $quantity,
                 'price'    => $price,
                 'total'    => round($price * $quantity, 2),
+                'color_name' => $item['color_name'] ?? null,
+                'color_hex'  => $item['color_hex'] ?? null,
             ];
         }
 
@@ -225,8 +230,16 @@ class CheckoutController extends Controller
         return [$lines, round(array_sum(array_column($lines, 'total')), 2), $removed];
     }
 
-    private function shippingFor(array $lines): float
+    private function shippingFor(array $lines, ?string $paymentMethod = null): float
     {
-        return empty($lines) ? 0.0 : (float) config('shop.shipping_flat', 50);
+        if (empty($lines)) {
+            return 0.0;
+        }
+
+        $configKey = $paymentMethod === 'card'
+            ? 'shop.shipping_online_payment'
+            : 'shop.shipping_cod_payment';
+
+        return (float) config($configKey, 50);
     }
 }

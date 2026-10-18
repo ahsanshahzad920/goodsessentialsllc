@@ -31,7 +31,9 @@ class Product extends Model
         'material',
         'suggested_min_age_months',
         'suggested_max_age_months',
+        'colors',
     ];
+    protected $casts = ['colors' => 'array'];
 
     // Relationship with Category
     public function category()
@@ -55,5 +57,9 @@ class Product extends Model
         static::addGlobalScope('latest', function (Builder $builder) {
             $builder->latest();
         });
+    }
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('sort_order')->orderBy('id');
     }
 }

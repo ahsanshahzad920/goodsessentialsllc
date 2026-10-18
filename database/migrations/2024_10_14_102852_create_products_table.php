@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('product_description');
             $table->string('price');
             $table->string('dis_price');
+            $table->json('colors')->nullable();
             $table->string('product_image')->nullable();
             $table->unsignedBigInteger('category_id'); // foreign key for category
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
