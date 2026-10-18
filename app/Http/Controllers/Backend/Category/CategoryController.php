@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -38,6 +39,7 @@ class CategoryController extends Controller
             'description' => 'required',
         ]);
 
+        $data['slug'] = $this->uniqueSlug($data['name']);
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
 
@@ -77,6 +79,9 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->name = $request->input('name');
         $category->description = $request->input('description');
+        if (! $category->slug) {
+            $category->slug = $this->uniqueSlug($category->name);
+        }
         $category->updated_by = Auth::id();
         $category->save();
 
@@ -92,5 +97,19 @@ class CategoryController extends Controller
 
         return redirect()->route('categories.index')
             ->with('success', 'Category deleted successfully.');
+    }
+
+    private function uniqueSlug(string $name): string
+    {
+        $base = Str::slug($name);
+        $slug = $base;
+        $suffix = 2;
+
+        while (Category::where('slug', $slug)->exists()) {
+            $slug = "{$base}-{$suffix}";
+            $suffix++;
+        }
+
+        return $slug;
     }
 }
