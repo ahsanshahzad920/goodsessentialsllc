@@ -57,6 +57,12 @@ class ShopController extends Controller
             ->paginate(12);
 
         SeoService::forCategory($category);
+        SeoService::itemList(collect($products->items()));
+        SeoService::faq([
+            'Is Cash on Delivery available for ' . $category->name . '?' => 'Yes. Cash on Delivery is available for orders under Rs. 40,000. Orders above that need a partial advance payment by bank transfer.',
+            'What is the return policy?' => 'You can request a return or exchange within 14 days of delivery. Items must be unused and in their original packaging with tags attached.',
+            'How long does delivery take?' => 'Delivery takes about 1-2 working days within Karachi and 4-5 working days to other cities in Pakistan.',
+        ]);
 
         return view('shop', compact('categories', 'products', 'category'));
     }
@@ -66,6 +72,11 @@ class ShopController extends Controller
         $products = Product::where('category_id', $product->category_id)->get();
 
         SeoService::forProduct($product);
+        SeoService::faq([
+            'Is Cash on Delivery available for this product?' => 'Yes, Cash on Delivery is available for orders under Rs. 40,000.',
+            'What is the return policy for this product?' => 'You can request a return or exchange within 14 days of delivery, provided the item is unused and in its original packaging.',
+            'How long will delivery take?' => 'Estimated delivery is 1-2 working days within Karachi and 4-5 working days to other cities in Pakistan.',
+        ]);
 
         return view('product-details', compact('product', 'products'));
     }

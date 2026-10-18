@@ -29,8 +29,7 @@ return [
         ['title' => 'Gift Boxes', 'text' => 'Make home feel good',         'tone' => 'mint',     'category' => 'Books', 'image' => 'assets/img/category-1.webp'],
         ['title' => 'Toys', 'text' => 'Gentle, everyday care',       'tone' => 'blush',    'category' => 'Clothes', 'image' => 'assets/img/category-2.jpg'],
     ],
-    'shipping_online_payment' => 200.00,
-    'shipping_cod_payment' => 250.00,
+    'shipping_flat' => 70.00,
 
     'currency' => [
         'code'     => env('SHOP_CURRENCY_CODE', 'PKR'),
@@ -38,5 +37,23 @@ return [
         'position' => env('SHOP_CURRENCY_POSITION', 'before'), // before | after
         'decimals' => (int) env('SHOP_CURRENCY_DECIMALS', 2),  // use 0 for whole rupees
         'space'    => true,                                    // "Rs. 1,299" vs "Rs.1,299"
+    ],
+
+    // Used by Organization/WebSite JSON-LD and the WhatsApp button.
+    // TODO(owner): fill these in — omitted from schema/UI entirely while null,
+    // never rendered as a placeholder value.
+    'contact' => [
+        'phone'    => env('SHOP_PHONE'),
+        'whatsapp' => env('SHOP_WHATSAPP'),
+        'email'    => env('SHOP_SUPPORT_EMAIL'),
+        'hours'    => env('SHOP_SUPPORT_HOURS'),
+    ],
+
+    // TODO(owner): social links for Organization schema's sameAs + footer icons.
+    'social' => [
+        'instagram' => env('SHOP_INSTAGRAM'),
+        'facebook'  => env('SHOP_FACEBOOK'),
+        'tiktok'    => env('SHOP_TIKTOK'),
+        'youtube'   => env('SHOP_YOUTUBE'),
     ],
 ];

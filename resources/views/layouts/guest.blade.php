@@ -7,7 +7,7 @@
     {!! \Artesaos\SEOTools\Facades\SEOMeta::generate() !!}
     {!! \Artesaos\SEOTools\Facades\OpenGraph::generate() !!}
     {!! \Artesaos\SEOTools\Facades\TwitterCard::generate() !!}
-    {!! \Artesaos\SEOTools\Facades\JsonLdMulti::generate() !!}
+    {!! \App\Services\SeoService::renderSchemas() !!}
     <link rel="shortcut icon" href="{{ asset('img/fav.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
