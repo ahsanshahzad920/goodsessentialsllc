@@ -16,7 +16,7 @@ class SeoService
         $description = self::truncate($description, 160);
         $canonical = $canonical ?? url()->current();
 
-        SEOMeta::setTitle($title)
+        SEOMeta::setTitle($title, false)
             ->setDescription($description)
             ->setCanonical($canonical);
 
@@ -51,7 +51,7 @@ class SeoService
 
     public static function forCategory(Category $category): void
     {
-        $title = $category->meta_title ?: "{$category->name} Price in Pakistan | Buy Online \xe2\x80\x93 " . config('app.name');
+        $title = $category->meta_title ?: "{$category->name} Price in Pakistan | Buy Online – " . config('app.name');
         $description = $category->meta_description ?: "Shop {$category->name} online in Pakistan with Cash on Delivery, fast delivery and easy returns at " . config('app.name') . '.';
         $image = $category->og_image ? asset('storage/' . $category->og_image) : null;
 
@@ -60,7 +60,7 @@ class SeoService
 
     private static function productTitleFallback(Product $product): string
     {
-        $price = $product->price ? ' \xe2\x80\x93 Rs. ' . number_format((float) $product->price) : '';
+        $price = $product->price ? ' – Rs. ' . number_format((float) $product->price) : '';
         return self::truncate($product->product_title . $price . ' | Price in Pakistan', 60);
     }
 
@@ -95,6 +95,6 @@ class SeoService
             return $text;
         }
 
-        return rtrim(mb_substr($text, 0, $limit - 1)) . "\xe2\x80\xa6";
+        return rtrim(mb_substr($text, 0, $limit - 1)) . '…';
     }
 }
