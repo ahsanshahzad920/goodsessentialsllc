@@ -95,7 +95,7 @@
                              class="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
 
                         {{-- Product Image --}}
-                        <a href="{{ route('productDetails', $product->id) }}"
+                        <a href="{{ route('productDetails', $product->slug) }}"
                            class="relative block overflow-hidden bg-pink-50">
                             <div class="aspect-square">
                                 <img
@@ -117,7 +117,7 @@
                         {{-- Product Details --}}
                         <div class="flex flex-1 flex-col p-3 sm:p-4">
                             <h3 class="line-clamp-2 text-sm font-bold leading-5 text-gray-900 sm:text-base">
-                                <a href="{{ route('productDetails', $product->id) }}"
+                                <a href="{{ route('productDetails', $product->slug) }}"
                                    class="transition hover:text-pink-600">
                                     {{ $product->product_title ?? $product->title ?? 'Untitled Product' }}
                                 </a>
@@ -130,7 +130,7 @@
                             @endif
 
                             <div class="mt-auto space-y-2 pt-4">
-                                <a href="{{ route('productDetails', $product->id) }}"
+                                <a href="{{ route('productDetails', $product->slug) }}"
                                    class="flex w-full items-center justify-center rounded-full bg-pink-500 px-3 py-2.5 text-xs font-semibold text-white transition hover:bg-pink-600 sm:text-sm">
                                     View Product
                                 </a>

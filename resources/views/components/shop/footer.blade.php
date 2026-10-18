@@ -8,6 +8,7 @@ $configuredCategories = collect(config('shop.categories', []))
 
                 return [
                     'name' => $category->name,
+                    'slug' => $category->slug,
                     'label' => $settings['label'] ?? $category->name,
                     'icon' => $settings['icon'] ?? 'tag',
                     'tone' => $settings['tone'] ?? 'lavender',
@@ -25,7 +26,7 @@ $configuredCategories = collect(config('shop.categories', []))
             <h3 class="text-base font-semibold">Shop</h3>
             <ul class="mt-3 space-y-2 text-sm text-muted">
                 @foreach ($categories as $c)
-                    <li><a href="{{ route('shop', $c['name']) }}" class="hover:text-brand-500">{{ $c['label'] ?? $c['name'] }}</a></li>
+                    <li><a href="{{ route('shop.category', $c['slug']) }}" class="hover:text-brand-500">{{ $c['label'] ?? $c['name'] }}</a></li>
                 @endforeach
             </ul>
         </div>

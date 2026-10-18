@@ -41,6 +41,7 @@ class CartController extends Controller
         if (isset($cart[$key])) {
             $cart[$key]['quantity'] = min(self::MAX_QTY, $cart[$key]['quantity'] + $quantity);
             $cart[$key]['product_price'] = $price; // keep price fresh
+            $cart[$product->id]['product_slug'] = $product->slug;
         } else {
             $cart[$key] = [
                 'product_id'    => $product->id,
@@ -50,6 +51,7 @@ class CartController extends Controller
                 'product_image' => $product->product_image,
                 'color_name'    => $color['name'] ?? null,
                 'color_hex'     => $color['hex'] ?? null,
+                'product_slug'  => $product->slug,
             ];
         }
 

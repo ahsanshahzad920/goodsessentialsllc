@@ -17,11 +17,22 @@
 
                 return [
                     'name' => $category->name,
+                    'slug' => $category->slug,
                     'label' => $settings['label'] ?? $category->name,
                     'icon' => $settings['icon'] ?? 'tag',
                     'tone' => $settings['tone'] ?? 'lavender',
                 ];
             });
+
+    // Promo cards reference categories by name in config/shop.php; resolve
+    // to a real slug when one exists, otherwise fall back to the full shop page.
+    $promoHref = function (?string $categoryName) use ($categories) {
+        if (! $categoryName) {
+            return route('shop');
+        }
+        $match = $categories->firstWhere(fn ($c) => strcasecmp($c['name'], $categoryName) === 0);
+        return $match ? route('shop.category', $match['slug']) : route('shop');
+    };
 @endphp
 
 @section('content')
@@ -33,7 +44,7 @@
     {{-- Category circles (from config/shop.php) --}}
     <section aria-label="Shop by category" class="grid grid-cols-[repeat(auto-fit,minmax(5.5rem,1fr))] gap-y-6">
         @foreach ($categories as $c)
-            <x-shop.category-circle :label="$c['label'] ?? $c['name']" :icon="$c['icon']" :tone="$c['tone']" :href="route('shop', $c['name'])" />
+            <x-shop.category-circle :label="$c['label'] ?? $c['name']" :icon="$c['icon']" :tone="$c['tone']" :href="route('shop.category', $c['slug'])" />
         @endforeach
     </section>
 
@@ -42,7 +53,7 @@
         @foreach (config('shop.promos', []) as $p)
             <x-shop.promo-card :title="$p['title']" :text="$p['text']" :tone="$p['tone']"
                                :image="asset($p['image'])"
-                               :href="$p['category'] ? route('shop', $p['category']) : route('shop')" />
+                               :href="$promoHref($p['category'] ?? null)" />
         @endforeach
     </section>
 

@@ -9,41 +9,51 @@ use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
-    public function shopIndex(Request $request, string $categoryName = null)
+    public function shopIndex(Request $request)
+    {
+        $categories = Category::withCount('products')->get();
+        $category = null;
+
+        $search = $request->input('q', $request->input('search'));
+        $categoryName = $request->input('category');
+
+        $products = Product::when($search, function ($query, $search) {
+            $query->where('product_title', 'LIKE', "%{$search}%")
+                ->orWhere('price', 'LIKE', "%{$search}%")
+                ->orWhere('dis_price', 'LIKE', "%{$search}%")
+                ->orWhere('product_description', 'LIKE', "%{$search}%");
+        })
+            ->when($categoryName, function ($query, $categoryName) {
+                $query->whereHas('category', function ($query) use ($categoryName) {
+                    $query->where('name', $categoryName)->orWhere('slug', $categoryName);
+                });
+            })
+            ->paginate(12);
+
+        return view('shop', compact('categories', 'products', 'category'));
+    }
+
+    public function shopCategory(Request $request, Category $category)
     {
         $categories = Category::withCount('products')->get();
 
-        if (is_null($categoryName)) {
-            // Get search query and category ID
-            $search = $request->input('search');
-            $categoryName = $request->input('category');
+        $search = $request->input('q', $request->input('search'));
 
-            // Filter products based on search and category name
-            $products = Product::when($search, function ($query, $search) {
-                $query->where('product_title', 'LIKE', "%{$search}%")
-                    ->orWhere('price', 'LIKE', "%{$search}%")
-                    ->orWhere('dis_price', 'LIKE', "%{$search}%")
-                    ->orWhere('product_description', 'LIKE', "%{$search}%");
+        $categoryIds = $category->children->isNotEmpty()
+            ? $category->children->pluck('id')->push($category->id)
+            : [$category->id];
+
+        $products = Product::whereIn('category_id', $categoryIds)
+            ->when($search, function ($query, $search) {
+                $query->where('product_title', 'LIKE', "%{$search}%");
             })
-                ->when($categoryName, function ($query, $categoryName) {
-                    $query->whereHas('category', function ($query) use ($categoryName) {
-                        $query->where('name', 'LIKE', "%{$categoryName}%");
-                    });
-                })
-                ->paginate(12);
-        } else {
-            $products = Product::whereHas('category', function ($query) use ($categoryName) {
-                $query->where('name', 'LIKE', "%{$categoryName}%");
-            })->paginate(12);
-        }
+            ->paginate(12);
 
-        return view('shop', compact('categories', 'products'));
+        return view('shop', compact('categories', 'products', 'category'));
     }
 
-
-    public function productDetails(string $id)
+    public function productDetails(Product $product)
     {
-        $product = Product::with('category')->find($id);
         $products = Product::where('category_id', $product->category_id)->get();
         return view('product-details', compact('product', 'products'));
     }

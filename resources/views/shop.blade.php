@@ -15,13 +15,13 @@
         'name'       => 'Name: A to Z',
     ];
     $currentSort    = request('sort', 'latest');
-    $activeCategory = request()->category_name;
+    $activeCategory = $category ?? null;
     $total          = $products->total();
 
     $input = 'w-full rounded-full border border-line bg-white px-4 py-2.5 text-xs text-ink placeholder:text-muted focus:border-brand-500 focus:outline-none';
 @endphp
 
-@section('pageTitle', ($activeCategory ?: 'Shop') . ' | ' . config('app.name'))
+@section('pageTitle', ($activeCategory->name ?? 'Shop') . ' | ' . config('app.name'))
 
 @section('content')
 
@@ -30,7 +30,7 @@
     <div class="container-shop flex flex-wrap items-end justify-between gap-4 py-6">
         <div>
             <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-500">Shop</p>
-            <h1 class="mt-1 text-3xl font-bold">{{ $activeCategory ?: 'Shop' }}</h1>
+            <h1 class="mt-1 text-3xl font-bold">{{ $activeCategory->name ?? 'Shop' }}</h1>
             <p class="mt-0.5 text-xs text-muted">{{ number_format($total) }} {{ Str::plural('product', $total) }}</p>
         </div>
 
@@ -84,10 +84,10 @@
 
                 <x-shop.select name="category" id="f-category" label="Category">
                     <option value="" data-url="{{ route('shop') }}">All categories</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->name }}" data-url="{{ route('shop', $category->name) }}"
-                                @selected($activeCategory === $category->name)>
-                            {{ $category->name }} ({{ $category->products_count ?? 0 }})
+                    @foreach ($categories as $c)
+                        <option value="{{ $c->slug }}" data-url="{{ route('shop.category', $c->slug) }}"
+                                @selected($activeCategory && $activeCategory->id === $c->id)>
+                            {{ $c->name }} ({{ $c->products_count ?? 0 }})
                         </option>
                     @endforeach
                 </x-shop.select>
@@ -156,7 +156,7 @@
         var form = document.getElementById('filters-form');
         var cat  = document.getElementById('f-category');
 
-        // Category lives in the URL path (route('shop', $name)), so point the form at it on submit.
+        // Category lives in the URL path (route('shop.category', $slug)), so point the form at it on submit.
         if (form && cat) {
             form.addEventListener('submit', function () {
                 var opt = cat.selectedOptions[0];

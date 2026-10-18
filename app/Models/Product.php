@@ -35,11 +35,6 @@ class Product extends Model
     ];
     protected $casts = ['colors' => 'array'];
 
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
     // Relationship with Category
     public function category()
     {

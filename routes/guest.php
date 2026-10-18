@@ -18,10 +18,12 @@ Route::view('/terms-and-conditions', 'policies.terms-and-conditions')->name('ter
 
 
 Route::controller(ShopController::class)->group(function () {
-    // Products List
-    Route::get('shop/{category_name?}',  'shopIndex')->name('shop');
-    // Product Details
-    Route::get('product-details/{id}', 'productDetails')->name('productDetails');
+    // Products list / search (no category)
+    Route::get('shop', 'shopIndex')->name('shop');
+    // Category listing (clean slug URL)
+    Route::get('shop/{category:slug}', 'shopCategory')->name('shop.category');
+    // Product details (clean slug URL)
+    Route::get('product/{product:slug}', 'productDetails')->name('productDetails');
 });
 
 Route::post('/wishlist/toggle', [WishlistController::class, 'toggleWishlist'])->name('wishlist.toggle')->middleware('auth');

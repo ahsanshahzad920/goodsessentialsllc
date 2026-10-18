@@ -46,7 +46,7 @@
                         $image = ! empty($details['product_image'])
                             ? asset('storage/' . $details['product_image'])
                             : asset('images/product-placeholder.svg');
-                        $url = route('productDetails', $details['product_id']);
+                        $url = route('productDetails', $details['product_slug'] ?? $details['product_id']);
                     @endphp
 
                     <li class="js-row flex gap-4 rounded-2xl border border-line bg-white p-3 shadow-sm transition aria-busy:opacity-60 sm:p-4"
