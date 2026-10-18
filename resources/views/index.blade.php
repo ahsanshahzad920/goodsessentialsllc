@@ -33,6 +33,15 @@
         $match = $categories->firstWhere(fn ($c) => strcasecmp($c['name'], $categoryName) === 0);
         return $match ? route('shop.category', $match['slug']) : route('shop');
     };
+
+    $homeFaqs = [
+        'Does Goods Essentials offer Cash on Delivery?' => 'Yes. Cash on Delivery is available across Pakistan for orders under Rs. 40,000. Orders above that amount require a partial advance payment by bank transfer.',
+        'How long does delivery take?' => 'Delivery takes about 1-2 working days within Karachi and 4-5 working days to other cities in Pakistan. Delivery may take longer during major sales.',
+        'What is the delivery charge?' => 'Prepaid orders have a Rs. 200 delivery charge, and Cash on Delivery orders have a Rs. 250 delivery charge. Charges are shown at checkout before you place your order.',
+        'Can I return or exchange a product?' => 'Yes. Contact us within 14 days of delivery to request a return or exchange. The item must be unused, in its original packaging, with tags and accessories intact.',
+        'What happens if my order arrives damaged?' => 'Contact us as soon as possible and within 14 days of delivery. We may ask for photographs or an unboxing video, and we cover return shipping for verified damaged or incorrect items.',
+        'Do you deliver outside Karachi?' => 'Yes, we deliver across Pakistan. Delivery outside Karachi takes approximately 4-5 working days.',
+    ];
 @endphp
 
 @section('content')
@@ -40,6 +49,16 @@
 
     {{-- Hero banner --}}
     <x-shop.hero-banner />
+
+    {{-- Intro --}}
+    <section aria-label="About Goods Essentials" class="mx-auto max-w-3xl text-center">
+        <p class="text-sm leading-7 text-muted sm:text-base">
+            Goods Essentials is an online store for baby and mom essentials in Pakistan. We sell baby clothing,
+            feeding supplies, baby care and grooming products, toys, and newborn gift sets, sourced for safety and
+            everyday quality. We deliver across Pakistan with Cash on Delivery, 1-2 day delivery within Karachi,
+            and a 14-day return window — so you can shop for your little one with confidence.
+        </p>
+    </section>
 
     {{-- Category circles (from config/shop.php) --}}
     <section aria-label="Shop by category" class="grid grid-cols-[repeat(auto-fit,minmax(5.5rem,1fr))] gap-y-6">
@@ -82,6 +101,22 @@
             </div>
         </section>
     @endif
+
+    {{-- Homepage FAQ (matches the FAQPage schema in IndexController) --}}
+    <section aria-label="Frequently asked questions" class="space-y-4">
+        <h2 class="text-2xl font-bold text-ink">Frequently Asked Questions</h2>
+        <div class="mx-auto max-w-3xl space-y-2">
+            @foreach ($homeFaqs as $question => $answer)
+                <details class="group rounded-2xl border border-line bg-white p-4">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-ink">
+                        {{ $question }}
+                        <x-shop.icon name="arrow-right" class="size-4 shrink-0 text-muted transition group-open:rotate-90" />
+                    </summary>
+                    <p class="mt-2 text-sm leading-6 text-muted">{{ $answer }}</p>
+                </details>
+            @endforeach
+        </div>
+    </section>
 
     <x-shop.trust-bar />
 </div>
