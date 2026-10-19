@@ -6,7 +6,7 @@
         type="button"
         aria-label="Open customer support chat"
         aria-expanded="false"
-        class="fixed bottom-4 right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-green-200 sm:bottom-6 sm:right-6 sm:h-[60px] sm:w-[60px]"
+        class="fixed bottom-4 right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-mint-100 sm:bottom-6 sm:right-6 sm:h-[60px] sm:w-[60px]"
     >
         <i class="fa-brands fa-whatsapp"></i>
     </button>
@@ -41,13 +41,13 @@
         <div class="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-[18px]">
 
             <!-- Welcome Message -->
-            <div class="rounded-xl bg-[#f1f5f0] p-3 text-sm leading-6 text-gray-800">
+            <div class="rounded-xl bg-[#f1f5f0] p-3 text-sm leading-6 text-ink">
                 Hi there! 👋 Welcome to Goods Essentials.
                 How can we help you today?
             </div>
 
             <div>
-                <p class="mb-3 text-xs font-semibold text-gray-500">
+                <p class="mb-3 text-xs font-semibold text-muted">
                     Choose an option:
                 </p>
 
@@ -56,7 +56,7 @@
 
                     <button
                         type="button"
-                        class="wa-option w-full rounded-xl border border-gray-200 bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                        class="wa-option w-full rounded-xl border border-line bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-mint-100 focus:outline-none focus:ring-2 focus:ring-mint-100"
                         data-message="Hi! I need help finding a product."
                     >
                         🧸 Product Inquiry
@@ -64,7 +64,7 @@
 
                     <button
                         type="button"
-                        class="wa-option w-full rounded-xl border border-gray-200 bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                        class="wa-option w-full rounded-xl border border-line bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-mint-100 focus:outline-none focus:ring-2 focus:ring-mint-100"
                         data-message="Hi! I need help with my order."
                     >
                         📦 Order Support
@@ -72,7 +72,7 @@
 
                     <button
                         type="button"
-                        class="wa-option w-full rounded-xl border border-gray-200 bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                        class="wa-option w-full rounded-xl border border-line bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-mint-100 focus:outline-none focus:ring-2 focus:ring-mint-100"
                         data-message="Hi! I have a question about shipping."
                     >
                         🚚 Shipping Information
@@ -80,7 +80,7 @@
 
                     <button
                         type="button"
-                        class="wa-option w-full rounded-xl border border-gray-200 bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                        class="wa-option w-full rounded-xl border border-line bg-white p-3 text-left text-sm transition hover:border-[#25D366] hover:bg-mint-100 focus:outline-none focus:ring-2 focus:ring-mint-100"
                         data-message="Hi! I have a question about returns or refunds."
                     >
                         ↩️ Returns &amp; Refunds
@@ -95,13 +95,13 @@
                 href="#"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#1fbd5a] focus:outline-none focus:ring-4 focus:ring-green-200"
+                class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#1fbd5a] focus:outline-none focus:ring-4 focus:ring-mint-100"
             >
                 <i class="fa-brands fa-whatsapp text-xl"></i>
                 Chat with us on WhatsApp
             </a>
 
-            <p class="pb-1 text-center text-xs leading-5 text-gray-500">
+            <p class="pb-1 text-center text-xs leading-5 text-muted">
                 WhatsApp will open so you can send your message.
             </p>
 
