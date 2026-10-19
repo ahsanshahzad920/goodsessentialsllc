@@ -52,6 +52,7 @@
                     @endphp
 
                     <li class="js-row flex gap-4 rounded-2xl border border-line bg-white p-3 shadow-sm transition aria-busy:opacity-60 sm:p-4"
+                        data-item-key="{{ $key }}"
                         data-product-id="{{ $details['product_id'] }}"
                         data-price="{{ $details['product_price'] }}">
 
@@ -89,7 +90,12 @@
                                 @if ($canRemove)
                                     <form method="POST" action="{{ route('cart.remove') }}">
                                         @csrf
-                                        <input type="hidden" name="product_id" value="{{ $details['product_id'] }}">
+                                        {{-- Bug fix: this used to send product_id, which only
+                                             identifies the cart row for colorless products. Rows
+                                             for a colored variant are keyed "{id}-{hex}" in the
+                                             session cart, so removing a colored item always
+                                             failed with "Product not found in your cart." --}}
+                                        <input type="hidden" name="item_key" value="{{ $key }}">
                                         <button type="submit" class="inline-flex items-center gap-1 text-xs font-semibold text-muted hover:text-blush-600">
                                             <x-shop.icon name="trash" class="size-3.5" /> Remove
                                         </button>
@@ -189,7 +195,9 @@
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': csrf
                     },
-                    body: JSON.stringify({ product_id: row.dataset.productId })
+                    // Same bug fix as the Remove form: a colored item's cart
+                    // row is keyed "{id}-{hex}", not just the product id.
+                    body: JSON.stringify({ item_key: row.dataset.itemKey })
                 });
                 if (!res.ok) throw new Error('Request failed: ' + res.status);
                 var data = await res.json();

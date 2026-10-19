@@ -135,23 +135,37 @@
                         <button
                             type="button"
                             disabled
-                            class="inline-flex min-h-12 flex-1 cursor-not-allowed items-center justify-center gap-2 rounded-full bg-gray-200 px-6 py-3 text-sm font-bold text-gray-500"
+                            class="inline-flex min-h-12 flex-1 cursor-not-allowed items-center justify-center gap-2 rounded-full bg-line px-6 py-3 text-sm font-bold text-muted"
                         >
                             <i class="fa-solid fa-check"></i>
                             Already in Cart
                         </button>
+                        <a href="{{ route('checkout') }}"
+                           class="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-blush-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:brightness-90">
+                            <i class="fa-solid fa-bolt"></i>
+                            Go to Checkout
+                        </a>
                     @else
                         <button
                             type="submit"
-                            class="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-pink-500 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-300"
+                            name="buy_now" value="0"
+                            class="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-blush-600 shadow-sm ring-1 ring-inset ring-blush-100 transition hover:bg-blush-100 focus:outline-none focus:ring-2 focus:ring-blush-100"
                         >
                             <i class="fa-solid fa-bag-shopping"></i>
                             Add to Cart
                         </button>
+                        <button
+                            type="submit"
+                            name="buy_now" value="1"
+                            class="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-blush-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:brightness-90 focus:outline-none focus:ring-2 focus:ring-blush-100"
+                        >
+                            <i class="fa-solid fa-bolt"></i>
+                            Buy Now
+                        </button>
                     @endif
                     <a
                         href="{{ route('shop') }}"
-                        class="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 transition hover:border-pink-300 hover:text-pink-600"
+                        class="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-line bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-blush-600 hover:text-blush-600"
                     >
                         Continue Shopping
                     </a>

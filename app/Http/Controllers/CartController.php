@@ -41,7 +41,13 @@ class CartController extends Controller
         if (isset($cart[$key])) {
             $cart[$key]['quantity'] = min(self::MAX_QTY, $cart[$key]['quantity'] + $quantity);
             $cart[$key]['product_price'] = $price; // keep price fresh
-            $cart[$product->id]['product_slug'] = $product->slug;
+            // Bug fix: this wrote to $cart[$product->id] instead of $cart[$key].
+            // For a colorless product the two are the same string, so it was
+            // never noticed -- but for a colored item already in the cart,
+            // $product->id (e.g. "5") is a different key from $key (e.g.
+            // "5-3b82f6"), so this was creating a second, malformed cart
+            // entry with only a product_slug and nothing else.
+            $cart[$key]['product_slug'] = $product->slug;
         } else {
             $cart[$key] = [
                 'product_id'    => $product->id,
@@ -56,6 +62,10 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
+
+        if ($request->boolean('buy_now')) {
+            return redirect()->route('checkout');
+        }
 
         return redirect()->back()->with('success', 'Product added to cart!');
     }
