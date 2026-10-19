@@ -6,8 +6,8 @@
 
     <a href="{{ route('productDetails', 'sw-6-character-baby-wrapping-swaddle') }}" class="block">
         <img
-            src="{{ asset('assets/img/hero-sw6-penguin-banner.png') }}"
-            alt="SW-6 Character Baby Wrapping Swaddle Bed Set — Flat 40% off, Rs. 5,400"
+            src="{{ asset('assets/img/hero-sw6-penguin-banner-v2.png') }}"
+            alt="SW-6 Character Baby Wrapping Swaddle Bed Set — Flat 35% off, Rs. 5,850"
             class="h-auto w-full"
             loading="eager"
         >
