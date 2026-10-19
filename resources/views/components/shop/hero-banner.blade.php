@@ -41,8 +41,8 @@
                         </div>
                     </div>
                     <div class="order-1 flex justify-center lg:order-2">
-                        <div class="flex h-56 w-56 items-center justify-center rounded-3xl bg-blush-100 shadow-lg sm:h-72 sm:w-72">
-                            <span style="font-size:5rem;">👶</span>
+                        <div class="flex h-56 w-56 items-center justify-center rounded-3xl bg-blush-100 text-blush-600 shadow-lg sm:h-72 sm:w-72">
+                            <x-shop.icon name="stroller" class="size-24 sm:size-32" />
                         </div>
                     </div>
                 </div>
@@ -77,8 +77,8 @@
                         </div>
                     </div>
                     <div class="order-1 flex justify-center lg:order-2">
-                        <div class="flex h-56 w-56 items-center justify-center rounded-3xl bg-mint-100 shadow-lg sm:h-72 sm:w-72">
-                            <span style="font-size:5rem;">🚚</span>
+                        <div class="flex h-56 w-56 items-center justify-center rounded-3xl bg-mint-100 text-mint-600 shadow-lg sm:h-72 sm:w-72">
+                            <x-shop.icon name="truck" class="size-24 sm:size-32" />
                         </div>
                     </div>
                 </div>
@@ -113,8 +113,8 @@
                         </div>
                     </div>
                     <div class="order-1 flex justify-center lg:order-2">
-                        <div class="flex h-56 w-56 items-center justify-center rounded-3xl bg-lilac-100 shadow-lg sm:h-72 sm:w-72">
-                            <span style="font-size:5rem;">🛡️</span>
+                        <div class="flex h-56 w-56 items-center justify-center rounded-3xl bg-lilac-100 text-lilac-600 shadow-lg sm:h-72 sm:w-72">
+                            <x-shop.icon name="shield" class="size-24 sm:size-32" />
                         </div>
                     </div>
                 </div>
