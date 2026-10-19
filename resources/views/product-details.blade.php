@@ -66,18 +66,17 @@
             {{-- Price --}}
             <div class="flex flex-wrap items-center gap-3">
                 <span class="text-2xl font-extrabold text-gray-900">
-                    {{ money((float) $currentPrice, 2) }}
+                    {{ money($currentPrice) }}
                 </span>
                 @if ($product->dis_price && $product->price > $currentPrice)
                     <span class="text-lg text-gray-400 line-through">
-                        {{ money((float) $product->price, 2) }}
+                        {{ money($product->price) }}
+                    </span>
+                    <span class="rounded-full bg-blush-100 px-2.5 py-1 text-xs font-bold text-blush-600">
+                        Save {{ money($product->price - $currentPrice) }}
                     </span>
                 @endif
             </div>
-            <!-- <p class="text-sm leading-6 text-muted">
-                A lovely addition to your little one's collection.
-                Explore the product details below and add it to your cart.
-            </p> -->
             {{-- Product description --}}
             <div class="border-t border-gray-100 pt-2">
                 <h2 class="mb-3 text-lg font-bold text-gray-900">
@@ -237,8 +236,6 @@
             </div>
         @endif
     </section>
-    {{-- Trust bar from the new theme --}}
-    <x-shop.trust-bar />
 </div>
 @endsection
 @push('style')

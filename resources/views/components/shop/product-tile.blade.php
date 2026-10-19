@@ -72,7 +72,10 @@
 
         <div class="mt-auto pt-3">
             @if ($canAddToCart)
-                <form method="POST" action="{{ route('cart.store') }}">
+                <form method="POST" action="{{ route('cart.store') }}"
+                      data-price="{{ $final ?: $price }}"
+                      data-sku="{{ $product->sku ?: $product->id }}"
+                      data-name="{{ $product->product_title }}">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                     <input type="hidden" name="quantity" value="1">

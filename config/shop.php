@@ -50,7 +50,11 @@ return [
         'code'     => env('SHOP_CURRENCY_CODE', 'PKR'),
         'symbol'   => env('SHOP_CURRENCY_SYMBOL', 'Rs.'),
         'position' => env('SHOP_CURRENCY_POSITION', 'before'), // before | after
-        'decimals' => (int) env('SHOP_CURRENCY_DECIMALS', 2),  // use 0 for whole rupees
+        // Bug fix: every product price is a whole rupee amount, so the old
+        // default of 2 decimals rendered a needless "Rs. 5,400.00" everywhere
+        // instead of "Rs. 5,400" — inconsistent with how prices are written
+        // on promo banners and on the product pages themselves.
+        'decimals' => (int) env('SHOP_CURRENCY_DECIMALS', 0),
         'space'    => true,                                    // "Rs. 1,299" vs "Rs.1,299"
     ],
 

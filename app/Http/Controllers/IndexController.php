@@ -24,21 +24,15 @@ class IndexController extends Controller
             'Do you deliver outside Karachi?' => 'Yes, we deliver to every city in Pakistan, not just Karachi — ' . lcfirst(config('shop.delivery.message')),
         ]);
 
-        // Fetch products where category is 'Baby Products'
         $babyProducts = Product::latest()->take(24)->get();
-        // $babyProducts = Product::whereHas('category', function ($query) {
-        //     $query->where('name', 'Baby Products');
-        // })->get();
 
-        // Fetch products where category is NOT 'Baby Products'
-        $otherProducts = Product::whereHas('category', function ($query) {
-            $query->where('name', '!=', 'Baby Products');
-        })->get();
+        // Bug fix: this used to be Product::latest()->take(9) — identical to
+        // $babyProducts, just a shorter slice of the same "newest first" list,
+        // so "Popular Picks" and "Deals of the Week" showed the same products
+        // in the same order. Deals now means what it says: products that
+        // actually have a discount, biggest discount first.
+        $latestProducts = Product::where('dis_price', '>', 0)->orderByDesc('dis_price')->take(9)->get();
 
-        $products = Product::all();
-
-        $latestProducts = Product::latest()->take(9)->get();
-
-        return view('index', compact('babyProducts', 'otherProducts', 'products', 'latestProducts'));
+        return view('index', compact('babyProducts', 'latestProducts'));
     }
 }
