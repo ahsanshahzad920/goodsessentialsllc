@@ -113,17 +113,31 @@
     @if ($firePlaceAnOrder ?? false)
         // Fires once (session flag consumed in CheckoutController::success()),
         // so refreshing this page never double-counts the same order.
+        var orderContents = @js($order->items->map(fn ($item) => [
+            'content_id'   => (string) $item->product_id,
+            'content_type' => 'product',
+            'content_name' => $item->product_title,
+            'quantity'     => $item->quantity,
+            'price'        => (float) $item->price,
+        ]));
+
         ttqTrack('PlaceAnOrder', {
-            contents: @js($order->items->map(fn ($item) => [
-                'content_id'   => (string) $item->product_id,
-                'content_type' => 'product',
-                'content_name' => $item->product_title,
-                'quantity'     => $item->quantity,
-                'price'        => (float) $item->price,
-            ])),
+            contents: orderContents,
             value: {{ (float) $order->total }},
             currency: 'PKR',
-        }, @json('place_order_' . $order->id));
+        }, @js('place_order_' . $order->id));
+
+        // Meta Pixel Purchase: fires under the same one-shot guard as
+        // PlaceAnOrder above -- for COD this is the real conversion moment,
+        // and for card orders this page load already coincides with payment
+        // confirmation (see CheckoutController::success()).
+        fbqTrack('Purchase', {
+            content_ids: orderContents.map(function (c) { return c.content_id; }),
+            content_type: 'product',
+            contents: orderContents.map(function (c) { return { id: c.content_id, quantity: c.quantity }; }),
+            value: {{ (float) $order->total }},
+            currency: 'PKR',
+        });
     @endif
 
     @if ($fireCompletePayment ?? false)

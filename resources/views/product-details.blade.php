@@ -308,5 +308,15 @@
         value: {{ (float) $currentPrice }},
         currency: 'PKR',
     });
+
+    // Meta Pixel ViewContent: one real event per product page load.
+    fbqTrack('ViewContent', {
+        content_ids: [@js($product->sku ?: (string) $product->id)],
+        content_type: 'product',
+        content_name: @js($product->product_title),
+        contents: [{ id: @js($product->sku ?: (string) $product->id), quantity: 1 }],
+        value: {{ (float) $currentPrice }},
+        currency: 'PKR',
+    });
 </script>
 @endpush

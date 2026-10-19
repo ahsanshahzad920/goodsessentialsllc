@@ -381,8 +381,18 @@
     @push('script')
     <script>
         // TikTok InitiateCheckout: one real event per checkout page load.
+        var checkoutContents = @js($ttqContents);
         ttqTrack('InitiateCheckout', {
-            contents: @json($ttqContents),
+            contents: checkoutContents,
+            value: {{ (float) $subtotal }},
+            currency: 'PKR',
+        });
+
+        // Meta Pixel InitiateCheckout: same cart contents, Meta's parameter shape.
+        fbqTrack('InitiateCheckout', {
+            content_ids: checkoutContents.map(function (c) { return c.content_id; }),
+            contents: checkoutContents.map(function (c) { return { id: c.content_id, quantity: c.quantity }; }),
+            num_items: checkoutContents.reduce(function (n, c) { return n + c.quantity; }, 0),
             value: {{ (float) $subtotal }},
             currency: 'PKR',
         });

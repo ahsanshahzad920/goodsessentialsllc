@@ -40,17 +40,7 @@
         </script>
     @endif
 
-    @if ($pixelId = config('tracking.meta_pixel_id'))
-        <script>
-            !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-            n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-            document,'script','https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', @json($pixelId));
-            fbq('track', 'PageView');
-        </script>
-    @endif
+    @include('partials.meta-pixel')
 
     @if ($tiktokId = config('tracking.tiktok_pixel_id'))
         <script>
@@ -93,6 +83,13 @@
         window.ttqIdentify = function (data) {
             if (typeof ttq === 'undefined' || !data) return;
             ttq.identify(data);
+        };
+
+        // Meta Pixel helper: same safe-no-op pattern as ttqTrack above, so
+        // event call sites don't need their own typeof fbq guard.
+        window.fbqTrack = function (event, data) {
+            if (typeof fbq === 'undefined') return;
+            fbq('track', event, data || {});
         };
 
         // Hamburger menu
@@ -164,6 +161,15 @@
                     quantity: quantity,
                     price: price,
                 }],
+                value: price * quantity,
+                currency: 'PKR',
+            });
+
+            fbqTrack('AddToCart', {
+                content_ids: [form.dataset.sku || productId],
+                content_type: 'product',
+                content_name: form.dataset.name || '',
+                contents: [{ id: form.dataset.sku || productId, quantity: quantity }],
                 value: price * quantity,
                 currency: 'PKR',
             });
