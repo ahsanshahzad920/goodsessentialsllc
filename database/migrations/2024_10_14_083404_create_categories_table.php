@@ -18,8 +18,8 @@ return new class extends Migration
             // $table->string('slug')->unique();
             $table->text('description')->nullable();
             // $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('set null');
-            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
-            $table->foreignId('updated_by')->constrained('users')->onDelete('cascade');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
 
             $table->timestamps();
         });

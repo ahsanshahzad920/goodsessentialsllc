@@ -14,6 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         $now = now();
+        $userId = DB::table('users')->value('id');
 
         $categories = [
             ['name' => 'Mom Care', 'slug' => 'mom-care', 'description' => 'Maternity essentials, postpartum recovery and self-care for moms.'],
@@ -29,8 +30,8 @@ return new class extends Migration
                     'name' => $category['name'],
                     'slug' => $category['slug'],
                     'description' => $category['description'],
-                    'created_by' => 1,
-                    'updated_by' => 1,
+                    'created_by' => $userId,
+                    'updated_by' => $userId,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
