@@ -1,32 +1,14 @@
-{{-- Auto-rotating hero carousel — slides every 2 seconds (Bootstrap 5) --}}
+{{-- Auto-rotating hero carousel — slides every 3 seconds. Dependency-free
+     (no Bootstrap JS/CSS exists in this Tailwind project; the earlier
+     data-bs-* markup was inert without it). --}}
 <section class="kids-hero relative isolate overflow-hidden rounded-[2rem]">
     <div class="kids-hero-scallop kids-hero-scallop-top"></div>
     <div class="kids-hero-scallop kids-hero-scallop-bottom"></div>
 
-    <div
-        id="heroBannerCarousel"
-        class="carousel slide"
-        data-bs-ride="carousel"
-        data-bs-interval="2000"
-    >
-        {{-- ── Dot indicators ── --}}
-        <div class="carousel-indicators" style="bottom: 0.75rem;">
-            <button type="button" data-bs-target="#heroBannerCarousel" data-bs-slide-to="0"
-                class="active rounded-full" aria-current="true" aria-label="Slide 1"
-                style="width:2rem;height:0.5rem;border-radius:9999px;background:#f472b6;border:none;opacity:1;"></button>
-            <button type="button" data-bs-target="#heroBannerCarousel" data-bs-slide-to="1"
-                aria-label="Slide 2"
-                style="width:0.625rem;height:0.5rem;border-radius:9999px;background:#fbcfe8;border:none;opacity:1;"></button>
-            <button type="button" data-bs-target="#heroBannerCarousel" data-bs-slide-to="2"
-                aria-label="Slide 3"
-                style="width:0.625rem;height:0.5rem;border-radius:9999px;background:#fbcfe8;border:none;opacity:1;"></button>
-        </div>
-
-        {{-- ── Slides ── --}}
-        <div class="carousel-inner">
-
+    <div id="heroCarousel" class="hero-carousel relative" role="region" aria-roledescription="carousel" aria-label="Featured promotions">
+        <div class="hero-carousel-track">
             {{-- Slide 1 — Baby & Mom Essentials --}}
-            <div class="carousel-item active">
+            <div class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="1 of 3">
                 <div class="grid items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-2 lg:gap-12 lg:px-14 lg:py-14"
                      style="background:linear-gradient(120deg,#fff0f3 0%,#fce7f3 100%);">
                     <div class="order-2 space-y-5 text-center lg:order-1 lg:text-left">
@@ -67,7 +49,7 @@
             </div>
 
             {{-- Slide 2 — Cash on Delivery --}}
-            <div class="carousel-item">
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="2 of 3">
                 <div class="grid items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-2 lg:gap-12 lg:px-14 lg:py-14"
                      style="background:linear-gradient(120deg,#f0fdf4 0%,#dcfce7 100%);">
                     <div class="order-2 space-y-5 text-center lg:order-1 lg:text-left">
@@ -103,7 +85,7 @@
             </div>
 
             {{-- Slide 3 — 14-Day Returns --}}
-            <div class="carousel-item">
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="3 of 3">
                 <div class="grid items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-2 lg:gap-12 lg:px-14 lg:py-14"
                      style="background:linear-gradient(120deg,#faf5ff 0%,#ede9fe 100%);">
                     <div class="order-2 space-y-5 text-center lg:order-1 lg:text-left">
@@ -137,30 +119,147 @@
                     </div>
                 </div>
             </div>
+        </div>{{-- /.hero-carousel-track --}}
 
-        </div>{{-- /.carousel-inner --}}
+        {{-- Dot indicators --}}
+        <div class="hero-carousel-dots" role="tablist" aria-label="Choose slide">
+            <button type="button" class="hero-dot is-active" data-slide-to="0" role="tab" aria-selected="true" aria-label="Slide 1"></button>
+            <button type="button" class="hero-dot" data-slide-to="1" role="tab" aria-selected="false" aria-label="Slide 2"></button>
+            <button type="button" class="hero-dot" data-slide-to="2" role="tab" aria-selected="false" aria-label="Slide 3"></button>
+        </div>
 
-        {{-- ── Prev / Next arrows ── --}}
-        <button class="carousel-control-prev" type="button"
-                data-bs-target="#heroBannerCarousel" data-bs-slide="prev"
-                style="width:2.5rem;left:0.5rem;">
+        {{-- Prev / Next arrows --}}
+        <button type="button" class="hero-carousel-arrow hero-carousel-prev" data-slide-dir="-1" aria-label="Previous slide">
             <span class="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 shadow-md">
                 <svg class="h-4 w-4 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
                 </svg>
             </span>
-            <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button"
-                data-bs-target="#heroBannerCarousel" data-bs-slide="next"
-                style="width:2.5rem;right:0.5rem;">
+        <button type="button" class="hero-carousel-arrow hero-carousel-next" data-slide-dir="1" aria-label="Next slide">
             <span class="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 shadow-md">
                 <svg class="h-4 w-4 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
                 </svg>
             </span>
-            <span class="visually-hidden">Next</span>
         </button>
-
-    </div>{{-- /.carousel --}}
+    </div>{{-- /.hero-carousel --}}
 </section>
+
+@push('style')
+<style>
+    .hero-carousel-track { position: relative; min-height: 1px; }
+    .hero-slide {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+    .hero-slide.is-active {
+        display: block;
+        opacity: 1;
+    }
+    .hero-carousel-dots {
+        position: absolute;
+        left: 50%;
+        bottom: 0.9rem;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.4rem;
+        z-index: 5;
+    }
+    .hero-dot {
+        width: 0.625rem;
+        height: 0.5rem;
+        border-radius: 9999px;
+        background: #fbcfe8;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: width 0.2s ease, background-color 0.2s ease;
+    }
+    .hero-dot.is-active {
+        width: 2rem;
+        background: #f472b6;
+    }
+    .hero-carousel-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 5;
+        background: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
+    .hero-carousel-prev { left: 0.5rem; }
+    .hero-carousel-next { right: 0.5rem; }
+    @media (prefers-reduced-motion: reduce) {
+        .hero-slide { transition: none; }
+    }
+</style>
+@endpush
+
+@push('script')
+<script>
+    (function () {
+        var root = document.getElementById('heroCarousel');
+        if (!root) return;
+
+        var slides = Array.prototype.slice.call(root.querySelectorAll('.hero-slide'));
+        var dots = Array.prototype.slice.call(root.querySelectorAll('.hero-dot'));
+        var current = 0;
+        var intervalMs = 3000;
+        var timer = null;
+        var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function show(index) {
+            current = (index + slides.length) % slides.length;
+            slides.forEach(function (slide, i) {
+                slide.classList.toggle('is-active', i === current);
+            });
+            dots.forEach(function (dot, i) {
+                var active = i === current;
+                dot.classList.toggle('is-active', active);
+                dot.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+        }
+
+        function next() { show(current + 1); }
+
+        function start() {
+            if (reduceMotion || slides.length < 2) return;
+            stop();
+            timer = window.setInterval(next, intervalMs);
+        }
+
+        function stop() {
+            if (timer) {
+                window.clearInterval(timer);
+                timer = null;
+            }
+        }
+
+        dots.forEach(function (dot) {
+            dot.addEventListener('click', function () {
+                show(parseInt(dot.dataset.slideTo, 10));
+                start();
+            });
+        });
+
+        root.querySelectorAll('[data-slide-dir]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                show(current + parseInt(btn.dataset.slideDir, 10));
+                start();
+            });
+        });
+
+        root.addEventListener('mouseenter', stop);
+        root.addEventListener('mouseleave', start);
+        root.addEventListener('focusin', stop);
+        root.addEventListener('focusout', start);
+
+        show(0);
+        start();
+    })();
+</script>
+@endpush
