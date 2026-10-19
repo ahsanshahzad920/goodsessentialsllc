@@ -8,21 +8,8 @@
         ? Wishlist::where('user_id', Auth::id())->pluck('product_id')->all()
         : [];
 
-    $configuredCategories = collect(config('shop.categories', []))
-        ->keyBy(fn ($category) => strtolower($category['name']));
-    $categories = \App\Models\Category::orderBy('name')
-            ->get()
-            ->map(function ($category) use ($configuredCategories) {
-                $settings = $configuredCategories->get(strtolower($category->name), []);
-
-                return [
-                    'name' => $category->name,
-                    'slug' => $category->slug,
-                    'label' => $settings['label'] ?? $category->name,
-                    'icon' => $settings['icon'] ?? 'tag',
-                    'tone' => $settings['tone'] ?? 'lavender',
-                ];
-            });
+    // Only categories with at least one product — see Category::navItems().
+    $categories = \App\Models\Category::navItems();
 
     // Promo cards reference categories by name in config/shop.php; resolve
     // to a real slug when one exists, otherwise fall back to the full shop page.
@@ -36,11 +23,11 @@
 
     $homeFaqs = [
         'Does Goods Essentials offer Cash on Delivery?' => 'Yes. Cash on Delivery is available across Pakistan for orders under Rs. 40,000. Orders above that amount require a partial advance payment by bank transfer.',
-        'How long does delivery take?' => 'Delivery takes about 1-2 working days within Karachi and 4-5 working days to other cities in Pakistan. Delivery may take longer during major sales.',
+        'How long does delivery take?' => config('shop.delivery.message') . ' Delivery may take longer during major sales.',
         'What is the delivery charge?' => 'Prepaid orders have a Rs. 200 delivery charge, and Cash on Delivery orders have a Rs. 250 delivery charge. Charges are shown at checkout before you place your order.',
         'Can I return or exchange a product?' => 'Yes. Contact us within 14 days of delivery to request a return or exchange. The item must be unused, in its original packaging, with tags and accessories intact.',
         'What happens if my order arrives damaged?' => 'Contact us as soon as possible and within 14 days of delivery. We may ask for photographs or an unboxing video, and we cover return shipping for verified damaged or incorrect items.',
-        'Do you deliver outside Karachi?' => 'Yes, we deliver across Pakistan. Delivery outside Karachi takes approximately 4-5 working days.',
+        'Do you deliver outside Karachi?' => 'Yes, we deliver to every city in Pakistan, not just Karachi — ' . lcfirst(config('shop.delivery.message')),
     ];
 @endphp
 
@@ -55,8 +42,8 @@
         <p class="text-sm leading-7 text-muted sm:text-base">
             Goods Essentials is an online store for baby and mom essentials in Pakistan, offering wholesale-rate
             pricing on good quality products. We sell baby clothing, feeding supplies, baby care and grooming
-            products, toys, and newborn gift sets, sourced for safety and everyday quality. We deliver across
-            Pakistan with Cash on Delivery, 1-2 day delivery within Karachi, and a 14-day return window — so you
+            products, toys, and newborn gift sets, sourced for safety and everyday quality.
+            {{ config('shop.delivery.message') }} Plus a 14-day return window — so you
             can shop for your little one with confidence.
         </p>
     </section>

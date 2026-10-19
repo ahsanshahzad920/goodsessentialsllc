@@ -69,12 +69,32 @@
     </div>
 
     <main>
+        {{-- Bug fix: this component existed but was never included anywhere,
+             so success/error messages (add-to-cart, contact form, checkout
+             errors) were set in session and silently never shown. --}}
+        <x-shop.flash />
         @yield('content')
     </main>
 
     <x-shop.footer />
 
     <script>
+        // TikTok Pixel helpers: safe no-ops when the Pixel isn't configured
+        // (so pages never throw just because TIKTOK_PIXEL_ID is unset), and
+        // always attach a per-event event_id for future server-side Events
+        // API deduplication (see config/tracking.php tiktok_events_api_token).
+        window.ttqTrack = function (event, data, eventId) {
+            if (typeof ttq === 'undefined') return;
+            eventId = eventId || ((window.crypto && crypto.randomUUID)
+                ? crypto.randomUUID()
+                : (Date.now() + '-' + Math.random().toString(36).slice(2)));
+            ttq.track(event, data || {}, { event_id: eventId });
+        };
+        window.ttqIdentify = function (data) {
+            if (typeof ttq === 'undefined' || !data) return;
+            ttq.identify(data);
+        };
+
         // Hamburger menu
         (function () {
             var btn = document.getElementById('menu-toggle');
@@ -117,19 +137,35 @@
             }
         });
 
-        // GA4 add_to_cart: fires client-side on submit so it works even though
-        // "Add to cart" is a normal (non-AJAX) form POST that reloads the page.
+        // add_to_cart (GA4 + TikTok): fires client-side on submit so it works
+        // even though "Add to cart" is a normal (non-AJAX) form POST that
+        // reloads the page. Also covers any future AJAX add-to-cart form that
+        // posts to the same route with the same data-* attributes.
         document.addEventListener('submit', function (e) {
             var form = e.target;
             if (!form.matches('form[action="{{ route('cart.store') }}"]')) return;
-            if (typeof gtag !== 'function') return;
 
             var productId = form.querySelector('[name="product_id"]')?.value;
-            var quantity = form.querySelector('[name="quantity"]')?.value;
+            var quantity = Number(form.querySelector('[name="quantity"]')?.value) || 1;
             if (!productId) return;
 
-            gtag('event', 'add_to_cart', {
-                items: [{ item_id: productId, quantity: Number(quantity) || 1 }]
+            if (typeof gtag === 'function') {
+                gtag('event', 'add_to_cart', {
+                    items: [{ item_id: productId, quantity: quantity }]
+                });
+            }
+
+            var price = Number(form.dataset.price) || 0;
+            ttqTrack('AddToCart', {
+                contents: [{
+                    content_id: form.dataset.sku || productId,
+                    content_type: 'product',
+                    content_name: form.dataset.name || '',
+                    quantity: quantity,
+                    price: price,
+                }],
+                value: price * quantity,
+                currency: 'PKR',
             });
         });
     </script>

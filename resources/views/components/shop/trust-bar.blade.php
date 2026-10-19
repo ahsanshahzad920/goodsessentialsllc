@@ -1,6 +1,6 @@
 @php
     $items = [
-        ['truck',   'Fast Shipping', '1-2 days in Karachi'],
+        ['truck',   'Fast Shipping', config('shop.delivery.message_short')],
         ['shield',  'Safe Payments', '100% secure checkout'],
         ['refresh', 'Easy Returns',  '14 day return policy'],
         ['headset', 'Here to Help',  'Reach us via Contact Us'],

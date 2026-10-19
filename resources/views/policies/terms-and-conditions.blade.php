@@ -52,6 +52,7 @@
             <h2 class="mb-2 text-xl font-bold text-gray-900">Changes and Contact</h2>
             <p>Goods Essentials may update these terms when necessary. The version published on this page applies to website use from the time it is posted, subject to applicable law. If you have questions about these terms or an order, contact us using the details on our Contact Us page.</p>
         </section>
+        <x-shop.policy-contact />
     </div>
 </div>
 @endsection

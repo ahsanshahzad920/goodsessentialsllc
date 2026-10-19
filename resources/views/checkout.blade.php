@@ -11,6 +11,14 @@
     $lastName  = $user->last_name  ?? ($nameParts[1] ?? '');
 
     $selectedMethod = old('payment_method', $defaultMethod ?? 'cod');
+
+    $ttqContents = collect($lines ?? [])->map(fn ($line) => [
+        'content_id'   => $line['product']->sku ?: (string) $line['product']->id,
+        'content_type' => 'product',
+        'content_name' => $line['product']->product_title,
+        'quantity'     => $line['quantity'],
+        'price'        => (float) $line['price'],
+    ])->values();
 @endphp
 
 @section('pageTitle', 'Checkout | ' . config('app.name'))
@@ -368,3 +376,29 @@
 </script>
 
 @endpush
+
+@if (! empty($lines))
+    @push('script')
+    <script>
+        // TikTok InitiateCheckout: one real event per checkout page load.
+        ttqTrack('InitiateCheckout', {
+            contents: @json($ttqContents),
+            value: {{ (float) $subtotal }},
+            currency: 'PKR',
+        });
+
+        @if ($user && $user->email)
+            {{-- Best-effort match data when available (logged-in customer).
+                 Hashed server-side with PHP's hash() (plain SHA-256 hex digest,
+                 the format TikTok's identify expects) — the raw email/phone
+                 never reaches the page source. --}}
+            ttqIdentify({
+                email: @json(hash('sha256', strtolower(trim($user->email)))),
+                @if ($user->phone)
+                    phone_number: @json(hash('sha256', preg_replace('/[^0-9]/', '', $user->phone))),
+                @endif
+            });
+        @endif
+    </script>
+    @endpush
+@endif

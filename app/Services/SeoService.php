@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Support\Price;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Artesaos\SEOTools\Facades\TwitterCard;
@@ -56,6 +57,8 @@ class SeoService
 
         self::set($title, $description, $image);
         OpenGraph::setType('product');
+        OpenGraph::addProperty('product:price:amount', (string) Price::final($product));
+        OpenGraph::addProperty('product:price:currency', 'PKR');
 
         self::addSchema(self::productSchema($product));
         self::addSchema(self::breadcrumbs([
@@ -193,7 +196,11 @@ class SeoService
             ? $product->images->map(fn ($image) => $image->url)->all()
             : array_filter([self::productImage($product)]);
 
-        $price = (float) str_replace(',', '', (string) ($product->dis_price ?: $product->price ?: 0));
+        // Bug fix: this used to read dis_price directly as if it were an absolute
+        // price, but dis_price is a discount PERCENTAGE (see Helper::calculateDiscountPrice).
+        // Price::final() is the same single source of truth the cart, checkout
+        // and visible product price all use, so title/meta/schema always agree.
+        $price = Price::final($product);
 
         $offer = Schema::offer()
             ->price($price)
@@ -204,7 +211,7 @@ class SeoService
             ->shippingDetails(
                 Schema::offerShippingDetails()
                     ->shippingDestination(Schema::definedRegion()->addressCountry('PK'))
-                    ->shippingRate(Schema::monetaryAmount()->currency('PKR')->value(200))
+                    ->shippingRate(Schema::monetaryAmount()->currency('PKR')->value(config('shop.shipping_cod_payment', 200)))
             )
             ->hasMerchantReturnPolicy(
                 Schema::merchantReturnPolicy()
@@ -223,9 +230,9 @@ class SeoService
         if ($images) {
             $schema->image(array_values($images));
         }
-        if ($product->brand) {
-            $schema->brand(Schema::brand()->name($product->brand));
-        }
+        // Brand defaults to the store name when a product has no brand of its
+        // own set — this is the store's own name, not invented per-product data.
+        $schema->brand(Schema::brand()->name($product->brand ?: config('app.name')));
         if ($product->color) {
             $schema->color($product->color);
         }
@@ -249,7 +256,11 @@ class SeoService
 
     private static function productTitleFallback(Product $product): string
     {
-        $price = $product->price ? ' – Rs. ' . number_format((float) $product->price) : '';
+        // Bug fix: always showed the original price even when a discount was
+        // active (e.g. Electric Baby Nail Trimmer showed "Rs. 2,200" when the
+        // real selling price was Rs. 1,320). Price::final() applies dis_price.
+        $current = Price::final($product);
+        $price = $current > 0 ? ' – Rs. ' . number_format($current) : '';
         return self::truncate($product->product_title . $price . ' | Wholesale Price in Pakistan', 60);
     }
 

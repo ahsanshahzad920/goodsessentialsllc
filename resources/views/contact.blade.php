@@ -1,5 +1,9 @@
 @extends('layouts.guest')
 
+@php
+    $contact = config('shop.contact', []);
+@endphp
+
 @section('content')
     <!-- Contact Hero -->
     <section class="relative overflow-hidden bg-gradient-to-r from-pink-100 via-purple-50 to-blue-100 py-16 md:py-24"
@@ -37,9 +41,9 @@
                         Call Us Anytime
                     </h3>
 
-                    <a href="tel:+923060974495"
+                    <a href="tel:{{ $contact['phone'] }}"
                         class="text-gray-600 transition hover:text-pink-600">
-                        +92 (306) 097-4495
+                        {{ $contact['phone'] }}
                     </a>
                 </div>
 
@@ -53,9 +57,11 @@
                         Send Us an Email
                     </h3>
 
-                    <a href="mailto:megamerchantinc01@gmail.com"
+                    {{-- Bug fix: this link used to point at megamerchantinc01@gmail.com
+                         while the visible text said info@goodsessentialsllc.com. --}}
+                    <a href="mailto:{{ $contact['email'] }}"
                         class="break-all text-gray-600 transition hover:text-purple-600">
-                        info@goodsessentialsllc.com
+                        {{ $contact['email'] }}
                     </a>
                 </div>
 
@@ -70,7 +76,26 @@
                     </h3>
 
                     <p class="text-gray-600">
-                        Majeed Abad Colony, Bahawalpur
+                        {{ config('shop.address') }}
+                    </p>
+                </div>
+
+                <!-- Business Hours -->
+                <div class="rounded-2xl border border-green-100 bg-green-50 p-6 transition duration-300 hover:-translate-y-1 hover:shadow-lg sm:col-span-2 lg:col-span-1">
+                    <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-green-100 text-green-600">
+                        <i class="fa-solid fa-clock text-2xl"></i>
+                    </div>
+
+                    <h3 class="mb-2 text-xl font-bold text-gray-900">
+                        Business Hours
+                    </h3>
+
+                    <p class="text-gray-600">
+                        @if (! empty($contact['hours']))
+                            {{ $contact['hours'] }}
+                        @else
+                            <span class="italic text-gray-400">[TODO: owner to confirm business hours]</span>
+                        @endif
                     </p>
                 </div>
 
@@ -298,7 +323,7 @@
                             <div>
                                 <h4 class="font-bold text-gray-900">Visit Our Location</h4>
                                 <p class="mt-1 text-sm leading-6 text-gray-600">
-                                    Majeed Abad Colony, Bahawalpur
+                                    {{ config('shop.address') }}
                                 </p>
                             </div>
                         </div>
@@ -309,3 +334,13 @@
         </div>
     </section>
 @endsection
+
+@if (session('success'))
+    @push('script')
+    <script>
+        // TikTok Contact: fires once (Laravel flash data only survives the
+        // single request right after redirect, so a refresh won't re-fire).
+        ttqTrack('Contact', { content_name: 'contact_form' });
+    </script>
+    @endpush
+@endif

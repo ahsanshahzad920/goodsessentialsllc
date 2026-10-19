@@ -12,9 +12,9 @@
                         <div class="text-white hover">
                             <h4 class="text-white heading">New to our website?</h4>
                             <p>
-                                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                                Create an account to track your orders,
                                 <br class="d-none d-md-block" />
-                                Odit molestiae possimus digniss
+                                save your details for faster checkout, and build your wishlist.
                             </p>
                             <a class="btn create-account-btn rounded-0" href="{{ route('register') }}">Create an Account</a>
                         </div>

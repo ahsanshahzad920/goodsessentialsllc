@@ -45,6 +45,7 @@
             <h2 class="mb-2 text-xl font-bold text-gray-900">Contact Us</h2>
             <p>To start a request, contact Goods Essentials through the contact information published on our website. Include your order number, the item concerned, and relevant photographs or other supporting information.</p>
         </section>
+        <x-shop.policy-contact />
     </div>
 </div>
 @endsection

@@ -106,6 +106,13 @@ class PaymentController extends Controller
                 'payment_reference' => $result->reference,
                 'paid_at'           => now(),
             ]);
+
+            // Set only on the exact request that flips paid status, so the
+            // TikTok CompletePayment event fires once. The webhook path has
+            // no session (server-to-server call), so this is a no-op there;
+            // the callback() path (which does have a session) is what
+            // actually reaches the order-success page in the browser today.
+            session()->put('ttq_pending_complete_payment_' . $order->id, true);
         }
     }
 
