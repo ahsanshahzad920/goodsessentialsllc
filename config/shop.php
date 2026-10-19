@@ -44,8 +44,7 @@ return [
     'shipping_online_payment' => (float) env('SHOP_SHIPPING_ONLINE', 200),
     'shipping_cod_payment'    => (float) env('SHOP_SHIPPING_COD', 250),
 
-    // [TODO: owner to confirm full street/house number and postal code]
-    'address' => env('SHOP_ADDRESS', 'Majeed Abad Colony, Bahawalpur, Pakistan'),
+    'address' => env('SHOP_ADDRESS', '5th Street, 79B Majeed Abad Colony, Bahawalpur, 63100, Pakistan'),
 
     'currency' => [
         'code'     => env('SHOP_CURRENCY_CODE', 'PKR'),
@@ -57,13 +56,11 @@ return [
 
     // Used by Organization JSON-LD, the WhatsApp button, and the Contact page
     // / footer / policy pages (single source of truth for all four).
-    // [TODO: owner to confirm support email + business hours] — both render
-    // as an explicit on-page TODO note while null, never a placeholder.
     'contact' => [
         'phone'    => env('SHOP_PHONE', '+923060974495'),
         'whatsapp' => env('SHOP_WHATSAPP', '+923060974495'),
         'email'    => env('SHOP_SUPPORT_EMAIL', 'info@goodsessentialsllc.com'),
-        'hours'    => env('SHOP_SUPPORT_HOURS'),
+        'hours'    => env('SHOP_SUPPORT_HOURS', 'Open 24 hours'),
     ],
 
     // TODO(owner): social links for Organization schema's sameAs + footer icons.
