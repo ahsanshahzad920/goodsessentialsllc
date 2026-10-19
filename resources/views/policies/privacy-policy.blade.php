@@ -44,7 +44,7 @@
             <h2 class="mb-2 text-xl font-bold text-gray-900">Your Choices and Contact</h2>
             <p>You may contact us to ask about personal information associated with your account or order, or to request a correction where appropriate. For privacy questions, please use the contact details shown on our website's Contact Us page.</p>
         </section>
-
+        <x-shop.policy-contact />
     </div>
 </div>
 @endsection

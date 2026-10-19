@@ -17,6 +17,10 @@
     $currentSort    = request('sort', 'latest');
     $activeCategory = $category ?? null;
     $total          = $products->total();
+    // Category filter dropdown + empty-state suggestions only ever show
+    // categories with at least one product (see Category::scopeWithProducts()).
+    $visibleCategories = $categories->where('products_count', '>', 0);
+    $searchQuery    = request('q', request('search'));
 
     $input = 'w-full rounded-full border border-line bg-white px-4 py-2.5 text-xs text-ink placeholder:text-muted focus:border-brand-500 focus:outline-none';
 @endphp
@@ -84,7 +88,7 @@
 
                 <x-shop.select name="category" id="f-category" label="Category">
                     <option value="" data-url="{{ route('shop') }}">All categories</option>
-                    @foreach ($categories as $c)
+                    @foreach ($visibleCategories as $c)
                         <option value="{{ $c->slug }}" data-url="{{ route('shop.category', $c->slug) }}"
                                 @selected($activeCategory && $activeCategory->id === $c->id)>
                             {{ $c->name }} ({{ $c->products_count ?? 0 }})
@@ -138,6 +142,25 @@
                 <div class="mt-8">
                     {{ $products->links('vendor.pagination.shop') }}
                 </div>
+            @elseif ($activeCategory)
+                {{-- Direct visit to a category with no products yet: a friendly
+                     page with links to shop other categories, not a bare
+                     "No products found" message. --}}
+                <div class="rounded-2xl border border-line bg-white p-10 text-center">
+                    <p class="text-lg font-semibold">No products in {{ $activeCategory->name }} yet</p>
+                    <p class="mt-1 text-sm text-muted">We're adding new items soon — check back shortly, or explore these categories instead:</p>
+                    @if ($visibleCategories->isNotEmpty())
+                        <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
+                            @foreach ($visibleCategories as $c)
+                                <a href="{{ route('shop.category', $c->slug) }}"
+                                   class="rounded-full border border-line bg-white px-4 py-2 text-xs font-bold text-ink hover:border-brand-500 hover:text-brand-500">
+                                    {{ $c->name }}
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                    <a href="{{ route('shop') }}" class="mt-5 inline-flex rounded-full bg-brand-500 px-5 py-2.5 text-xs font-extrabold text-white hover:bg-brand-600">Browse All Products</a>
+                </div>
             @else
                 <div class="rounded-2xl border border-line bg-white p-10 text-center">
                     <p class="text-lg font-semibold">No products found</p>
@@ -176,3 +199,14 @@
     })();
 </script>
 @endpush
+
+@if ($searchQuery)
+    @push('script')
+    <script>
+        // TikTok Search: one real event per search-results page load.
+        ttqTrack('Search', {
+            query: @json($searchQuery),
+        });
+    </script>
+    @endpush
+@endif

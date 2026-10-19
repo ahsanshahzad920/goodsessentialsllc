@@ -1,21 +1,6 @@
 @php
-$configuredCategories = collect(config('shop.categories', []))
-        ->keyBy(fn ($category) => strtolower($category['name']));
-$categories = \App\Models\Category::orderBy('name')
-        ->get()
-        ->map(function ($category) use ($configuredCategories) {
-            $settings = $configuredCategories->get(strtolower($category->name), []);
-
-            return [
-                'name' => $category->name,
-                'slug' => $category->slug,
-                'label' => $settings['label'] ?? $category->name,
-                'icon' => $settings['icon'] ?? 'tag',
-                'tone' => $settings['tone'] ?? 'lavender',
-            ];
-        });
-
-
+    // Only categories with at least one product — see Category::navItems().
+    $categories = \App\Models\Category::navItems();
 @endphp
 
 <nav class="border-b border-line bg-white" aria-label="Categories">

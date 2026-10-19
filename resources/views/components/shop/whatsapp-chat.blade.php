@@ -21,7 +21,7 @@
         <!-- Header -->
         <div class="flex shrink-0 items-center justify-between gap-3 bg-[#159447] px-4 py-4 text-white sm:p-[18px]">
             <div>
-                <strong class="block text-base font-bold">Good Essentials</strong>
+                <strong class="block text-base font-bold">Goods Essentials</strong>
                 <small class="mt-1 block text-xs opacity-90">
                     Customer Support
                 </small>
@@ -42,7 +42,7 @@
 
             <!-- Welcome Message -->
             <div class="rounded-xl bg-[#f1f5f0] p-3 text-sm leading-6 text-gray-800">
-                Hi there! 👋 Welcome to Good Essentials.
+                Hi there! 👋 Welcome to Goods Essentials.
                 How can we help you today?
             </div>
 
@@ -126,9 +126,9 @@
         const options = widget.querySelectorAll('.wa-option');
 
         // WhatsApp number in international format without + or spaces.
-        const phone = '923060974495';
+        const phone = {!! json_encode(preg_replace('/[^0-9]/', '', config('shop.contact.whatsapp'))) !!};
 
-        let message = 'Hello! I need help with Good Essentials.';
+        let message = 'Hello! I need help with Goods Essentials.';
 
         function updateLink() {
             startChat.href =
@@ -161,6 +161,10 @@
                 message = button.dataset.message;
                 updateLink();
 
+                if (typeof ttqTrack === 'function') {
+                    ttqTrack('Contact', { content_name: 'whatsapp_' + (button.dataset.message || 'chat') });
+                }
+
                 // Open WhatsApp with the selected message.
                 window.open(
                     startChat.href,
@@ -168,6 +172,12 @@
                     'noopener,noreferrer'
                 );
             });
+        });
+
+        startChat.addEventListener('click', () => {
+            if (typeof ttqTrack === 'function') {
+                ttqTrack('Contact', { content_name: 'whatsapp_chat' });
+            }
         });
 
         updateLink();

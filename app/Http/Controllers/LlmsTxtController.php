@@ -18,7 +18,9 @@ class LlmsTxtController extends Controller
         $lines[] = 'Pakistani parents and families shopping for babies and young children, and people buying gifts for a newborn, baby shower, or aqiqa.';
         $lines[] = '';
 
-        $categories = Category::whereNull('parent_id')->get();
+        // Only categories with at least one product, so llms.txt never
+        // recommends a category that currently has nothing to show.
+        $categories = Category::whereNull('parent_id')->withProducts()->get();
         if ($categories->isNotEmpty()) {
             $lines[] = '## Categories';
             foreach ($categories as $category) {
@@ -29,7 +31,7 @@ class LlmsTxtController extends Controller
 
         $lines[] = '## Policies';
         $lines[] = '- Cash on Delivery: available for orders under Rs. 40,000 (orders above that require a partial advance payment). [Shipping Policy](' . route('shipping-policy') . ')';
-        $lines[] = '- Delivery time: approximately 1-2 working days within Karachi, 4-5 working days to other cities in Pakistan.';
+        $lines[] = '- Delivery time: ' . lcfirst(config('shop.delivery.message'));
         $lines[] = '- Delivery charge: Rs. 200 for prepaid orders, Rs. 250 for Cash on Delivery orders.';
         $lines[] = '- Returns & exchanges: 14 days from delivery, item must be unused and in original packaging. [Return, Refund & Exchange Policy](' . route('return-refund-policy') . ')';
         $lines[] = '- [Privacy Policy](' . route('privacy-policy') . ')';
@@ -49,6 +51,9 @@ class LlmsTxtController extends Controller
         }
         if (! empty($contact['hours'])) {
             $lines[] = '- Support hours: ' . $contact['hours'];
+        }
+        if ($address = config('shop.address')) {
+            $lines[] = '- Address: ' . $address;
         }
         $lines[] = '- [Contact form](' . route('contacts.index') . ')';
         $lines[] = '';

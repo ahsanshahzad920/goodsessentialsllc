@@ -64,7 +64,7 @@
                             <span class="block text-green-500">Delivery.</span>
                         </p>
                         <p class="text-base leading-7 text-slate-600 sm:text-lg">
-                            Order with confidence — COD available across Pakistan. Karachi in 1–2 days, nationwide in 4–5 days.
+                            Order with confidence — {{ config('shop.delivery.message') }}
                         </p>
                         <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
                             <a href="{{ route('shop') }}"

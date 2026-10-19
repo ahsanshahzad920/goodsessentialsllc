@@ -3,7 +3,7 @@
 @php
     \App\Services\SeoService::set(
         'Shipping Policy & Delivery Times | ' . config('app.name'),
-        'Delivery across Pakistan: 1-2 working days in Karachi, 4-5 days elsewhere. Cash on Delivery available under Rs. 40,000. See full shipping charges and timelines.',
+        config('shop.delivery.message') . ' Available under Rs. 40,000. See full shipping charges and timelines.',
     );
 @endphp
 
@@ -27,9 +27,8 @@
         <section>
             <h2 class="mb-2 text-xl font-bold text-gray-900">Estimated Delivery Times</h2>
             <ul class="list-disc space-y-1 pl-6">
-                <li>Within Karachi: approximately 1–2 working days.</li>
-                <li>Outside Karachi: approximately 4–5 working days.</li>
-                <li>During major sales or peak periods, delivery may take longer: approximately 2–3 working days within Karachi and 5–7 working days outside Karachi.</li>
+                <li>{{ config('shop.delivery.message') }}</li>
+                <li>During major sales or peak periods, delivery may take a little longer than the usual 1–3 working days.</li>
             </ul>
             <p class="mt-2">These are estimates, not guaranteed delivery dates. Delays may occur due to courier operations, weather, public holidays, remote locations, or other circumstances outside our control.</p>
         </section>
@@ -39,7 +38,8 @@
         </section>
         <section>
             <h2 class="mb-2 text-xl font-bold text-gray-900">Order Processing and Tracking</h2>
-            <p>Orders are processed after the required order and payment details have been received and verified. If tracking information is available, it will be shared through the contact details provided with the order. Please ensure your phone number and delivery address are accurate when placing an order.</p>
+            <p>Orders are processed after the required order and payment details have been received and verified. Orders placed before our daily cut-off time are processed the same day; orders placed after the cut-off are processed the next working day. [TODO: owner to confirm exact daily order cut-off time]</p>
+            <p class="mt-2">If tracking information is available, it will be shared through the contact details provided with the order. Please ensure your phone number and delivery address are accurate when placing an order. To ask about the status of an existing order, contact us using the details below or on our <a href="{{ route('contacts.index') }}" class="font-semibold text-pink-600 hover:underline">Contact Us</a> page, with your order number ready.</p>
         </section>
         <section>
             <h2 class="mb-2 text-xl font-bold text-gray-900">Lost, Delayed, or Damaged Packages</h2>
@@ -49,6 +49,7 @@
             <h2 class="mb-2 text-xl font-bold text-gray-900">Service and Support</h2>
             <p>For delivery questions, order updates, or help with a shipment, use the contact details listed on the Goods Essentials Contact Us page. For damaged, defective, incorrect, or missing products, please also review our Return, Refund & Exchange Policy.</p>
         </section>
+        <x-shop.policy-contact />
     </div>
 </div>
 @endsection

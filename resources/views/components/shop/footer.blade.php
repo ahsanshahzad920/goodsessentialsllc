@@ -1,25 +1,25 @@
 @php
-$configuredCategories = collect(config('shop.categories', []))
-        ->keyBy(fn ($category) => strtolower($category['name']));
-    $categories = \App\Models\Category::orderBy('name')
-            ->get()
-            ->map(function ($category) use ($configuredCategories) {
-                $settings = $configuredCategories->get(strtolower($category->name), []);
-
-                return [
-                    'name' => $category->name,
-                    'slug' => $category->slug,
-                    'label' => $settings['label'] ?? $category->name,
-                    'icon' => $settings['icon'] ?? 'tag',
-                    'tone' => $settings['tone'] ?? 'lavender',
-                ];
-            });
+    // Only categories with at least one product — see Category::navItems().
+    $categories = \App\Models\Category::navItems();
+    $contact = config('shop.contact', []);
 @endphp
 <footer class="mt-12 border-t border-line bg-white">
     <div class="container-shop grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
         <div>
             <x-shop.logo />
             <p class="mt-3 max-w-xs text-sm text-muted">Baby & mom essentials, delivered across Pakistan.</p>
+            {{-- Same source as the Contact page and all policy pages (config/shop.php). --}}
+            <ul class="mt-3 space-y-1 text-sm text-muted">
+                @if (! empty($contact['phone']))
+                    <li><a href="tel:{{ $contact['phone'] }}" class="hover:text-brand-500">{{ $contact['phone'] }}</a></li>
+                @endif
+                @if (! empty($contact['email']))
+                    <li><a href="mailto:{{ $contact['email'] }}" class="hover:text-brand-500">{{ $contact['email'] }}</a></li>
+                @endif
+                @if ($address = config('shop.address'))
+                    <li>{{ $address }}</li>
+                @endif
+            </ul>
         </div>
 
         <div>

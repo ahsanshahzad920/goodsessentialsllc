@@ -12,10 +12,9 @@
     $cart = session('cart', []);
     $hasColors = ! empty($product->colors);
     $isInCart = ! $hasColors && collect($cart)->contains(fn ($item) => (int) ($item['product_id'] ?? 0) === $product->id);
-    $currentPrice = calculateDiscountPrice(
-        $product->price,
-        $product->dis_price
-    ) ?? 0;
+    // Same source of truth used by cart/checkout/SeoService, so the title,
+    // meta tags, JSON-LD, and this visible price can never disagree.
+    $currentPrice = \App\Support\Price::final($product);
 @endphp
 @section('content')
 <div class="container-shop space-y-8 py-5">
@@ -90,7 +89,10 @@
             </div>
             {{-- Add to cart --}}
             <form action="{{ route('cart.store') }}" method="POST"
-                  class="space-y-5 border-t border-gray-100 pt-5">
+                  class="space-y-5 border-t border-gray-100 pt-5"
+                  data-price="{{ $currentPrice }}"
+                  data-sku="{{ $product->sku ?: $product->id }}"
+                  data-name="{{ $product->product_title }}">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                 <x-shop.color-picker :colors="$product->colors ?? []" />
@@ -178,29 +180,7 @@
                 </div>
             </div>
             {{-- Delivery, COD & returns --}}
-            <div class="grid grid-cols-1 gap-3 border-t border-gray-100 pt-5 sm:grid-cols-3">
-                <div class="flex items-start gap-2.5">
-                    <i class="fa-solid fa-truck mt-0.5 text-pink-500"></i>
-                    <div>
-                        <p class="text-sm font-bold text-gray-800">Delivery</p>
-                        <p class="text-xs text-gray-500">1-2 days in Karachi, 4-5 days elsewhere</p>
-                    </div>
-                </div>
-                <div class="flex items-start gap-2.5">
-                    <i class="fa-solid fa-money-bill-wave mt-0.5 text-pink-500"></i>
-                    <div>
-                        <p class="text-sm font-bold text-gray-800">Cash on Delivery</p>
-                        <p class="text-xs text-gray-500">Available for orders under Rs. 40,000</p>
-                    </div>
-                </div>
-                <div class="flex items-start gap-2.5">
-                    <i class="fa-solid fa-rotate-left mt-0.5 text-pink-500"></i>
-                    <div>
-                        <p class="text-sm font-bold text-gray-800">Returns</p>
-                        <p class="text-xs text-gray-500">14 days, unused & original packaging</p>
-                    </div>
-                </div>
-            </div>
+            <x-shop.delivery-info />
         </div>
     </section>
     {{-- FAQ --}}
@@ -210,7 +190,7 @@
             @foreach ([
                 'Is Cash on Delivery available for this product?' => 'Yes, Cash on Delivery is available for orders under Rs. 40,000.',
                 'What is the return policy for this product?' => 'You can request a return or exchange within 14 days of delivery, provided the item is unused and in its original packaging.',
-                'How long will delivery take?' => 'Estimated delivery is 1-2 working days within Karachi and 4-5 working days to other cities in Pakistan.',
+                'How long will delivery take?' => config('shop.delivery.message'),
             ] as $question => $answer)
                 <details class="group rounded-2xl border border-gray-100 bg-white p-4">
                     <summary class="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-gray-800">
@@ -314,5 +294,22 @@
                 : 1;
         });
     })();
+</script>
+@endpush
+
+@push('script')
+<script>
+    // TikTok ViewContent: one real event per product page load.
+    ttqTrack('ViewContent', {
+        contents: [{
+            content_id: @json($product->sku ?: (string) $product->id),
+            content_type: 'product',
+            content_name: @json($product->product_title),
+            quantity: 1,
+            price: {{ (float) $currentPrice }},
+        }],
+        value: {{ (float) $currentPrice }},
+        currency: 'PKR',
+    });
 </script>
 @endpush

@@ -166,6 +166,9 @@ class CheckoutController extends Controller
         session()->forget('cart');
         session()->put('last_order_id', $order->id);
         session()->put('account_created', $wantsAccount);
+        // Consumed exactly once on the order-success page (session()->pull()),
+        // so a refresh of that page never re-fires the TikTok PlaceAnOrder event.
+        session()->put('ttq_pending_place_order_' . $order->id, true);
 
         // Card orders go to the gateway; cash on delivery is complete.
         if ($order->payment_method === 'card') {
@@ -189,6 +192,10 @@ class CheckoutController extends Controller
         return view('order-success', [
             'order'          => $order,
             'accountCreated' => (bool) session()->pull('account_created', false),
+            // One-shot flags for the TikTok events on this page — see store()
+            // and PaymentController::applyResult() for where each is set.
+            'firePlaceAnOrder'    => (bool) session()->pull('ttq_pending_place_order_' . $order->id, false),
+            'fireCompletePayment' => (bool) session()->pull('ttq_pending_complete_payment_' . $order->id, false),
         ]);
     }
 

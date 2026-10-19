@@ -99,3 +99,47 @@
     </aside>
 </div>
 @endsection
+
+@push('script')
+<script>
+    // Hashed server-side (plain SHA-256 hex digest) so the raw email/phone
+    // never reaches the page source — real customer data, known for certain
+    // at this point regardless of guest vs. logged-in checkout.
+    ttqIdentify({
+        email: @json(hash('sha256', strtolower(trim($order->email)))),
+        phone_number: @json(hash('sha256', preg_replace('/[^0-9]/', '', $order->phone)))
+    });
+
+    @if ($firePlaceAnOrder ?? false)
+        // Fires once (session flag consumed in CheckoutController::success()),
+        // so refreshing this page never double-counts the same order.
+        ttqTrack('PlaceAnOrder', {
+            contents: @json($order->items->map(fn ($item) => [
+                'content_id'   => (string) $item->product_id,
+                'content_type' => 'product',
+                'content_name' => $item->product_title,
+                'quantity'     => $item->quantity,
+                'price'        => (float) $item->price,
+            ])),
+            value: {{ (float) $order->total }},
+            currency: 'PKR',
+        }, @json('place_order_' . $order->id));
+    @endif
+
+    @if ($fireCompletePayment ?? false)
+        // Prepaid (card) orders only — fires once, the same request the
+        // gateway confirmed payment on (see PaymentController::applyResult()).
+        ttqTrack('CompletePayment', {
+            contents: @json($order->items->map(fn ($item) => [
+                'content_id'   => (string) $item->product_id,
+                'content_type' => 'product',
+                'content_name' => $item->product_title,
+                'quantity'     => $item->quantity,
+                'price'        => (float) $item->price,
+            ])),
+            value: {{ (float) $order->total }},
+            currency: 'PKR',
+        }, @json('complete_payment_' . $order->id));
+    @endif
+</script>
+@endpush
