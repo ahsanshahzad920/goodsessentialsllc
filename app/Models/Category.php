@@ -51,7 +51,7 @@ class Category extends Model
      */
     public function scopeWithProducts(Builder $query): Builder
     {
-        return $query->withCount('products')->having('products_count', '>', 0);
+        return $query->whereHas('products')->withCount('products');
     }
 
     /**
