@@ -14,6 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         $now = now();
+        $userId = DB::table('users')->value('id');
 
         // Rename legacy categories in place if they exist (preserves ids/relations),
         // otherwise create them fresh.
@@ -45,8 +46,8 @@ return new class extends Migration
                 'name' => 'Baby Clothing',
                 'slug' => 'baby-clothing',
                 'description' => 'Everyday and seasonal clothing for babies and toddlers.',
-                'created_by' => 1,
-                'updated_by' => 1,
+                'created_by' => $userId,
+                'updated_by' => $userId,
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
@@ -74,8 +75,8 @@ return new class extends Migration
                     'slug' => $sub['slug'],
                     'description' => $sub['description'],
                     'parent_id' => $babyParentId,
-                    'created_by' => 1,
-                    'updated_by' => 1,
+                    'created_by' => $userId,
+                    'updated_by' => $userId,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
@@ -95,8 +96,8 @@ return new class extends Migration
                     'name' => $cat['name'],
                     'slug' => $cat['slug'],
                     'description' => $cat['description'],
-                    'created_by' => 1,
-                    'updated_by' => 1,
+                    'created_by' => $userId,
+                    'updated_by' => $userId,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
