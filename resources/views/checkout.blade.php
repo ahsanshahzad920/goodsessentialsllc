@@ -393,9 +393,9 @@
                  the format TikTok's identify expects) — the raw email/phone
                  never reaches the page source. --}}
             ttqIdentify({
-                email: @json(hash('sha256', strtolower(trim($user->email)))),
+                email: @js(hash('sha256', strtolower(trim($user->email)))),
                 @if ($user->phone)
-                    phone_number: @json(hash('sha256', preg_replace('/[^0-9]/', '', $user->phone))),
+                    phone_number: @js(hash('sha256', preg_replace('/[^0-9]/', '', $user->phone))),
                 @endif
             });
         @endif

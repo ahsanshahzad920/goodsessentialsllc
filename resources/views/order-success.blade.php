@@ -106,15 +106,15 @@
     // never reaches the page source — real customer data, known for certain
     // at this point regardless of guest vs. logged-in checkout.
     ttqIdentify({
-        email: @json(hash('sha256', strtolower(trim($order->email)))),
-        phone_number: @json(hash('sha256', preg_replace('/[^0-9]/', '', $order->phone)))
+        email: @js(hash('sha256', strtolower(trim($order->email)))),
+        phone_number: @js(hash('sha256', preg_replace('/[^0-9]/', '', $order->phone)))
     });
 
     @if ($firePlaceAnOrder ?? false)
         // Fires once (session flag consumed in CheckoutController::success()),
         // so refreshing this page never double-counts the same order.
         ttqTrack('PlaceAnOrder', {
-            contents: @json($order->items->map(fn ($item) => [
+            contents: @js($order->items->map(fn ($item) => [
                 'content_id'   => (string) $item->product_id,
                 'content_type' => 'product',
                 'content_name' => $item->product_title,
@@ -130,7 +130,7 @@
         // Prepaid (card) orders only — fires once, the same request the
         // gateway confirmed payment on (see PaymentController::applyResult()).
         ttqTrack('CompletePayment', {
-            contents: @json($order->items->map(fn ($item) => [
+            contents: @js($order->items->map(fn ($item) => [
                 'content_id'   => (string) $item->product_id,
                 'content_type' => 'product',
                 'content_name' => $item->product_title,
