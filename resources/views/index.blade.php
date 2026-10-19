@@ -53,10 +53,11 @@
     {{-- Intro --}}
     <section aria-label="About Goods Essentials" class="mx-auto max-w-3xl text-center">
         <p class="text-sm leading-7 text-muted sm:text-base">
-            Goods Essentials is an online store for baby and mom essentials in Pakistan. We sell baby clothing,
-            feeding supplies, baby care and grooming products, toys, and newborn gift sets, sourced for safety and
-            everyday quality. We deliver across Pakistan with Cash on Delivery, 1-2 day delivery within Karachi,
-            and a 14-day return window — so you can shop for your little one with confidence.
+            Goods Essentials is an online store for baby and mom essentials in Pakistan, offering wholesale-rate
+            pricing on good quality products. We sell baby clothing, feeding supplies, baby care and grooming
+            products, toys, and newborn gift sets, sourced for safety and everyday quality. We deliver across
+            Pakistan with Cash on Delivery, 1-2 day delivery within Karachi, and a 14-day return window — so you
+            can shop for your little one with confidence.
         </p>
     </section>
 

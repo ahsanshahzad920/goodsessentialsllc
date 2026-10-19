@@ -11,8 +11,8 @@ class IndexController extends Controller
     public function indexPage()
     {
         SeoService::set(
-            'Baby Products Online in Pakistan | Goods Essentials',
-            'Shop safe, quality baby clothes, breast pumps, baby care & newborn gift sets online in Pakistan. Cash on Delivery, fast delivery & easy returns.',
+            'Baby Products at Wholesale Rates | Goods Essentials',
+            'Quality baby clothes, feeding supplies, baby care & gift sets at wholesale prices across Pakistan. Cash on Delivery, fast delivery & easy returns.',
         );
 
         SeoService::faq([

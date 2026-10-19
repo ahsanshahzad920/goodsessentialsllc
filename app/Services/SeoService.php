@@ -67,8 +67,8 @@ class SeoService
 
     public static function forCategory(Category $category): void
     {
-        $title = $category->meta_title ?: "{$category->name} Price in Pakistan | Buy Online – " . config('app.name');
-        $description = $category->meta_description ?: "Shop {$category->name} online in Pakistan with Cash on Delivery, fast delivery and easy returns at " . config('app.name') . '.';
+        $title = $category->meta_title ?: "{$category->name} Wholesale Price in Pakistan – " . config('app.name');
+        $description = $category->meta_description ?: "Shop {$category->name} online in Pakistan at wholesale prices without compromising on quality. Cash on Delivery, fast delivery and easy returns at " . config('app.name') . '.';
         $image = $category->og_image ? asset('storage/' . $category->og_image) : null;
 
         self::set($title, $description, $image);
@@ -250,7 +250,7 @@ class SeoService
     private static function productTitleFallback(Product $product): string
     {
         $price = $product->price ? ' – Rs. ' . number_format((float) $product->price) : '';
-        return self::truncate($product->product_title . $price . ' | Price in Pakistan', 60);
+        return self::truncate($product->product_title . $price . ' | Wholesale Price in Pakistan', 60);
     }
 
     private static function productDescriptionFallback(Product $product): string
@@ -258,7 +258,7 @@ class SeoService
         $categoryName = $product->category->name ?? config('app.name');
         $base = $product->product_description
             ? strip_tags($product->product_description)
-            : "Shop {$product->product_title} from our {$categoryName} range at " . config('app.name') . '.';
+            : "Shop {$product->product_title} from our {$categoryName} range at " . config('app.name') . ' at wholesale rates, without compromising on quality.';
 
         return self::truncate($base . ' Cash on Delivery available across Pakistan.', 160);
     }

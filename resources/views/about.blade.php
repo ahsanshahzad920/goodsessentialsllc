@@ -3,7 +3,7 @@
 @php
     \App\Services\SeoService::set(
         'About Us | ' . config('app.name'),
-        'Learn about Goods Essentials, a Pakistan-based baby and mom essentials store offering quality products with Cash on Delivery and fast delivery.',
+        'Learn about Goods Essentials, a Pakistan-based baby and mom essentials store offering wholesale-rate pricing on quality products, with Cash on Delivery and fast delivery.',
     );
 @endphp
 
@@ -25,7 +25,8 @@
 
             <p class="mt-5 max-w-xl text-base leading-8 text-gray-600 sm:text-lg">
                 Goods Essentials is your one-stop destination for baby clothing, feeding essentials,
-                baby care, toys and gift sets for moms across Pakistan.
+                baby care, toys and gift sets for moms across Pakistan — at wholesale-rate pricing,
+                without compromising on quality.
             </p>
 
             <div class="mt-8 flex flex-wrap gap-3">
@@ -94,7 +95,7 @@
             </h2>
 
             <p class="text-sm leading-7 text-gray-600 sm:text-base">
-                At Goods Essentials, we've combined years of dedication and passion to bring you a diverse range of products that cater to your everyday needs. Our journey is built on hard work and a commitment to quality, ensuring that every item we offer meets our standards.
+                At Goods Essentials, we've combined years of dedication and passion to bring you a diverse range of products that cater to your everyday needs, at wholesale-level pricing. Our journey is built on hard work and a commitment to quality and affordability, ensuring that every item we offer meets our standards without the usual retail markup.
             </p>
 
             <p class="text-sm leading-7 text-gray-600 sm:text-base">
@@ -189,7 +190,17 @@
             </p>
         </div>
 
-        <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="rounded-2xl bg-white p-6 text-center">
+                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-500">
+                    <i class="fa-solid fa-tags text-2xl"></i>
+                </div>
+                <h3 class="mt-4 font-bold text-gray-900">Wholesale Pricing</h3>
+                <p class="mt-2 text-sm leading-6 text-gray-500">
+                    Direct-to-customer, wholesale-rate pricing on every product — without compromising on quality.
+                </p>
+            </div>
+
             <div class="rounded-2xl bg-white p-6 text-center">
                 <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-50 text-pink-500">
                     <i class="fa-solid fa-box-open text-2xl"></i>
@@ -210,7 +221,7 @@
                 </p>
             </div>
 
-            <div class="rounded-2xl bg-white p-6 text-center sm:col-span-2 lg:col-span-1">
+            <div class="rounded-2xl bg-white p-6 text-center">
                 <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
                     <i class="fa-solid fa-face-smile text-2xl"></i>
                 </div>

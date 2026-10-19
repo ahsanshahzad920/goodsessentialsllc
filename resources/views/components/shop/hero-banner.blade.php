@@ -24,7 +24,7 @@
                             <span class="block text-pink-500">Big Moments.</span>
                         </p>
                         <p class="text-base leading-7 text-slate-600 sm:text-lg">
-                            Baby clothing, feeding, care, toys &amp; newborn gifts — sourced for safety and everyday quality.
+                            Baby clothing, feeding, care, toys &amp; newborn gifts — at wholesale rates, without compromising on quality.
                         </p>
                         <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
                             <a href="{{ route('shop') }}"
