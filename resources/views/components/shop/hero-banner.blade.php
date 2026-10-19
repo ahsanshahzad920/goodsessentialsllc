@@ -8,7 +8,7 @@
     <div id="heroCarousel" class="hero-carousel relative" role="region" aria-roledescription="carousel" aria-label="Featured promotions">
         <div class="hero-carousel-track">
             {{-- Slide 1 — Baby & Mom Essentials --}}
-            <div class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="1 of 3">
+            <div class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="1 of 4">
                 <div class="grid items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-2 lg:gap-12 lg:px-14 lg:py-14"
                      style="background:linear-gradient(120deg,#fff0f3 0%,#fce7f3 100%);">
                     <div class="order-2 space-y-5 text-center lg:order-1 lg:text-left">
@@ -49,7 +49,7 @@
             </div>
 
             {{-- Slide 2 — Cash on Delivery --}}
-            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="2 of 3">
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="2 of 4">
                 <div class="grid items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-2 lg:gap-12 lg:px-14 lg:py-14"
                      style="background:linear-gradient(120deg,#f0fdf4 0%,#dcfce7 100%);">
                     <div class="order-2 space-y-5 text-center lg:order-1 lg:text-left">
@@ -85,7 +85,7 @@
             </div>
 
             {{-- Slide 3 — 14-Day Returns --}}
-            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="3 of 3">
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="3 of 4">
                 <div class="grid items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-2 lg:gap-12 lg:px-14 lg:py-14"
                      style="background:linear-gradient(120deg,#faf5ff 0%,#ede9fe 100%);">
                     <div class="order-2 space-y-5 text-center lg:order-1 lg:text-left">
@@ -119,6 +119,17 @@
                     </div>
                 </div>
             </div>
+            {{-- Slide 4 — SW-6 Character Swaddle promo (image, links to the product) --}}
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="4 of 4">
+                <a href="{{ route('productDetails', 'sw-6-character-baby-wrapping-swaddle') }}" class="block">
+                    <img
+                        src="{{ asset('assets/img/hero-sw6-penguin-banner.png') }}"
+                        alt="SW-6 Character Baby Wrapping Swaddle Bed Set — Flat 40% off, Rs. 5,400"
+                        class="h-auto w-full"
+                        loading="lazy"
+                    >
+                </a>
+            </div>
         </div>{{-- /.hero-carousel-track --}}
 
         {{-- Dot indicators --}}
@@ -126,6 +137,7 @@
             <button type="button" class="hero-dot is-active" data-slide-to="0" role="tab" aria-selected="true" aria-label="Slide 1"></button>
             <button type="button" class="hero-dot" data-slide-to="1" role="tab" aria-selected="false" aria-label="Slide 2"></button>
             <button type="button" class="hero-dot" data-slide-to="2" role="tab" aria-selected="false" aria-label="Slide 3"></button>
+            <button type="button" class="hero-dot" data-slide-to="3" role="tab" aria-selected="false" aria-label="Slide 4"></button>
         </div>
 
         {{-- Prev / Next arrows --}}
