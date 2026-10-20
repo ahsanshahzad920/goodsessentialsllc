@@ -75,6 +75,6 @@ return [
         'youtube'   => env('SHOP_YOUTUBE'),
     ],
     'admin_emails' => array_filter(
-        array_map('trim', explode(',', env('ORDER_ADMIN_EMAILS', 'info@goodsessentialsllc.com')))
+        array_map('trim', explode(',', env('ADMIN_EMAILS', 'info@goodsessentialsllc.com')))
     ),
 ];
