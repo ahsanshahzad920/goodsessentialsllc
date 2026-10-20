@@ -15,6 +15,6 @@ class SendWelcomeEmail
             return;
         }
 
-        Mail::to($user->email)->send(new WelcomeUser($user));
+        Mail::to($user->email)->queue(new WelcomeUser($user));
     }
 }

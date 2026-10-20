@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
-        Event::listen(Registered::class, SendWelcomeEmail::class);
+        //Event::listen(Registered::class, SendWelcomeEmail::class);
         VerifyEmail::toMailUsing(function ($notifiable, string $url) {
             return (new MailMessage)
                 ->subject('Verify Your Email - Good Essentials')

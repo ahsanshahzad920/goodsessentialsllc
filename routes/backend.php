@@ -48,7 +48,7 @@ Route::middleware(['auth', 'verified', 'area:admin'])
 | CUSTOMER AREA  (/account/...)  - customers only (admins are redirected away)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified', 'area:customer'])
+Route::middleware(['auth', 'area:customer'])
     ->prefix('account')
     ->group(function () {
 

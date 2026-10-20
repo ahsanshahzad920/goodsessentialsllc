@@ -29,10 +29,12 @@ class SendContactFormMail implements ShouldQueue
     public function handle(): void
     {
         
-        Mail::to($this->data['email'])->send(new ContactFormMail($this->data));
+        Mail::to($this->data['email'])->queue(new ContactFormMail($this->data));
         $superAdmins = User::role('admin')->get();
-        foreach ($superAdmins as $admin) {
-            Mail::to($admin->email)->send(new AdminContactFormMail($this->data));
+        $adminEmails = config('shop.admin_emails', []);
+        if (!empty($adminEmails)) {
+            Mail::to($adminEmails)->queue(new AdminContactFormMail($this->data));
         }
+        
     }
 }
