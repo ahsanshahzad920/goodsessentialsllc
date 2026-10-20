@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use App\Mail\OrderConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
@@ -170,12 +172,24 @@ class CheckoutController extends Controller
         // so a refresh of that page never re-fires the TikTok PlaceAnOrder event.
         session()->put('ttq_pending_place_order_' . $order->id, true);
 
-        // Card orders go to the gateway; cash on delivery is complete.
-        if ($order->payment_method === 'card') {
-            return redirect()->route('payment.start', $order->order_number);
+        // and send a hidden copy to the admin.
+        try {
+            Mail::to($order->email)
+                ->bcc(config('shop.admin_emails'))
+                ->queue(new OrderConfirmationMail($order));
+        } catch (\Throwable $e) {
+            report($e);
         }
 
-        return redirect()->route('order.success', $order->order_number);
+        // Card orders go to the gateway; cash on delivery is complete.
+        if ($order->payment_method === 'card') {
+            return redirect()->route(
+                'payment.start',
+                $order->order_number
+            );
+        }
+
+        return redirect()->route('order.success',$order->order_number);
     }
 
     /** GET /order/success/{order_number} */
