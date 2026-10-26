@@ -101,9 +101,22 @@ class ProductController extends Controller
                 $product->images()->create(['path' => $product->product_image, 'sort_order' => 0]);
             }
 
+            // Bug fix: this used to be $product->slug ?: uniqueSlug(...), which
+            // kept the old slug forever since $product->slug is always already
+            // set -- so the URL never followed a renamed product. Only
+            // regenerate when the title actually changed (so editing price/
+            // description/images alone never touches the URL), and exclude
+            // this product's own row from the uniqueness check so re-saving
+            // the same title doesn't get suffixed against itself.
+            $oldSlug = $product->slug;
+            $titleChanged = $request->product_title !== $product->product_title;
+            $newSlug = $titleChanged
+                ? $this->uniqueSlug($request->product_title, $product->id)
+                : $oldSlug;
+
             $product->update([
                 'product_title'       => $request->product_title,
-                'slug'                => $product->slug ?: $this->uniqueSlug($request->product_title),
+                'slug'                => $newSlug,
                 'product_description' => $request->product_description,
                 'category_id'         => $request->category_id,
                 'price'               => $request->price,
@@ -111,6 +124,22 @@ class ProductController extends Controller
                 'colors'              => $this->cleanColors($request),
                 'updated_by'          => Auth::id(),
             ]);
+
+            // Keep the old URL working (301) now that it points somewhere new.
+            if ($newSlug !== $oldSlug) {
+                $now = now();
+
+                DB::table('redirects')->updateOrInsert(
+                    ['old_path' => 'product/' . $oldSlug],
+                    [
+                        'old_path'    => 'product/' . $oldSlug,
+                        'new_path'    => 'product/' . $newSlug,
+                        'status_code' => 301,
+                        'created_at'  => $now,
+                        'updated_at'  => $now,
+                    ]
+                );
+            }
 
             // Remove ticked images (files are deleted after the transaction succeeds)
             if ($removeIds) {
@@ -227,13 +256,13 @@ class ProductController extends Controller
         $product->update(['product_image' => $main->path]);
     }
 
-    private function uniqueSlug(string $title): string
+    private function uniqueSlug(string $title, ?int $ignoreId = null): string
     {
         $base = Str::slug($title) ?: 'product';
         $slug = $base;
         $suffix = 2;
 
-        while (Product::where('slug', $slug)->exists()) {
+        while (Product::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
             $slug = "{$base}-{$suffix}";
             $suffix++;
         }

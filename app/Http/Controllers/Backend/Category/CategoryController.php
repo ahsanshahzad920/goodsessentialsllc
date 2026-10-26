@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -77,13 +78,37 @@ class CategoryController extends Controller
         ]);
 
         $category = Category::findOrFail($id);
+
+        // Bug fix: this used to only set the slug when it was empty, so the
+        // URL never followed a renamed category. Only regenerate when the
+        // name actually changed, excluding this category's own row from the
+        // uniqueness check so re-saving the same name doesn't get suffixed
+        // against itself, and 301 the old URL to the new one.
+        $oldSlug = $category->slug;
+        $nameChanged = $request->input('name') !== $category->name;
+
         $category->name = $request->input('name');
         $category->description = $request->input('description');
-        if (! $category->slug) {
-            $category->slug = $this->uniqueSlug($category->name);
-        }
+        $category->slug = $nameChanged
+            ? $this->uniqueSlug($category->name, $category->id)
+            : ($oldSlug ?: $this->uniqueSlug($category->name, $category->id));
         $category->updated_by = Auth::id();
         $category->save();
+
+        if ($category->slug !== $oldSlug && $oldSlug) {
+            $now = now();
+
+            DB::table('redirects')->updateOrInsert(
+                ['old_path' => 'shop/' . $oldSlug],
+                [
+                    'old_path'    => 'shop/' . $oldSlug,
+                    'new_path'    => 'shop/' . $category->slug,
+                    'status_code' => 301,
+                    'created_at'  => $now,
+                    'updated_at'  => $now,
+                ]
+            );
+        }
 
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
@@ -99,13 +124,13 @@ class CategoryController extends Controller
             ->with('success', 'Category deleted successfully.');
     }
 
-    private function uniqueSlug(string $name): string
+    private function uniqueSlug(string $name, ?int $ignoreId = null): string
     {
         $base = Str::slug($name);
         $slug = $base;
         $suffix = 2;
 
-        while (Category::where('slug', $slug)->exists()) {
+        while (Category::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
             $slug = "{$base}-{$suffix}";
             $suffix++;
         }
