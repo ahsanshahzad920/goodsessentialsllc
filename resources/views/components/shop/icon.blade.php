@@ -40,6 +40,7 @@ $icons = [
     'toys' => '<path d="M12 8a4 4 0 1 0-4-4 4 4 0 0 0 4 4z"/><path d="M5 14a3 3 0 1 0-3-3 3 3 0 0 0 3 3zM19 14a3 3 0 1 0-3-3 3 3 0 0 0 3 3z"/><path d="M7 16h10l2 6H5l2-6zM9 16v-2a3 3 0 0 1 6 0v2"/>',
     'banknote'    => '<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
     'credit-card' => '<rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/>',
+    'snowflake'   => '<path d="M12 2v20M4.93 4.93l14.14 14.14M2 12h20M4.93 19.07 19.07 4.93"/><path d="m9 4 3 2 3-2M9 20l3-2 3 2M4 9l2 3-2 3M20 9l-2 3 2 3"/>',
 
 ];
 @endphp

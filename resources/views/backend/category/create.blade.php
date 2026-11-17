@@ -9,7 +9,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <form action="{{ route('categories.store') }}" method="POST">
+                        <form action="{{ route('categories.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
 
@@ -26,6 +26,14 @@
                                 <label for="description">Category Description</label>
                                 <textarea name="description" class="form-control" rows="6">{{ old('description') }}</textarea>
                                 @error('description')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-4 fw-bold">
+                                <label for="image">Homepage Tile Image <span class="fw-normal text-muted">(optional — leave empty to auto-use the best-selling product photo)</span></label>
+                                <input type="file" name="image" id="image" class="form-control" accept="image/jpeg,image/png,image/webp">
+                                @error('image')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>

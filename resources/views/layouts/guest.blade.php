@@ -155,7 +155,7 @@
             var price = Number(form.dataset.price) || 0;
             ttqTrack('AddToCart', {
                 contents: [{
-                    content_id: form.dataset.sku || productId,
+                    content_id: productId,
                     content_type: 'product',
                     content_name: form.dataset.name || '',
                     quantity: quantity,
@@ -166,10 +166,10 @@
             });
 
             fbqTrack('AddToCart', {
-                content_ids: [form.dataset.sku || productId],
+                content_ids: [productId],
                 content_type: 'product',
                 content_name: form.dataset.name || '',
-                contents: [{ id: form.dataset.sku || productId, quantity: quantity }],
+                contents: [{ id: productId, quantity: quantity }],
                 value: price * quantity,
                 currency: 'PKR',
             });

@@ -1,4 +1,4 @@
-@props(['product', 'wishlisted' => false])
+@props(['product', 'wishlisted' => false, 'priority' => false])
 
 @php
     // calculateDiscountPrice() is your existing helper.
@@ -17,15 +17,26 @@
     }
 
     $image  = $product->product_image ? asset('storage/' . $product->product_image) : asset('images/product-placeholder.svg');
+    $webp   = \App\Support\WebpImage::url($product->product_image);
     $url    = route('productDetails', $product->slug);
     $rating = $product->rating ?? null;          // optional: shown only if your products have a rating column
     $reviews = $product->reviews_count ?? null;  // optional
 @endphp
 
 <article class="flex flex-col rounded-2xl border border-line bg-white p-2 transition hover:shadow-md">
-    <div class="relative overflow-hidden rounded-xl bg-mist-100">
+    {{-- Normalized 1:1 frame on one soft background; contain (never crop) so
+         every packshot sits the same way regardless of its original ratio. --}}
+    <div class="relative overflow-hidden rounded-xl bg-[#FFF7F2]">
         <a href="{{ $url }}" class="block">
-            <img src="{{ $image }}" alt="{{ $product->product_title }}" loading="lazy" class="aspect-square w-full object-cover">
+            <picture>
+                @if ($webp)
+                    <source type="image/webp" srcset="{{ $webp }}">
+                @endif
+                <img src="{{ $image }}" alt="{{ $product->product_title }}"
+                     width="600" height="600" decoding="async"
+                     @if ($priority) loading="eager" fetchpriority="high" @else loading="lazy" @endif
+                     class="aspect-square w-full object-contain p-2 mix-blend-multiply">
+            </picture>
         </a>
 
         @if ($badge)

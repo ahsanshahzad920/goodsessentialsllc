@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Support\WebpImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -162,6 +163,7 @@ class ProductController extends Controller
 
         if ($deletePaths) {
             Storage::disk('public')->delete($deletePaths);
+            array_map([WebpImage::class, 'delete'], $deletePaths);
         }
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');
@@ -181,6 +183,7 @@ class ProductController extends Controller
 
         if ($paths) {
             Storage::disk('public')->delete($paths);
+            array_map([WebpImage::class, 'delete'], $paths);
         }
 
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
@@ -221,8 +224,12 @@ class ProductController extends Controller
     private function storeImages(Product $product, array $files, int $startOrder): void
     {
         foreach (array_values($files) as $i => $file) {
+            $path = $file->store('products', 'public');
+            // Best effort: a failed conversion just means the original is served.
+            rescue(fn () => WebpImage::generate($path), report: false);
+
             $product->images()->create([
-                'path'       => $file->store('products', 'public'),
+                'path'       => $path,
                 'sort_order' => $startOrder + $i,
             ]);
         }
