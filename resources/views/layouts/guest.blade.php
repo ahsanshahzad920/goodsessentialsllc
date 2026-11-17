@@ -28,6 +28,8 @@
 
     {{-- Hide a dismissed announcement bar before first paint (no layout shift). --}}
     <script>try { if (sessionStorage.getItem('ann-off')) document.documentElement.classList.add('ann-off'); } catch (e) {}</script>
+    {{-- Arm scroll-reveal before first paint (no flicker); only when it can run and motion is welcome. --}}
+    <script>if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js-reveal');</script>
 
     @vite(['resources/css/app.css'])
     @stack('style')
@@ -192,6 +194,28 @@
 
     <x-shop.search-script />
     <x-shop.card-script />
+
+    <script>
+        // Scroll reveal: fade/slide up 16px; product grids stagger 60ms per card.
+        (function () {
+            var root = document.documentElement;
+            if (!root.classList.contains('js-reveal')) return;
+            document.querySelectorAll('[data-reveal-stagger]').forEach(function (grid) {
+                Array.prototype.forEach.call(grid.children, function (c, i) {
+                    c.setAttribute('data-reveal', '');
+                    c.style.setProperty('--reveal-delay', Math.min(i, 6) * 60 + 'ms');
+                });
+            });
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+                });
+            }, { rootMargin: '0px 0px -8% 0px' });
+            document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+            // Printing / save-as-PDF: show everything.
+            window.addEventListener('beforeprint', function () { document.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('is-in'); }); });
+        })();
+    </script>
 
     <script>
         // Header shrink + mobile bottom-nav hide/show. One rAF-throttled

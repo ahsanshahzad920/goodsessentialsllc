@@ -31,12 +31,40 @@
         }
     });
 
+    // ---- 3D tilt + glare (mouse only, max 6°) --------------------------------
+    if (canHover && !reduce) {
+        document.querySelectorAll('article.tilt').forEach(function (card) {
+            var raf = 0;
+            card.addEventListener('pointermove', function (e) {
+                cancelAnimationFrame(raf);
+                raf = requestAnimationFrame(function () {
+                    var r = card.getBoundingClientRect();
+                    var x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+                    card.style.setProperty('--ry', ((x - 0.5) * 12).toFixed(2) + 'deg');
+                    card.style.setProperty('--rx', ((0.5 - y) * 12).toFixed(2) + 'deg');
+                    card.style.setProperty('--gx', (x * 100).toFixed(0) + '%');
+                    card.style.setProperty('--gy', (y * 100).toFixed(0) + '%');
+                    card.classList.add('is-tilting');
+                });
+            });
+            card.addEventListener('pointerleave', function () {
+                cancelAnimationFrame(raf);
+                card.classList.remove('is-tilting');
+                card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg');
+            });
+        });
+    }
+
     // ---- Toast ---------------------------------------------------------------
     var region = document.getElementById('toast-region'), toastTimer;
     window.shopToast = function (text, link) {
         region.replaceChildren();
         var box = document.createElement('div');
         box.className = 'pointer-events-auto flex items-center gap-3 rounded-full bg-ink py-2 pl-4 pr-2 text-sm font-bold text-white shadow-lift transition-[transform,opacity] duration-300 ease-soft translate-y-4 opacity-0';
+        if (link && link.openCart) {
+            // Little drawn checkmark (replaces a Lottie "success" animation, no library needed).
+            box.insertAdjacentHTML('beforeend', '<svg class="size-5 shrink-0 text-mint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-dasharray="24" class="animate-draw"/></svg>');
+        }
         var msg = document.createElement('span'); msg.textContent = text; box.appendChild(msg);
         if (link) {
             var a = document.createElement('a');
@@ -103,7 +131,7 @@
             if (res.status === 200 && res.data.ok) {
                 fly(form.closest('article') && form.closest('article').querySelector('img'));
                 setTimeout(function () { setCartCount(res.data.count); }, reduce ? 0 : 550);
-                shopToast('Added ✓', { href: res.data.cart_url, text: 'View cart', openCart: true });
+                shopToast('Added to cart', { href: res.data.cart_url, text: 'View cart', openCart: true });
                 document.dispatchEvent(new CustomEvent('cart:changed', { detail: res.data }));
             } else if (res.status === 422 && res.data.message) {
                 shopToast(res.data.message);

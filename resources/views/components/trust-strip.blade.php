@@ -19,7 +19,7 @@
         @foreach ($items as $i => [$icon, $title, $text])
             <li class="flex min-w-[11.5rem] shrink-0 snap-start items-center gap-3 rounded-2xl px-3 py-2 md:min-w-0 md:rounded-none {{ $i > 0 ? ($solid ? 'md:border-l md:border-white/25' : 'md:border-l md:border-line') : '' }}">
                 <span class="grid size-11 shrink-0 place-items-center rounded-full {{ $solid ? 'bg-white/15' : 'bg-coral-50 text-coral-600' }}">
-                    <x-shop.icon :name="$icon" class="size-5" />
+                    <x-shop.icon :name="$icon" class="size-5 {{ $icon === 'truck' ? 'animate-truck' : '' }}" />
                 </span>
                 <span>
                     <span class="block text-sm font-extrabold leading-tight">{{ $title }}</span>

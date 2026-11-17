@@ -42,7 +42,7 @@
     $onlyColor = count($colors) === 1 ? $colors[0]['hex'] : null;
 @endphp
 
-<article {{ $attributes->class('group relative flex min-w-0 flex-col overflow-hidden rounded-card border border-line bg-white transition-[box-shadow,transform] duration-300 ease-soft hover:shadow-lift') }}>
+<article {{ $attributes->class('tilt group relative flex min-w-0 flex-col overflow-hidden rounded-card border border-line bg-white duration-300 ease-soft hover:shadow-lift') }}>
     <div class="relative bg-frame">
         {{-- Gallery: swipe on touch screens, second image on hover with a mouse --}}
         <div class="flex snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"

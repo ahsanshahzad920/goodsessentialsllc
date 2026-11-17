@@ -84,6 +84,11 @@
         @endforeach
     </ul>
 
+    {{-- Decorative 3D layer (Phase 7). Stays empty unless resources/js/hero3d.js
+         decides the device can afford it; the static hero above is the fallback. --}}
+    <div data-hero-3d class="pointer-events-none absolute inset-x-0 top-0 h-[38%] overflow-hidden rounded-t-card md:left-[52%] md:h-[calc(100%-3.75rem)] md:rounded-l-none md:rounded-r-card" aria-hidden="true"></div>
+    @vite('resources/js/hero3d.js')
+
     @if ($slides->count() > 1)
         <div class="mt-3 flex items-center justify-center gap-1" data-hero-dots>
             @foreach ($slides as $i => $s)

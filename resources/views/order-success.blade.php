@@ -142,6 +142,32 @@
     ])));
 
     @if ($firePlaceAnOrder ?? false)
+        // Confetti, once per order (same one-shot flag as the Purchase event). ~1KB, no library.
+        (function () {
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            var c = document.createElement('canvas'), x = c.getContext('2d');
+            c.setAttribute('aria-hidden', 'true');
+            c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:80';
+            document.body.appendChild(c);
+            var W = c.width = innerWidth, H = c.height = innerHeight;
+            var colors = ['#f26b5b', '#7c6ce0', '#bdebdd', '#ffe7a3', '#ffd9de'];
+            var bits = Array.from({ length: 120 }, function () {
+                return { x: W / 2, y: H / 3, vx: (Math.random() - .5) * 14, vy: Math.random() * -12 - 4, s: 4 + Math.random() * 6,
+                         r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: colors[(Math.random() * colors.length) | 0] };
+            });
+            var start = performance.now();
+            (function tick(now) {
+                var t = now - start;
+                x.clearRect(0, 0, W, H);
+                bits.forEach(function (b) {
+                    b.vy += .35; b.vx *= .99; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+                    x.save(); x.translate(b.x, b.y); x.rotate(b.r); x.globalAlpha = Math.max(0, 1 - t / 2200);
+                    x.fillStyle = b.c; x.fillRect(-b.s / 2, -b.s / 4, b.s, b.s / 2); x.restore();
+                });
+                t < 2200 ? requestAnimationFrame(tick) : c.remove();
+            })(start);
+        })();
+
         // Fires once (session flag consumed in CheckoutController::success()),
         // so refreshing this page never double-counts the same order.
         var orderContents = @js($order->items->map(fn ($item) => [
