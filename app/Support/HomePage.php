@@ -98,7 +98,7 @@ class HomePage
             return ['products' => collect(), 'ends_at' => null, 'sold' => []];
         }
 
-        $products = Product::forBabySections()
+        $products = Product::forBabySections()->withCardData()
             ->where('dis_price', '>', 0)
             ->reorder()->orderByRaw('CAST(dis_price AS DECIMAL(6,2)) DESC')->latest()
             ->take(8)->get();
@@ -128,9 +128,8 @@ class HomePage
     public static function bestSellers(int $limit = 8): Collection
     {
         return Cache::remember('home.best_sellers', 300, function () use ($limit) {
-            $products = Product::forBabySections()
+            $products = Product::forBabySections()->withCardData()
                 ->reorder()
-                ->select('products.*')
                 ->selectSub(
                     DB::table('order_items')->selectRaw('COALESCE(SUM(quantity), 0)')->whereColumn('order_items.product_id', 'products.id'),
                     'units_sold'
@@ -146,7 +145,7 @@ class HomePage
 
     public static function newArrivals(int $limit = 8): Collection
     {
-        return Product::forBabySections()->take($limit)->get();
+        return Product::forBabySections()->withCardData()->take($limit)->get();
     }
 
     /** Age buckets that actually contain products: key => [label, count]. */

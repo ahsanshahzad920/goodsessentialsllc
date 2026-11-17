@@ -29,8 +29,17 @@ class CartController extends Controller
             $color = collect($product->colors)->firstWhere('hex', strtolower((string) $request->color));
 
             if (! $color) {
-                return back()->withInput()->withErrors(['color' => 'Please choose a color.']);
+                return $this->fail($request, 'color', 'Please choose a color.');
             }
+        }
+
+        // Optional inventory: only products with a stock number are limited.
+        $inCart = collect(session('cart', []))->where('product_id', $product->id)->sum('quantity');
+        $available = \App\Support\Stock::available($product, (int) $inCart);
+        if ($available !== null && $quantity > $available) {
+            return $this->fail($request, 'quantity', $available > 0
+                ? "Only {$available} more of this item can be added."
+                : ($inCart ? 'You already have all remaining stock of this item in your cart.' : 'Sorry, this item is sold out.'));
         }
 
         // Same product in two colors = two cart lines
@@ -67,7 +76,24 @@ class CartController extends Controller
             return redirect()->route('checkout');
         }
 
+        if ($request->wantsJson()) {
+            // AJAX add from product cards: the page stays put (fly-to-cart + toast).
+            return response()->json([
+                'ok'      => true,
+                'count'   => collect($cart)->sum('quantity'),
+                'message' => 'Added to cart',
+                'cart_url' => route('cart'),
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Product added to cart!')->with('cart_added', true);
+    }
+
+    private function fail(Request $request, string $field, string $message)
+    {
+        return $request->wantsJson()
+            ? response()->json(['ok' => false, 'message' => $message], 422)
+            : back()->withInput()->withErrors([$field => $message]);
     }
 
     public function incrementSession(Request $request)

@@ -117,6 +117,9 @@ class CheckoutController extends Controller
                 Area::heal($user); // gives the new account the `customer` role
             }
 
+            // Tracked products: lock, verify, decrement (rolls back with the order on failure).
+            \App\Support\Stock::reserve($lines);
+
             $order = Order::create([
                 'order_number'   => Order::generateNumber(),
                 'user_id'        => $user?->id,

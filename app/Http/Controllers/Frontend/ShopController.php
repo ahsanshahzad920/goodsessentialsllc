@@ -19,7 +19,7 @@ class ShopController extends Controller
         $categoryName = $request->input('category');
         $age = \App\Support\AgeRange::valid($request->input('age')) ? $request->input('age') : null;
 
-        $products = Product::search($search)
+        $products = Product::withCardData()->search($search)
             ->forAge($age)
             ->when($categoryName, function ($query, $categoryName) {
                 $query->whereHas('category', function ($query) use ($categoryName) {
@@ -57,7 +57,7 @@ class ShopController extends Controller
             ? $category->children->pluck('id')->push($category->id)
             : [$category->id];
 
-        $products = Product::whereIn('category_id', $categoryIds)
+        $products = Product::withCardData()->whereIn('category_id', $categoryIds)
             ->search($search)
             ->tap(fn ($q) => $this->applySort($q, $request->input('sort')))
             ->paginate(12)
@@ -76,7 +76,9 @@ class ShopController extends Controller
 
     public function productDetails(Product $product)
     {
-        $products = Product::where('category_id', $product->category_id)->get();
+        // Related products for "You may also like" (cards need gallery + review data).
+        $products = Product::withCardData()->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)->take(8)->get();
 
         SeoService::forProduct($product);
         SeoService::faq([

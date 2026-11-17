@@ -32,8 +32,9 @@ class Product extends Model
         'suggested_min_age_months',
         'suggested_max_age_months',
         'colors',
+        'stock_quantity',
     ];
-    protected $casts = ['colors' => 'array'];
+    protected $casts = ['colors' => 'array', 'stock_quantity' => 'integer'];
 
     // Relationship with Category
     public function category()
@@ -61,6 +62,18 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Everything <x-product-card> shows, in a fixed number of queries:
+     * gallery (second image on hover / swipe) and real approved-review stats.
+     */
+    public function scopeWithCardData(Builder $query): Builder
+    {
+        return $query
+            ->with(['images'])
+            ->withAvg(['reviews as reviews_avg_rating' => fn ($q) => $q->where('is_approved', true)], 'rating')
+            ->withCount(['reviews' => fn ($q) => $q->where('is_approved', true)]);
     }
 
     /** Products whose suitable age range overlaps an AgeRange bucket ('0-3m', '1-3y', …). */

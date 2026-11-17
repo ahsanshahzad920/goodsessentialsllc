@@ -1,54 +1,82 @@
 {{--
     The one product card for every grid (homepage, shop, related products).
-    <x-product-card :product="$p" :wishlisted="true" :priority="$loop->index < 2" />
+    <x-product-card :product="$p" :wishlisted="true" :priority="$loop->index < 2" :sold="12" />
 
-    Keeps the hooks other code relies on:
+    Query with Product::withCardData() so the gallery and review stats load
+    without extra queries.
+
+    Hooks other code relies on (keep them):
       - form[action=cart.store] + data-price / data-sku / data-name -> AddToCart pixel (guest layout)
+      - form[data-ajax-cart]                                       -> fly-to-cart + toast (x-shop.card-script)
       - .js-wishlist + data-product-id / data-url / data-login     -> wishlist toggle
-    Rating only shows when the query loaded real review data
-    (withAvg('reviews as reviews_avg_rating', 'rating') + withCount('reviews')).
+      - [data-card-gallery] / [data-card-dot]                      -> swipe dots, hover swap
 --}}
 @props(['product', 'wishlisted' => false, 'priority' => false, 'sold' => null])
 
 @php
+    use App\Support\{Stock, WebpImage};
+
     $price = (float) str_replace(',', '', (string) ($product->price ?? 0));
     $final = (float) str_replace(',', '', (string) (calculateDiscountPrice($product->price, $product->dis_price) ?? $price));
     $onSale = $final > 0 && $final < $price;
     $pay = $final ?: $price;
+    $url = route('productDetails', $product->slug);
 
-    $image = $product->product_image ? asset('storage/' . $product->product_image) : asset('images/product-placeholder.svg');
-    $webp  = \App\Support\WebpImage::url($product->product_image);
-    $url   = route('productDetails', $product->slug);
+    // Up to 3 gallery images (cover first); falls back to the single cover image.
+    $paths = $product->relationLoaded('images') && $product->images->isNotEmpty()
+        ? $product->images->pluck('path')->take(3)->all()
+        : array_filter([$product->product_image]);
+    $gallery = array_map(fn ($p) => ['src' => asset('storage/' . $p), 'webp' => WebpImage::url($p)], $paths)
+        ?: [['src' => asset('images/product-placeholder.svg'), 'webp' => null]];
 
-    $rating  = $product->reviews_avg_rating ?? null;
-    $reviews = $product->reviews_count ?? null;
+    $rating  = $product->reviews_count ? $product->reviews_avg_rating : null;
+    $reviews = $product->reviews_count ?: null;
+
+    $soldOut = Stock::soldOut($product);
+    $lowLeft = Stock::lowCount($product);
 
     // Two or more colours need a choice on the product page; a single colour is
     // sent automatically (CartController requires one of the product's own colours).
     $colors = $product->colors ?? [];
-    $canAddToCart = \Illuminate\Support\Facades\Route::has('cart.store') && count($colors) <= 1;
+    $canAddToCart = ! $soldOut && \Illuminate\Support\Facades\Route::has('cart.store') && count($colors) <= 1;
     $onlyColor = count($colors) === 1 ? $colors[0]['hex'] : null;
 @endphp
 
 <article {{ $attributes->class('group relative flex min-w-0 flex-col overflow-hidden rounded-card border border-line bg-white transition-[box-shadow,transform] duration-300 ease-soft hover:shadow-lift') }}>
     <div class="relative bg-frame">
-        <a href="{{ $url }}" class="block overflow-hidden" tabindex="-1" aria-hidden="true">
-            <picture>
-                @if ($webp)
-                    <source type="image/webp" srcset="{{ $webp }}">
-                @endif
-                <img src="{{ $image }}" alt="{{ $product->product_title }}"
-                     width="600" height="600" decoding="async"
-                     @if ($priority) loading="eager" fetchpriority="high" @else loading="lazy" @endif
-                     class="aspect-square w-full object-contain p-3 mix-blend-multiply transition-transform duration-300 ease-soft group-hover:scale-105">
-            </picture>
-        </a>
+        {{-- Gallery: swipe on touch screens, second image on hover with a mouse --}}
+        <div class="flex snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+             @if (count($gallery) > 1) data-card-gallery @endif>
+            @foreach ($gallery as $i => $img)
+                <a href="{{ $url }}" class="block w-full shrink-0 snap-center" tabindex="-1" aria-hidden="true">
+                    <picture>
+                        @if ($img['webp']) <source type="image/webp" srcset="{{ $img['webp'] }}"> @endif
+                        <img src="{{ $img['src'] }}" alt="{{ $i === 0 ? $product->product_title : '' }}"
+                             width="600" height="600" decoding="async"
+                             @if ($priority && $i === 0) loading="eager" fetchpriority="high" @else loading="lazy" @endif
+                             class="aspect-square w-full object-contain p-3 mix-blend-multiply {{ $soldOut ? 'opacity-50 grayscale' : '' }}">
+                    </picture>
+                </a>
+            @endforeach
+        </div>
 
-        @if ($onSale)
-            <x-badge tone="sale" class="absolute left-2.5 top-2.5">-{{ round((1 - $final / $price) * 100) }}%</x-badge>
-        @elseif ($product->created_at?->gt(now()->subDays(14)))
-            <x-badge tone="new" class="absolute left-2.5 top-2.5">New</x-badge>
+        @if (count($gallery) > 1)
+            <div class="pointer-events-none absolute inset-x-0 bottom-2 flex justify-center gap-1" aria-hidden="true">
+                @foreach ($gallery as $i => $img)
+                    <span data-card-dot class="h-1.5 rounded-full transition-[width,background-color] duration-300 {{ $i === 0 ? 'w-4 bg-ink/60' : 'w-1.5 bg-ink/20' }}"></span>
+                @endforeach
+            </div>
         @endif
+
+        <div class="pointer-events-none absolute left-2.5 top-2.5 flex flex-col items-start gap-1">
+            @if ($soldOut)
+                <x-badge tone="neutral">Sold out</x-badge>
+            @elseif ($onSale)
+                <x-badge tone="sale">-{{ round((1 - $final / $price) * 100) }}%</x-badge>
+            @elseif ($product->created_at?->gt(now()->subDays(14)))
+                <x-badge tone="new">New</x-badge>
+            @endif
+        </div>
 
         <button type="button"
                 class="js-wishlist group/heart absolute right-1.5 top-1.5 z-10 grid size-11 place-items-center rounded-full text-muted transition active:scale-90"
@@ -70,7 +98,14 @@
 
         <x-rating-stars :rating="$rating" :count="$reviews" size="xs" />
 
-        <x-price :amount="$pay" :original="$onSale ? $price : null" size="sm" :show-save="false" />
+        <x-price :amount="$pay" :original="$onSale ? $price : null" size="sm" />
+
+        @if ($lowLeft)
+            {{-- Real inventory (products.stock_quantity), never a made-up number. --}}
+            <p class="flex items-center gap-1 text-xs font-extrabold text-coral-600">
+                <span class="size-1.5 animate-pulse rounded-full bg-coral-600" aria-hidden="true"></span> Only {{ $lowLeft }} left
+            </p>
+        @endif
 
         @if ($sold)
             {{-- Real units ordered in the last 7 days (App\Support\HomePage::soldThisWeek). --}}
@@ -78,8 +113,10 @@
         @endif
 
         <div class="relative z-10 mt-auto pt-2">
-            @if ($canAddToCart)
-                <form method="POST" action="{{ route('cart.store') }}"
+            @if ($soldOut)
+                <x-button variant="soft" size="sm" type="button" :disabled="true" class="w-full px-2 sm:w-full">Sold out</x-button>
+            @elseif ($canAddToCart)
+                <form method="POST" action="{{ route('cart.store') }}" data-ajax-cart
                       data-price="{{ $pay }}"
                       data-sku="{{ $product->sku ?: $product->id }}"
                       data-name="{{ $product->product_title }}">

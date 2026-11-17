@@ -190,6 +190,7 @@
     </script>
 
     <x-shop.search-script />
+    <x-shop.card-script />
 
     <script>
         // Header shrink + mobile bottom-nav hide/show. One rAF-throttled
