@@ -66,8 +66,8 @@
         <form id="checkout-form"
             action="{{ route('checkout.store') }}"
             method="POST"
-            data-shipping-cod="{{ config('shop.shipping_cod_payment', 50) }}"
-            data-shipping-online="{{ config('shop.shipping_online_payment', 0) }}"
+            data-shipping-cod="{{ \App\Support\Shipping::for((float) $subtotal, 'cod') }}"
+            data-shipping-online="{{ \App\Support\Shipping::for((float) $subtotal, 'card') }}"
             class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
             @csrf
 
@@ -232,7 +232,7 @@
                         </div>
                         <div class="flex justify-between">
                             <dt class="text-muted">Shipping</dt>
-                            <dd id="shipping-amount" class="font-bold">{{ $money($shipping) }}</dd>
+                            <dd id="shipping-amount" class="font-bold">{{ $shipping > 0 ? $money($shipping) : 'FREE' }}</dd>
                         </div>
                         <div class="flex items-center justify-between border-t border-line pt-3">
                             <dt class="text-base font-bold">Total</dt>
@@ -345,7 +345,7 @@
                 if (!Number.isFinite(shipping)) shipping = 0;
                 if (!Number.isFinite(subtotal)) subtotal = 0;
 
-                shippingAmount.textContent = formatMoney(shipping);
+                shippingAmount.textContent = shipping === 0 ? 'FREE' : formatMoney(shipping);
                 totalAmount.textContent = formatMoney(subtotal + shipping);
             }
         }

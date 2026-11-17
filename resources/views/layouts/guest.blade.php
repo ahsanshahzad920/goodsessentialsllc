@@ -26,6 +26,9 @@
         <meta name="msvalidate.01" content="{{ $code }}">
     @endif
 
+    {{-- Hide a dismissed announcement bar before first paint (no layout shift). --}}
+    <script>try { if (sessionStorage.getItem('ann-off')) document.documentElement.classList.add('ann-off'); } catch (e) {}</script>
+
     @vite(['resources/css/app.css'])
     @stack('style')
 
@@ -52,13 +55,19 @@
         </script>
     @endif
 </head>
-<body data-auth="{{ Auth::check() ? '1' : '0' }}">
-    <div class="z-40 md:sticky md:top-0">
-        <x-shop.header :cart-count="collect(session('cart', []))->sum('quantity')" />
-        <x-shop.nav />
-    </div>
+@php $cartCount = collect(session('cart', []))->sum('quantity'); @endphp
+<body data-auth="{{ Auth::check() ? '1' : '0' }}" class="pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
+    <a href="#main" class="sr-only z-[60] rounded-full bg-ink px-4 py-2 font-bold text-white focus:not-sr-only focus:fixed focus:left-3 focus:top-3">Skip to content</a>
 
-    <main>
+    <x-shop.announcement-bar />
+
+    {{-- Fixed-height sticky slot: the header inside shrinks on scroll without moving the page. --}}
+    <div id="site-header" class="sticky top-0 z-40 h-16 md:h-[72px]">
+        <x-shop.header :cart-count="$cartCount" />
+    </div>
+    <x-shop.nav />
+
+    <main id="main">
         {{-- Bug fix: this component existed but was never included anywhere,
              so success/error messages (add-to-cart, contact form, checkout
              errors) were set in session and silently never shown. --}}
@@ -67,6 +76,10 @@
     </main>
 
     <x-shop.footer />
+
+    <x-shop.menu-sheet />
+    <x-shop.search-dialog />
+    <x-shop.bottom-nav :cart-count="$cartCount" />
 
     <script>
         // TikTok Pixel helpers: safe no-ops when the Pixel isn't configured
@@ -175,8 +188,35 @@
             });
         });
     </script>
-    @stack('script')
 
+    <x-shop.search-script />
+
+    <script>
+        // Header shrink + mobile bottom-nav hide/show. One rAF-throttled
+        // passive scroll listener; height changes only inside a fixed-size slot.
+        (function () {
+            var slot = document.getElementById('site-header');
+            var bottom = document.getElementById('bottom-nav');
+            var lastY = window.scrollY, ticking = false;
+
+            function update() {
+                var y = window.scrollY;
+                if (slot) slot.classList.toggle('is-stuck', y > 8);
+                if (bottom) {
+                    var nearEnd = window.innerHeight + y >= document.documentElement.scrollHeight - 80;
+                    if (y > lastY + 4 && y > 120 && !nearEnd) bottom.classList.add('translate-y-full');
+                    else if (y < lastY - 4 || y <= 120 || nearEnd) bottom.classList.remove('translate-y-full');
+                }
+                lastY = y;
+                ticking = false;
+            }
+            window.addEventListener('scroll', function () {
+                if (!ticking) { ticking = true; requestAnimationFrame(update); }
+            }, { passive: true });
+            update();
+        })();
+    </script>
+    @stack('script')
 
 
     <!-- Floating WhatsApp Button -->

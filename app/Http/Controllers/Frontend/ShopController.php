@@ -18,18 +18,19 @@ class ShopController extends Controller
         $search = $request->input('q', $request->input('search'));
         $categoryName = $request->input('category');
 
-        $products = Product::when($search, function ($query, $search) {
-            $query->where('product_title', 'LIKE', "%{$search}%")
-                ->orWhere('price', 'LIKE', "%{$search}%")
-                ->orWhere('dis_price', 'LIKE', "%{$search}%")
-                ->orWhere('product_description', 'LIKE', "%{$search}%");
-        })
+        $products = Product::search($search)
             ->when($categoryName, function ($query, $categoryName) {
                 $query->whereHas('category', function ($query) use ($categoryName) {
                     $query->where('name', $categoryName)->orWhere('slug', $categoryName);
                 });
             })
             ->paginate(12);
+
+        // Real search data for "popular searches" + the admin report.
+        // First page only, so paging through results is not counted again.
+        if ($search && $products->currentPage() === 1) {
+            \App\Models\SearchTerm::record($search, $products->total());
+        }
 
         SeoService::set(
             $search ? "Search results for \"{$search}\" | " . config('app.name') : 'Shop All Baby & Mom Products Online in Pakistan | ' . config('app.name'),
@@ -51,9 +52,7 @@ class ShopController extends Controller
             : [$category->id];
 
         $products = Product::whereIn('category_id', $categoryIds)
-            ->when($search, function ($query, $search) {
-                $query->where('product_title', 'LIKE', "%{$search}%");
-            })
+            ->search($search)
             ->paginate(12);
 
         SeoService::forCategory($category);

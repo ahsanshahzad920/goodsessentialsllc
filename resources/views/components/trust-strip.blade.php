@@ -15,7 +15,7 @@
 @endphp
 
 <section aria-label="Our promises" {{ $attributes->class(['rounded-card', 'bg-brand-600 text-white' => $solid, 'bg-white shadow-soft' => ! $solid]) }}>
-    <ul class="flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 py-3 [scrollbar-width:none] md:grid md:grid-cols-4 md:gap-0 md:overflow-visible md:px-2 [&::-webkit-scrollbar]:hidden">
+    <ul class="flex snap-x snap-mandatory scroll-px-3 gap-2 overflow-x-auto px-3 py-3 [scrollbar-width:none] md:grid md:grid-cols-4 md:gap-0 md:overflow-visible md:px-2 [&::-webkit-scrollbar]:hidden">
         @foreach ($items as $i => [$icon, $title, $text])
             <li class="flex min-w-[11.5rem] shrink-0 snap-start items-center gap-3 rounded-2xl px-3 py-2 md:min-w-0 md:rounded-none {{ $i > 0 ? ($solid ? 'md:border-l md:border-white/25' : 'md:border-l md:border-line') : '' }}">
                 <span class="grid size-11 shrink-0 place-items-center rounded-full {{ $solid ? 'bg-white/15' : 'bg-coral-50 text-coral-600' }}">

@@ -31,7 +31,7 @@ class CheckoutController extends Controller
         [$lines, $subtotal, $removed] = $this->cartLines(session('cart', []));
 
         $defaultMethod = array_key_first(PaymentManager::methods());
-        $shipping = $this->shippingFor($lines, $defaultMethod);
+        $shipping = $this->shippingFor($lines, $defaultMethod, $subtotal);
         $methods  = PaymentManager::methods();
 
         if ($removed) {
@@ -92,7 +92,7 @@ class CheckoutController extends Controller
             'payment_method.in'       => 'That payment method is not available right now.',
         ]);
 
-        $shipping = $this->shippingFor($lines, $data['payment_method']);
+        $shipping = $this->shippingFor($lines, $data['payment_method'], $subtotal);
         $total    = round($subtotal + $shipping, 2);
         $user     = Auth::user(); // null for guests
         $ip = $request->ip(); //  user ip
@@ -254,16 +254,14 @@ class CheckoutController extends Controller
         return [$lines, round(array_sum(array_column($lines, 'total')), 2), $removed];
     }
 
-    private function shippingFor(array $lines, ?string $paymentMethod = null): float
+    private function shippingFor(array $lines, ?string $paymentMethod, float $subtotal): float
     {
         if (empty($lines)) {
             return 0.0;
         }
 
-        $configKey = $paymentMethod === 'card'
-            ? 'shop.shipping_online_payment'
-            : 'shop.shipping_cod_payment';
-
-        return (float) config($configKey, 50);
+        // Base charge per payment method, or 0 once the admin free-delivery
+        // threshold (Settings) is reached. See App\Support\Shipping.
+        return \App\Support\Shipping::for($subtotal, $paymentMethod);
     }
 }
