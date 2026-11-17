@@ -45,7 +45,7 @@
             <ul class="space-y-2">
                 @foreach ($related as $relatedPost)
                     <li>
-                        <a href="{{ route('blog.show', $relatedPost->slug) }}" class="text-sm font-semibold text-brand-500 hover:text-brand-600">
+                        <a href="{{ route('blog.show', $relatedPost->slug) }}" class="text-sm font-semibold text-brand-600 hover:text-brand-700">
                             {{ $relatedPost->title }}
                         </a>
                     </li>

@@ -30,14 +30,14 @@
     <div class="container-shop py-6">
         <nav aria-label="Breadcrumb" class="mb-2 text-xs text-muted">
             <ol class="flex items-center gap-2">
-                <li><a href="{{ route('shop') }}" class="hover:text-brand-500">Shop</a></li>
+                <li><a href="{{ route('shop') }}" class="hover:text-brand-600">Shop</a></li>
                 <li aria-hidden="true">/</li>
-                <li><a href="{{ route('cart') }}" class="hover:text-brand-500">Cart</a></li>
+                <li><a href="{{ route('cart') }}" class="hover:text-brand-600">Cart</a></li>
                 <li aria-hidden="true">/</li>
                 <li class="font-bold text-ink">Checkout</li>
             </ol>
         </nav>
-        <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-500">Almost yours</p>
+        <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-600">Almost yours</p>
         <h1 class="mt-1 text-3xl font-bold">Checkout</h1>
         <p class="mt-0.5 text-xs text-muted">Review your order and enter your delivery details.</p>
     </div>
@@ -46,7 +46,7 @@
 <div class="container-shop py-8">
     @if (empty($lines))
         <div class="mx-auto max-w-md rounded-3xl border border-line bg-white p-10 text-center">
-            <span class="mx-auto grid size-16 place-items-center rounded-full bg-lavender-100 text-brand-500">
+            <span class="mx-auto grid size-16 place-items-center rounded-full bg-lavender-100 text-brand-600">
                 <x-shop.icon name="cart" class="size-7" />
             </span>
             <h2 class="mt-5 text-xl font-semibold">Your cart is empty</h2>
@@ -118,7 +118,7 @@
                             ],
                             'card' => [
                                 'card'  => 'hover:border-brand-500/40 peer-checked:border-brand-500 peer-checked:bg-lavender-100 peer-checked:shadow-brand-500/20',
-                                'idle'  => 'bg-lavender-100 text-brand-500',
+                                'idle'  => 'bg-lavender-100 text-brand-600',
                                 'icon'  => 'group-has-[:checked]/pay:bg-brand-500 group-has-[:checked]/pay:text-white',
                                 'title' => 'group-has-[:checked]/pay:text-brand-600',
                                 'dot'   => 'group-has-[:checked]/pay:border-brand-500 group-has-[:checked]/pay:bg-brand-500',
@@ -179,7 +179,7 @@
                         </div>
 
                         <p class="mt-4 text-xs text-muted">
-                            Already have an account? <a href="{{ route('login') }}" class="font-bold text-brand-500 hover:text-brand-600">Log in</a>
+                            Already have an account? <a href="{{ route('login') }}" class="font-bold text-brand-600 hover:text-brand-700">Log in</a>
                             (your cart will be kept).
                         </p>
                     </section>
@@ -189,7 +189,7 @@
                 <div class="grid gap-3 sm:grid-cols-3">
                     @foreach ([['lock', 'Secure checkout'], ['truck', 'Careful packaging'], ['heart', 'Made with love']] as [$icon, $text])
                         <div class="flex items-center gap-3 rounded-2xl border border-line bg-white p-4">
-                            <x-shop.icon :name="$icon" class="size-5 text-brand-500" />
+                            <x-shop.icon :name="$icon" class="size-5 text-brand-600" />
                             <span class="text-xs font-bold">{{ $text }}</span>
                         </div>
                     @endforeach
@@ -239,7 +239,7 @@
                             <div class="flex items-center justify-between border-t border-line pt-3">
                             <dt class="text-base font-bold">Total</dt>
                             <dd id="total-amount"
-                                class="text-2xl font-extrabold text-brand-500"
+                                class="text-2xl font-extrabold text-brand-600"
                                 data-subtotal="{{ $subtotal }}">
                                 {{ $money($total) }}
                             </dd>
@@ -252,20 +252,20 @@
                             <input type="checkbox" id="terms" name="terms" value="1" required @checked(old('terms'))
                                    class="mt-0.5 size-4 rounded border-line accent-brand-500">
                             <span class="text-xs leading-5 text-muted">
-                                I have read and accept the <a href="#" class="font-bold text-brand-500 underline">Terms &amp; Conditions</a>.
+                                I have read and accept the <a href="#" class="font-bold text-brand-600 underline">Terms &amp; Conditions</a>.
                             </span>
                         </label>
                         @error('terms') <p class="mt-2 text-xs font-semibold text-blush-600">{{ $message }}</p> @enderror
                     </div>
 
                     <button type="submit" id="place-order"
-                            class="flex w-full items-center justify-center gap-2 rounded-full bg-brand-500 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-600 disabled:cursor-wait disabled:opacity-70">
+                            class="btn btn-primary btn-lg w-full disabled:cursor-wait">
                         <span id="place-order-label">Place Order</span>
                         <x-shop.icon name="arrow-right" class="size-4" />
                     </button>
                     <p id="payment-hint" class="text-center text-xs text-muted" aria-live="polite"></p>
 
-                    <a href="{{ route('cart') }}" class="block text-center text-xs font-bold text-muted hover:text-brand-500">Back to cart</a>
+                    <a href="{{ route('cart') }}" class="block text-center text-xs font-bold text-muted hover:text-brand-600">Back to cart</a>
                 </div>
             </aside>
         </form>

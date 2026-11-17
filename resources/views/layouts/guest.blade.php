@@ -12,11 +12,11 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {{-- display=swap: text renders immediately in the fallback font. css2 serves
+         unicode-range subsets, so browsers only fetch the Latin files they need.
+         Font Awesome is no longer loaded on the storefront: all icons are inline
+         Lucide SVGs via <x-shop.icon> (one consistent set, no extra request). --}}
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-    >
     <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}">
 
     @if ($code = config('tracking.google_site_verification'))
