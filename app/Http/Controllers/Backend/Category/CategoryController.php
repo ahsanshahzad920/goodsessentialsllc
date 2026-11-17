@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -38,13 +39,21 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name' => 'required|unique:categories',
             'description' => 'required',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
         $data['slug'] = $this->uniqueSlug($data['name']);
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
+        $data['image'] = $request->hasFile('image')
+            ? $request->file('image')->store('categories', 'public')
+            : null;
+        if ($data['image']) {
+            rescue(fn () => \App\Support\WebpImage::generate($data['image']), report: false);
+        }
 
         Category::create($data);
+        Category::forgetCaches();
 
         return redirect()->route('categories.index')
             ->with('success', 'Category created successfully.');
@@ -75,9 +84,26 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'remove_image' => 'nullable|boolean',
         ]);
 
         $category = Category::findOrFail($id);
+
+        // Optional homepage tile image. Without one, the tile auto-uses the
+        // category's best-selling product photo (Category::homeTiles).
+        if ($request->hasFile('image') || $request->boolean('remove_image')) {
+            if ($category->image) {
+                Storage::disk('public')->delete($category->image);
+                \App\Support\WebpImage::delete($category->image);
+            }
+            $category->image = $request->hasFile('image')
+                ? $request->file('image')->store('categories', 'public')
+                : null;
+            if ($category->image) {
+                rescue(fn () => \App\Support\WebpImage::generate($category->image), report: false);
+            }
+        }
 
         // Bug fix: this used to only set the slug when it was empty, so the
         // URL never followed a renamed category. Only regenerate when the
@@ -110,6 +136,8 @@ class CategoryController extends Controller
             );
         }
 
+        Category::forgetCaches();
+
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
 
@@ -119,6 +147,7 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete();
+        Category::forgetCaches();
 
         return redirect()->route('categories.index')
             ->with('success', 'Category deleted successfully.');

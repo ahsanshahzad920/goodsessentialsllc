@@ -227,6 +227,20 @@ class SeoService
             ->sku($product->sku ?: (string) $product->id)
             ->offers($offer);
 
+        // aggregateRating only from real, approved reviews of THIS product —
+        // never a store-wide or made-up figure.
+        $ratings = $product->reviews()->approved()
+            ->selectRaw('COUNT(*) as n, AVG(rating) as avg')->first();
+        if ($ratings && $ratings->n > 0) {
+            $schema->aggregateRating(
+                Schema::aggregateRating()
+                    ->ratingValue(round((float) $ratings->avg, 1))
+                    ->reviewCount((int) $ratings->n)
+                    ->bestRating(5)
+                    ->worstRating(1)
+            );
+        }
+
         if ($images) {
             $schema->image(array_values($images));
         }

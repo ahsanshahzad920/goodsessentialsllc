@@ -58,6 +58,21 @@ class Product extends Model
             $builder->latest();
         });
     }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /** Products shown in homepage baby sections (excludes e.g. Mom & Wellness). */
+    public function scopeForBabySections(Builder $query): Builder
+    {
+        $excluded = config('shop.homepage_exclude_categories', []);
+
+        return $excluded
+            ? $query->whereDoesntHave('category', fn ($c) => $c->whereIn('slug', $excluded))
+            : $query;
+    }
+
     public function images()
     {
         return $this->hasMany(ProductImage::class)->orderBy('sort_order')->orderBy('id');
