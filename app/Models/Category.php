@@ -109,17 +109,8 @@ class Category extends Model
                 ->map(function (self $category) use ($configured) {
                     $settings = $configured->get(strtolower($category->name), []);
 
-                    $image = $category->image;
-                    if (! $image) {
-                        $image = Product::withoutGlobalScopes()
-                            ->where('products.category_id', $category->id)
-                            ->whereNotNull('products.product_image')
-                            ->leftJoin('order_items', 'order_items.product_id', '=', 'products.id')
-                            ->groupBy('products.id', 'products.product_image', 'products.created_at')
-                            ->orderByRaw('COALESCE(SUM(order_items.quantity), 0) DESC')
-                            ->orderByDesc('products.created_at')
-                            ->value('products.product_image');
-                    }
+                    $image = $category->image ?: static::bestSellersIn($category->id, 1)->value('product_image');
+
 
                     return [
                         'name'  => $category->name,
@@ -136,10 +127,64 @@ class Category extends Model
         });
     }
 
+    /**
+     * Products of one category ranked by units actually ordered, newest first
+     * among equals — "best sellers" from real order data.
+     */
+    public static function bestSellersIn(int $categoryId, int $limit): \Illuminate\Database\Eloquent\Builder
+    {
+        return Product::withoutGlobalScopes()
+            ->where('products.category_id', $categoryId)
+            ->whereNotNull('products.product_image')
+            // Correlated subquery instead of JOIN + GROUP BY: safe under
+            // ONLY_FULL_GROUP_BY on both MySQL and MariaDB.
+            ->orderByRaw('(SELECT COALESCE(SUM(oi.quantity), 0) FROM order_items oi WHERE oi.product_id = products.id) DESC')
+            ->orderByDesc('products.created_at')
+            ->take($limit);
+    }
+
+    /**
+     * Desktop mega-menu: every nav category with its image and top 4 products.
+     *
+     * @return \Illuminate\Support\Collection<int, array>
+     */
+    public static function megaMenu(): \Illuminate\Support\Collection
+    {
+        return Cache::remember('shop.mega_menu', 300, function () {
+            $rows = static::withoutGlobalScope('latest')->withProducts()->get()->keyBy('slug');
+
+            return static::navItems()->map(function (array $nav) use ($rows) {
+                $category = $rows->get($nav['slug']);
+                if (! $category) {
+                    return null;
+                }
+                $products = static::bestSellersIn($category->id, 4)->get();
+                $image = $category->image ?: optional($products->first())->product_image;
+
+                return $nav + [
+                    'count'    => (int) $category->products_count,
+                    'image'    => $image ? asset('storage/' . $image) : null,
+                    'products' => $products->map(function (Product $p) {
+                        $price = (float) str_replace(',', '', (string) $p->price);
+                        $final = (float) calculateDiscountPrice($price, (float) $p->dis_price);
+                        return [
+                            'title' => $p->product_title,
+                            'url'   => route('productDetails', $p->slug),
+                            'image' => \App\Support\WebpImage::url($p->product_image) ?? asset('storage/' . $p->product_image),
+                            'price' => $final ?: $price,
+                            'was'   => $final > 0 && $final < $price ? $price : null,
+                        ];
+                    })->all(),
+                ];
+            })->filter()->values();
+        });
+    }
+
     public static function forgetCaches(): void
     {
         Cache::forget('shop.visible_categories');
         Cache::forget('shop.home_tiles');
+        Cache::forget('shop.mega_menu');
     }
 
     // Query Scope

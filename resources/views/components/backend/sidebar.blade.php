@@ -40,6 +40,13 @@
                 <i class="fa fa-shopping-bag me-2"></i>
                 Products
             </a>
+
+            {{-- Store settings --}}
+            <a href="{{ route('admin.settings.edit') }}"
+                class="nav-item nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                <i class="fa fa-sliders-h me-2"></i>
+                Store Settings
+            </a>
         </div>
     </nav>
 </div>

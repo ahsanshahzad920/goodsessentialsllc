@@ -63,6 +63,26 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
+    /**
+     * Text search over title, SKU and description, as ONE grouped condition
+     * so it combines correctly with category filters (the old shop query
+     * chained bare orWhere()s, which let other categories leak in).
+     */
+    public function scopeSearch(Builder $query, ?string $term): Builder
+    {
+        $term = trim((string) $term);
+        if ($term === '') {
+            return $query;
+        }
+        $like = '%' . addcslashes($term, '%_\\') . '%';
+
+        return $query->where(function (Builder $q) use ($like) {
+            $q->where('product_title', 'LIKE', $like)
+              ->orWhere('sku', 'LIKE', $like)
+              ->orWhere('product_description', 'LIKE', $like);
+        });
+    }
+
     /** Products shown in homepage baby sections (excludes e.g. Mom & Wellness). */
     public function scopeForBabySections(Builder $query): Builder
     {

@@ -37,6 +37,11 @@ Route::controller(ShopController::class)->group(function () {
     Route::get('product/{product:slug}', 'productDetails')->name('productDetails');
 });
 
+// Instant results for the header search box (debounced client-side, 250ms).
+Route::get('search/suggest', \App\Http\Controllers\Frontend\SearchSuggestController::class)
+    ->middleware('throttle:90,1')
+    ->name('search.suggest');
+
 Route::post('/wishlist/toggle', [WishlistController::class, 'toggleWishlist'])->name('wishlist.toggle')->middleware('auth');
 Route::post('/wishlist/remove', [WishlistController::class, 'remove'])->name('wishlist.remove')->middleware('auth');
 

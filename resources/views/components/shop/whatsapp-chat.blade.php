@@ -6,16 +6,16 @@
         type="button"
         aria-label="Open customer support chat"
         aria-expanded="false"
-        class="fixed bottom-4 right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-mint-100 sm:bottom-6 sm:right-6 sm:h-[60px] sm:w-[60px]"
+        class="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-mint-100 md:bottom-6 sm:right-6 sm:h-[60px] sm:w-[60px]"
     >
-        <x-shop.icon name="whatsapp" class="size-4 shrink-0" />
+        <x-shop.icon name="whatsapp" class="size-8 shrink-0" />
     </button>
 
     <!-- Chat Popup -->
     <div
         id="wa-panel"
         hidden
-        class="fixed bottom-[84px] left-3 right-3 z-[9999] flex h-[514px] max-h-[calc(100dvh-104px)] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:bottom-[100px] sm:left-auto sm:right-6 sm:h-[514px] sm:w-[360px] sm:max-w-[calc(100vw-48px)] sm:max-h-[calc(100dvh-120px)]"
+        class="fixed bottom-[calc(9.5rem+env(safe-area-inset-bottom))] left-3 right-3 z-[9999] flex h-[514px] max-h-[calc(100dvh-11rem)] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl md:bottom-[100px] sm:left-auto sm:right-6 sm:h-[514px] sm:w-[360px] sm:max-w-[calc(100vw-48px)] sm:max-h-[calc(100dvh-120px)]"
     >
 
         <!-- Header -->
