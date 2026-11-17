@@ -25,7 +25,19 @@ class Settings
         // Empty = no free delivery, and the announcement bar does not claim it.
         'free_delivery_threshold' => null,
         'announcement_enabled'    => '1',
+        // JSON list of up to 3 {product_id, eyebrow, badge, headline}; empty = sensible defaults (App\Support\HomePage).
+        'hero_slides'             => null,
+        // When the current "Deals of the Week" end (Y-m-d H:i, store time). Empty = no countdown.
+        'deals_ends_at'           => null,
     ];
+
+    /** Decoded JSON setting, or [] when missing/invalid. */
+    public static function json(string $key): array
+    {
+        $v = json_decode((string) self::get($key, ''), true);
+
+        return is_array($v) ? $v : [];
+    }
 
     public static function all(): array
     {

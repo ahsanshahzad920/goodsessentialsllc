@@ -68,6 +68,9 @@
                                 @enderror
                             </div>
 
+                            {{-- Suitable age (Shop by Age) --}}
+                            @include('backend.products._age-fields', ['product' => null])
+
                             {{-- Product color picker --}}
                             @include('backend.products._color-picker', ['product' => null])
 

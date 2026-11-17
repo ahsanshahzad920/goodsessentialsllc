@@ -41,6 +41,36 @@
                                 </label>
                             </div>
 
+                            <h5 class="fw-bold mb-1">Homepage hero slides</h5>
+                            <p class="text-muted small mb-3">Up to 3 products. Price, discount and photo come from the product itself. Leave a slide's product empty to remove it; leave all empty to use the defaults (Character swaddle, top winter deal, gift set).</p>
+                            @foreach ($heroSlides as $i => $slide)
+                                <div class="border rounded p-3 mb-3">
+                                    <div class="fw-bold mb-2">Slide {{ $i + 1 }}</div>
+                                    <select name="hero[{{ $i }}][product_id]" class="form-control mb-2">
+                                        <option value="">— No slide —</option>
+                                        @foreach ($products as $p)
+                                            <option value="{{ $p->id }}" @selected((int) old("hero.$i.product_id", $slide['product_id'] ?? 0) === $p->id)>
+                                                {{ $p->product_title }}{{ (float) $p->dis_price > 0 ? ' (' . (float) $p->dis_price . '% off)' : '' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="row g-2">
+                                        <div class="col-md-4"><input type="text" name="hero[{{ $i }}][eyebrow]" maxlength="40" class="form-control" placeholder="Small label, e.g. Winter collection" value="{{ old("hero.$i.eyebrow", $slide['eyebrow'] ?? '') }}"></div>
+                                        <div class="col-md-3"><input type="text" name="hero[{{ $i }}][badge]" maxlength="20" class="form-control" placeholder="Badge, e.g. MEGA SALE" value="{{ old("hero.$i.badge", $slide['badge'] ?? '') }}"></div>
+                                        <div class="col-md-5"><input type="text" name="hero[{{ $i }}][headline]" maxlength="80" class="form-control" placeholder="Headline (default: product name)" value="{{ old("hero.$i.headline", $slide['headline'] ?? '') }}"></div>
+                                    </div>
+                                </div>
+                            @endforeach
+
+                            <h5 class="fw-bold mb-1 mt-4">Deals of the Week</h5>
+                            <div class="form-group mb-4">
+                                <label for="deals_ends_at" class="fw-bold">Deal ends at</label>
+                                <input type="datetime-local" name="deals_ends_at" id="deals_ends_at" class="form-control"
+                                       value="{{ old('deals_ends_at', $settings['deals_ends_at'] ? \Illuminate\Support\Carbon::parse($settings['deals_ends_at'])->format('Y-m-d\TH:i') : '') }}">
+                                <small class="text-muted d-block mt-1">Shows a live countdown on the homepage. When this time passes, the Deals section hides itself until you set a new date. Leave empty for deals without a countdown.</small>
+                                @error('deals_ends_at') <div class="text-danger">{{ $message }}</div> @enderror
+                            </div>
+
                             <button type="submit" class="btn btn-success">Save Settings</button>
                         </form>
                     </div>

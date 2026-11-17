@@ -17,14 +17,18 @@ class ShopController extends Controller
 
         $search = $request->input('q', $request->input('search'));
         $categoryName = $request->input('category');
+        $age = \App\Support\AgeRange::valid($request->input('age')) ? $request->input('age') : null;
 
         $products = Product::search($search)
+            ->forAge($age)
             ->when($categoryName, function ($query, $categoryName) {
                 $query->whereHas('category', function ($query) use ($categoryName) {
                     $query->where('name', $categoryName)->orWhere('slug', $categoryName);
                 });
             })
-            ->paginate(12);
+            ->tap(fn ($q) => $this->applySort($q, $request->input('sort')))
+            ->paginate(12)
+            ->withQueryString();
 
         // Real search data for "popular searches" + the admin report.
         // First page only, so paging through results is not counted again.
@@ -33,12 +37,14 @@ class ShopController extends Controller
         }
 
         SeoService::set(
-            $search ? "Search results for \"{$search}\" | " . config('app.name') : 'Shop All Baby & Mom Products Online in Pakistan | ' . config('app.name'),
+            $search ? "Search results for \"{$search}\" | " . config('app.name')
+                : ($age ? 'Baby Products for ' . \App\Support\AgeRange::label($age) . ' | ' . config('app.name')
+                : 'Shop All Baby & Mom Products Online in Pakistan | ' . config('app.name')),
             'Browse baby clothes, feeding essentials, baby care, toys and gift sets online in Pakistan. Cash on Delivery, fast delivery & easy returns.',
-            index: ! $search,
+            index: ! $search && ! $age,
         );
 
-        return view('shop', compact('categories', 'products', 'category'));
+        return view('shop', compact('categories', 'products', 'category', 'search', 'age'));
     }
 
     public function shopCategory(Request $request, Category $category)
@@ -53,7 +59,9 @@ class ShopController extends Controller
 
         $products = Product::whereIn('category_id', $categoryIds)
             ->search($search)
-            ->paginate(12);
+            ->tap(fn ($q) => $this->applySort($q, $request->input('sort')))
+            ->paginate(12)
+            ->withQueryString();
 
         SeoService::forCategory($category);
         SeoService::itemList(collect($products->items()));
@@ -63,7 +71,7 @@ class ShopController extends Controller
             'How long does delivery take?' => config('shop.delivery.message'),
         ]);
 
-        return view('shop', compact('categories', 'products', 'category'));
+        return view('shop', compact('categories', 'products', 'category', 'search'));
     }
 
     public function productDetails(Product $product)
@@ -78,5 +86,22 @@ class ShopController extends Controller
         ]);
 
         return view('product-details', compact('product', 'products'));
+    }
+
+    /**
+     * The shop page has always shown a Sort dropdown, but the value was never
+     * applied (every listing came back newest-first). Price sorts use the
+     * price the customer actually pays (price minus the dis_price percentage).
+     */
+    private function applySort($query, ?string $sort): void
+    {
+        $final = "CAST(price AS DECIMAL(12,2)) * (1 - COALESCE(CAST(NULLIF(dis_price, '') AS DECIMAL(6,2)), 0) / 100)";
+
+        match ($sort) {
+            'price_asc'  => $query->reorder()->orderByRaw("$final ASC"),
+            'price_desc' => $query->reorder()->orderByRaw("$final DESC"),
+            'name'       => $query->reorder()->orderBy('product_title'),
+            default      => null, // latest: the model's global scope
+        };
     }
 }

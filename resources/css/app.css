@@ -3,6 +3,7 @@
 @source "../views";
 /* Pastel tone safelist so components can build classes like bg-{{ $tone }}-100 */
 @source inline("{bg,text,ring}-{lavender,blush,mint,sun,peach,sky,lilac,leaf,mist}-{100,600}");
+@source inline("from-{lavender,blush,mint,sun,peach,sky,lilac,leaf,mist}-600/60");
 
 /*
  * Goods Essentials design tokens (Phase 1).
