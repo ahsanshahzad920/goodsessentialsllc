@@ -12,12 +12,12 @@
 <section class="border-b border-line bg-white/70">
     <div class="container-shop flex flex-wrap items-end justify-between gap-3 py-6">
         <div>
-            <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-500">My account</p>
+            <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-600">My account</p>
             <h1 class="mt-1 text-3xl font-bold">My orders</h1>
             <p class="mt-0.5 text-xs text-muted">Hi {{ Auth::user()->name }}, here's everything you've ordered.</p>
         </div>
         <a href="{{ route('user.profile.show') }}"
-           class="rounded-full border border-line bg-white px-5 py-2.5 text-xs font-bold hover:border-brand-500 hover:text-brand-500">Edit profile</a>
+           class="rounded-full border border-line bg-white px-5 py-2.5 text-xs font-bold hover:border-brand-500 hover:text-brand-600">Edit profile</a>
     </div>
 </section>
 
@@ -37,7 +37,7 @@
                         <span class="rounded-full bg-{{ $t }}-100 px-3 py-1 text-[11px] font-extrabold capitalize text-{{ $t }}-600">{{ $order->status }}</span>
                         <span class="text-base font-extrabold">{{ $money($order->total) }}</span>
                         <a href="{{ route('account.orders.show', $order) }}"
-                           class="inline-flex items-center gap-1 rounded-full bg-lavender-100 px-4 py-2 text-xs font-extrabold text-brand-500 hover:bg-brand-500 hover:text-white">
+                           class="inline-flex items-center gap-1 rounded-full bg-lavender-100 px-4 py-2 text-xs font-extrabold text-brand-600 hover:bg-brand-500 hover:text-white">
                             View <x-shop.icon name="arrow-right" class="size-3.5" />
                         </a>
                     </div>
@@ -48,7 +48,7 @@
         <div class="mt-8">{{ $orders->links('vendor.pagination.shop') }}</div>
     @else
         <div class="mx-auto max-w-md rounded-3xl border border-line bg-white p-10 text-center">
-            <span class="mx-auto grid size-16 place-items-center rounded-full bg-lavender-100 text-brand-500">
+            <span class="mx-auto grid size-16 place-items-center rounded-full bg-lavender-100 text-brand-600">
                 <x-shop.icon name="cart" class="size-7" />
             </span>
             <h2 class="mt-5 text-xl font-semibold">No orders yet</h2>

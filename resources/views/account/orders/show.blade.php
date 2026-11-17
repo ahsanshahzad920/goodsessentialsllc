@@ -12,7 +12,7 @@
 <section class="border-b border-line bg-white/70">
     <div class="container-shop py-6">
         <nav aria-label="Breadcrumb" class="mb-2 text-xs text-muted">
-            <a href="{{ route('account.orders.index') }}" class="hover:text-brand-500">My orders</a> <span aria-hidden="true">/</span>
+            <a href="{{ route('account.orders.index') }}" class="hover:text-brand-600">My orders</a> <span aria-hidden="true">/</span>
             <span class="font-bold text-ink">{{ $order->order_number }}</span>
         </nav>
         <div class="flex flex-wrap items-center gap-3">
@@ -48,7 +48,7 @@
             <div class="flex justify-between"><dt class="text-muted">Subtotal</dt><dd class="font-bold">{{ $money($order->subtotal) }}</dd></div>
             <div class="flex justify-between"><dt class="text-muted">Shipping</dt><dd class="font-bold">{{ $money($order->shipping) }}</dd></div>
             <div class="flex justify-between border-t border-line pt-3 text-base">
-                <dt class="font-bold">Total</dt><dd class="font-extrabold text-brand-500">{{ $money($order->total) }}</dd>
+                <dt class="font-bold">Total</dt><dd class="font-extrabold text-brand-600">{{ $money($order->total) }}</dd>
             </div>
         </dl>
     </section>
@@ -69,7 +69,7 @@
         </div>
 
         <a href="{{ route('account.orders.index') }}"
-           class="flex w-full items-center justify-center rounded-full border border-line bg-white py-3 text-sm font-extrabold hover:border-brand-500 hover:text-brand-500">
+           class="flex w-full items-center justify-center rounded-full border border-line bg-white py-3 text-sm font-extrabold hover:border-brand-500 hover:text-brand-600">
             Back to my orders
         </a>
     </aside>

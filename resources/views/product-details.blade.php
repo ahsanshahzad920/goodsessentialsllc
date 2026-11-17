@@ -133,52 +133,23 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex flex-col gap-3 sm:flex-row">
+                <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     @if ($isInCart)
-                        <button
-                            type="button"
-                            disabled
-                            class="inline-flex min-h-12 flex-1 cursor-not-allowed items-center justify-center gap-2 rounded-full bg-line px-6 py-3 text-sm font-bold text-muted"
-                        >
-                            <i class="fa-solid fa-check"></i>
-                            Already in Cart
-                        </button>
-                        <a href="{{ route('checkout') }}"
-                           class="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-blush-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:brightness-90">
-                            <i class="fa-solid fa-bolt"></i>
-                            Go to Checkout
-                        </a>
+                        <x-button :href="route('checkout')" icon="zap" class="flex-1">Go to Checkout</x-button>
+                        <x-button variant="soft" type="button" :disabled="true" icon="check" class="flex-1">Already in Cart</x-button>
                     @else
-                        <button
-                            type="submit"
-                            name="buy_now" value="0"
-                            class="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-blush-600 shadow-sm ring-1 ring-inset ring-blush-100 transition hover:bg-blush-100 focus:outline-none focus:ring-2 focus:ring-blush-100"
-                        >
-                            <i class="fa-solid fa-bag-shopping"></i>
-                            Add to Cart
-                        </button>
-                        <button
-                            type="submit"
-                            name="buy_now" value="1"
-                            class="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-blush-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:brightness-90 focus:outline-none focus:ring-2 focus:ring-blush-100"
-                        >
-                            <i class="fa-solid fa-bolt"></i>
-                            Buy Now
-                        </button>
+                        {{-- Primary first: one clear action. name/value tell CartController which one was pressed. --}}
+                        <x-button name="buy_now" value="1" icon="zap" class="flex-1">Buy Now</x-button>
+                        <x-button name="buy_now" value="0" variant="secondary" icon="bag" class="flex-1">Add to Cart</x-button>
                     @endif
-                    <a
-                        href="{{ route('shop') }}"
-                        class="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-line bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-blush-600 hover:text-blush-600"
-                    >
-                        Continue Shopping
-                    </a>
+                    <x-button :href="route('shop')" variant="ghost" class="sm:basis-full">Continue Shopping</x-button>
                 </div>
             </form>
             {{-- Store benefits --}}
             <div class="grid grid-cols-1 gap-3 border-t border-gray-100 pt-5 sm:grid-cols-2">
                 <div class="flex items-center gap-3 rounded-2xl bg-pink-50/70 p-4">
                     <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-pink-600">
-                        <i class="fa-solid fa-heart"></i>
+                        <x-shop.icon name="heart" class="size-4 shrink-0 fill-current" />
                     </span>
                     <div>
                         <p class="text-sm font-bold text-gray-800">Made for Little Ones</p>
@@ -187,7 +158,7 @@
                 </div>
                 <div class="flex items-center gap-3 rounded-2xl bg-purple-50/70 p-4">
                     <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-purple-600">
-                        <i class="fa-solid fa-gift"></i>
+                        <x-shop.icon name="gift" class="size-4 shrink-0" />
                     </span>
                     <div>
                         <p class="text-sm font-bold text-gray-800">Perfect for Gifting</p>
@@ -201,7 +172,7 @@
     </section>
     {{-- FAQ --}}
     <section aria-label="Frequently asked questions" class="space-y-4 border-t border-gray-100 pt-6">
-        <h2 class="text-lg font-bold text-gray-900">Frequently Asked Questions</h2>
+        <x-section-header title="Frequently Asked Questions" />
         <div class="space-y-2">
             @foreach ([
                 'Is Cash on Delivery available for this product?' => 'Yes, Cash on Delivery is available for orders under Rs. 40,000.',
@@ -211,7 +182,7 @@
                 <details class="group rounded-2xl border border-gray-100 bg-white p-4">
                     <summary class="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-gray-800">
                         {{ $question }}
-                        <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition group-open:rotate-180"></i>
+                        <x-shop.icon name="chevron-down" class="size-3 shrink-0 text-gray-400 transition group-open:rotate-180" />
                     </summary>
                     <p class="mt-2 text-sm leading-6 text-gray-600">{{ $answer }}</p>
                 </details>
@@ -238,7 +209,7 @@
         @else
             <div class="rounded-3xl border border-gray-100 bg-white px-6 py-12 text-center">
                 <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-pink-50 text-pink-500">
-                    <i class="fa-solid fa-heart text-xl"></i>
+                    <x-shop.icon name="heart" class="size-5 shrink-0 fill-current" />
                 </div>
                 <h3 class="font-bold text-gray-900">
                     More goodies coming soon!

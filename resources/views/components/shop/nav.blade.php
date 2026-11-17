@@ -8,7 +8,7 @@
         @php $home = request()->routeIs('index'); @endphp
         <li class="shrink-0">
             <a href="{{ route('index') }}" @if($home) aria-current="page" @endif
-               class="flex items-center gap-1.5 border-b-2 py-1.5 {{ $home ? 'border-brand-500 text-brand-500' : 'border-transparent text-ink hover:text-brand-500' }}">
+               class="flex items-center gap-1.5 border-b-2 py-1.5 {{ $home ? 'border-brand-500 text-brand-600' : 'border-transparent text-ink hover:text-brand-600' }}">
                 <x-shop.icon name="home" class="size-4" /> Home
             </a>
         </li>
@@ -20,7 +20,7 @@
             @endphp
             <li class="shrink-0">
                 <a href="{{ $href }}" @if($active) aria-current="page" @endif
-                   class="flex items-center gap-1.5 border-b-2 py-1.5 {{ $active ? 'border-brand-500 text-brand-500' : 'border-transparent text-ink hover:text-brand-500' }}">
+                   class="flex items-center gap-1.5 border-b-2 py-1.5 {{ $active ? 'border-brand-500 text-brand-600' : 'border-transparent text-ink hover:text-brand-600' }}">
                     <x-shop.icon :name="$c['icon']" class="size-4" /> {{ $c['label'] ?? $c['name'] }}
                 </a>
             </li>

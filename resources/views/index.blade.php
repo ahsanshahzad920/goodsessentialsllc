@@ -83,7 +83,7 @@
 
     {{-- Homepage FAQ (same source as the FAQPage schema: App\Support\StoreFaq) --}}
     <section aria-label="Frequently asked questions" class="space-y-4">
-        <h2 class="text-2xl font-bold text-ink">Frequently Asked Questions</h2>
+        <x-section-header title="Frequently Asked Questions" />
         <div class="mx-auto max-w-3xl space-y-2">
             @foreach ($homeFaqs as $question => $answer)
                 <details class="group rounded-2xl border border-line bg-white p-4">
@@ -98,55 +98,7 @@
     </section>
 
     {{-- Testimonials: approved + featured rows from the reviews table --}}
-    @if ($testimonials->isNotEmpty())
-        @php $tones = ['blush', 'lilac', 'sun']; @endphp
-        <section aria-label="Customer testimonials" class="space-y-6">
-            <div class="text-center">
-                <span class="text-sm font-bold uppercase tracking-wider text-blush-600">
-                    Kind Words from Customers
-                </span>
-                <h2 class="mt-2 text-3xl font-extrabold tracking-tight text-ink">
-                    What Our Customers Say
-                </h2>
-                <p class="mt-3 text-sm text-muted">
-                    Feedback shared by customers about their shopping experiences.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
-                @foreach ($testimonials as $review)
-                    @php $tone = $tones[$loop->index % count($tones)]; @endphp
-                    <article class="flex flex-col rounded-3xl border border-line bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                        <div class="flex items-center gap-1 text-sun-100" role="img" aria-label="{{ $review->rating }} out of 5 stars">
-                            @for ($i = 1; $i <= 5; $i++)
-                                <i class="fa-solid fa-star text-sm {{ $i <= $review->rating ? '' : 'opacity-30' }}"></i>
-                            @endfor
-                        </div>
-
-                        <i class="fa-solid fa-quote-left mt-5 text-2xl text-{{ $tone }}-100"></i>
-
-                        <p class="mt-3 flex-1 text-sm leading-7 text-muted">{{ $review->body }}</p>
-
-                        <div class="mt-6 flex items-center gap-3 border-t border-line pt-5">
-                            @if ($review->photo_url)
-                                <img src="{{ $review->photo_url }}" alt="" width="44" height="44" loading="lazy" class="size-11 rounded-full object-cover">
-                            @else
-                                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-{{ $tone }}-100 font-bold text-{{ $tone }}-600" aria-hidden="true">
-                                    {{ $review->initials }}
-                                </div>
-                            @endif
-                            <div>
-                                <h3 class="text-sm font-bold text-ink">{{ $review->display_name }}</h3>
-                                @if ($review->city)
-                                    <p class="mt-1 text-xs text-muted">{{ $review->city }}</p>
-                                @endif
-                            </div>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
-        </section>
-    @endif
+    <x-shop.testimonials :reviews="$testimonials" />
 
     <x-shop.trust-bar />
 </div>

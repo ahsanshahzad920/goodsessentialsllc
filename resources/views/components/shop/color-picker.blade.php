@@ -8,7 +8,7 @@
 
     <fieldset>
         <legend class="mb-3 block text-sm font-semibold text-gray-800">
-            Color: <span data-color-label class="font-bold text-brand-500">{{ $selectedName }}</span>
+            Color: <span data-color-label class="font-bold text-brand-600">{{ $selectedName }}</span>
         </legend>
 
         <div class="flex flex-wrap gap-3" role="radiogroup" aria-label="Color">

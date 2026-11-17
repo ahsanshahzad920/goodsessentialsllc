@@ -11,7 +11,7 @@
             </span>
         @else
             <a href="{{ $paginator->previousPageUrl() }}" rel="prev" aria-label="Previous page"
-               class="{{ $base }} border-line bg-white text-ink hover:border-brand-500 hover:text-brand-500">
+               class="{{ $base }} border-line bg-white text-ink hover:border-brand-500 hover:text-brand-600">
                 <x-shop.icon name="arrow-right" class="size-4 rotate-180" />
             </a>
         @endif
@@ -28,7 +28,7 @@
                         <span aria-current="page" class="{{ $base }} border-brand-500 bg-brand-500 text-white">{{ $page }}</span>
                     @else
                         <a href="{{ $url }}" aria-label="Go to page {{ $page }}"
-                           class="{{ $base }} border-line bg-white text-ink hover:border-brand-500 hover:text-brand-500">{{ $page }}</a>
+                           class="{{ $base }} border-line bg-white text-ink hover:border-brand-500 hover:text-brand-600">{{ $page }}</a>
                     @endif
                 @endforeach
             @endif
@@ -37,7 +37,7 @@
         {{-- Next --}}
         @if ($paginator->hasMorePages())
             <a href="{{ $paginator->nextPageUrl() }}" rel="next" aria-label="Next page"
-               class="{{ $base }} border-line bg-white text-ink hover:border-brand-500 hover:text-brand-500">
+               class="{{ $base }} border-line bg-white text-ink hover:border-brand-500 hover:text-brand-600">
                 <x-shop.icon name="arrow-right" class="size-4" />
             </a>
         @else
