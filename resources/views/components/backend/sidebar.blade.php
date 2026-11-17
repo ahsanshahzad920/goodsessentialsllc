@@ -41,6 +41,17 @@
                 Products
             </a>
 
+            {{-- Reviews --}}
+            @php $pendingReviews = rescue(fn () => \App\Models\Review::where('is_approved', false)->count(), 0, false); @endphp
+            <a href="{{ route('admin.reviews.index') }}"
+                class="nav-item nav-link {{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">
+                <i class="fa fa-star me-2"></i>
+                Reviews
+                @if ($pendingReviews > 0)
+                    <span class="badge bg-warning text-dark ms-2">{{ $pendingReviews }}</span>
+                @endif
+            </a>
+
             {{-- Store settings --}}
             <a href="{{ route('admin.settings.edit') }}"
                 class="nav-item nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">

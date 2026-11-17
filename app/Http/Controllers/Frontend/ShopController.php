@@ -87,7 +87,16 @@ class ShopController extends Controller
             'How long will delivery take?' => config('shop.delivery.message'),
         ]);
 
-        return view('product-details', compact('product', 'products'));
+        $product->loadMissing('images', 'category');
+
+        return view('product-details', [
+            'product'         => $product,
+            'products'        => $products,
+            'reviewData'      => \App\Support\ProductPage::reviews($product),
+            'boughtTogether'  => \App\Support\ProductPage::boughtTogether($product),
+            'description'     => \App\Support\ProductPage::descriptionSections($product->product_description),
+            'deliveryWindow'  => \App\Support\ProductPage::deliveryWindow(),
+        ]);
     }
 
     /**

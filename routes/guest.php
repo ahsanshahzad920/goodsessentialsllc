@@ -37,6 +37,11 @@ Route::controller(ShopController::class)->group(function () {
     Route::get('product/{product:slug}', 'productDetails')->name('productDetails');
 });
 
+// Customer reviews (held for admin approval).
+Route::post('product/{product:slug}/reviews', [\App\Http\Controllers\Frontend\ReviewController::class, 'store'])
+    ->middleware('throttle:5,10')
+    ->name('reviews.store');
+
 // Instant results for the header search box (debounced client-side, 250ms).
 Route::get('search/suggest', \App\Http\Controllers\Frontend\SearchSuggestController::class)
     ->middleware('throttle:90,1')
