@@ -63,6 +63,23 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
+    /** Products whose suitable age range overlaps an AgeRange bucket ('0-3m', '1-3y', …). */
+    public function scopeForAge(Builder $query, ?string $bucket): Builder
+    {
+        if (! \App\Support\AgeRange::valid($bucket)) {
+            return $query;
+        }
+        [, $from, $to] = \App\Support\AgeRange::BUCKETS[$bucket];
+
+        return $query->where(function (Builder $q) {
+            $q->whereNotNull('suggested_min_age_months')->orWhereNotNull('suggested_max_age_months');
+        })->where(function (Builder $q) use ($to) {
+            $q->whereNull('suggested_min_age_months')->orWhere('suggested_min_age_months', '<', $to);
+        })->where(function (Builder $q) use ($from) {
+            $q->whereNull('suggested_max_age_months')->orWhere('suggested_max_age_months', '>', $from);
+        });
+    }
+
     /**
      * Text search over title, SKU and description, as ONE grouped condition
      * so it combines correctly with category filters (the old shop query

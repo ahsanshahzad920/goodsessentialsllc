@@ -19,6 +19,12 @@
                     <x-rating-stars :rating="$review->rating" size="md" />
                     <x-shop.icon name="quote" class="mt-4 size-7 fill-current text-{{ $tone }}-100" />
                     <blockquote class="mt-2 flex-1 text-sm leading-7 text-muted">{{ $review->body }}</blockquote>
+                    @if ($review->product)
+                        <a href="{{ route('productDetails', $review->product->slug) }}" class="mt-4 flex items-center gap-2.5 rounded-2xl bg-frame p-2 text-xs font-bold text-ink hover:bg-coral-50">
+                            <img src="{{ \App\Support\WebpImage::url($review->product->product_image) ?? asset('storage/' . $review->product->product_image) }}" alt="" width="40" height="40" loading="lazy" class="size-10 rounded-xl bg-white object-contain p-0.5">
+                            <span class="line-clamp-2">{{ $review->product->product_title }}</span>
+                        </a>
+                    @endif
 
                     <figcaption class="mt-6 flex items-center gap-3 border-t border-line pt-5">
                         @if ($review->photo_url)

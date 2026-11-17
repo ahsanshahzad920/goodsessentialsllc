@@ -8,7 +8,7 @@
     Rating only shows when the query loaded real review data
     (withAvg('reviews as reviews_avg_rating', 'rating') + withCount('reviews')).
 --}}
-@props(['product', 'wishlisted' => false, 'priority' => false])
+@props(['product', 'wishlisted' => false, 'priority' => false, 'sold' => null])
 
 @php
     $price = (float) str_replace(',', '', (string) ($product->price ?? 0));
@@ -23,8 +23,11 @@
     $rating  = $product->reviews_avg_rating ?? null;
     $reviews = $product->reviews_count ?? null;
 
-    // Products with colour options need a choice first, so the card links to the page.
-    $canAddToCart = \Illuminate\Support\Facades\Route::has('cart.store') && empty($product->colors);
+    // Two or more colours need a choice on the product page; a single colour is
+    // sent automatically (CartController requires one of the product's own colours).
+    $colors = $product->colors ?? [];
+    $canAddToCart = \Illuminate\Support\Facades\Route::has('cart.store') && count($colors) <= 1;
+    $onlyColor = count($colors) === 1 ? $colors[0]['hex'] : null;
 @endphp
 
 <article {{ $attributes->class('group relative flex min-w-0 flex-col overflow-hidden rounded-card border border-line bg-white transition-[box-shadow,transform] duration-300 ease-soft hover:shadow-lift') }}>
@@ -69,6 +72,11 @@
 
         <x-price :amount="$pay" :original="$onSale ? $price : null" size="sm" :show-save="false" />
 
+        @if ($sold)
+            {{-- Real units ordered in the last 7 days (App\Support\HomePage::soldThisWeek). --}}
+            <x-badge tone="warning" size="xs" class="self-start">{{ $sold }} sold this week</x-badge>
+        @endif
+
         <div class="relative z-10 mt-auto pt-2">
             @if ($canAddToCart)
                 <form method="POST" action="{{ route('cart.store') }}"
@@ -78,6 +86,7 @@
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                     <input type="hidden" name="quantity" value="1">
+                    @if ($onlyColor) <input type="hidden" name="color" value="{{ $onlyColor }}"> @endif
                     <x-button variant="soft" size="sm" icon="cart" class="w-full px-2 text-center leading-tight whitespace-normal sm:w-full max-[400px]:[&>svg]:hidden">Add to cart</x-button>
                 </form>
             @else
