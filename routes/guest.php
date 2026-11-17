@@ -37,6 +37,10 @@ Route::controller(ShopController::class)->group(function () {
     Route::get('product/{product:slug}', 'productDetails')->name('productDetails');
 });
 
+// Gift box builder (pick 3–5 items).
+Route::get('gift-box', [\App\Http\Controllers\Frontend\GiftBoxController::class, 'show'])->name('gift-box');
+Route::post('gift-box', [\App\Http\Controllers\Frontend\GiftBoxController::class, 'store'])->name('gift-box.store')->middleware('throttle:20,1');
+
 // Customer reviews (held for admin approval).
 Route::post('product/{product:slug}/reviews', [\App\Http\Controllers\Frontend\ReviewController::class, 'store'])
     ->middleware('throttle:5,10')
@@ -63,10 +67,12 @@ Route::controller(CartController::class)->group(function () {
     Route::post('/increment-session', 'incrementSession')->name('increment.session');
     Route::post('/decrement-session', 'decrementSession')->name('decrement.session');
     Route::post('/cart/remove', 'remove')->name('cart.remove');
+    Route::get('/cart/drawer', 'drawer')->name('cart.drawer');
 });
 
 Route::get('checkout', [CheckoutController::class, 'show'])->name('checkout');
 Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store')->middleware('throttle:10,1');
+Route::post('checkout/capture', \App\Http\Controllers\Frontend\CheckoutCaptureController::class)->name('checkout.capture')->middleware('throttle:20,1');
 Route::get('order/success/{order_number}', [CheckoutController::class, 'success'])->name('order.success');
 
 

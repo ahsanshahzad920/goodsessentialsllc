@@ -79,6 +79,7 @@
 
     <x-shop.menu-sheet />
     <x-shop.search-dialog />
+    <x-shop.cart-drawer />
     <x-shop.bottom-nav :cart-count="$cartCount" />
 
     <script>

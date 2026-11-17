@@ -96,7 +96,10 @@
                     <p class="text-xs font-extrabold uppercase tracking-wider text-sun-600">Newborn gifts · Aqiqa</p>
                     <h2 id="gift-title" class="mt-1 font-display text-3xl font-semibold leading-tight text-ink md:text-4xl">A thoughtful gift for the new baby</h2>
                     <p class="mt-3 max-w-md text-sm leading-7 text-ink/75">Ready-to-give sets, delivered to their door anywhere in Pakistan — with Cash on Delivery.</p>
-                    <x-button :href="$giftLink" icon="gift" class="mt-5">Shop gift sets</x-button>
+                    <div class="mt-5 flex flex-wrap gap-3">
+                        <x-button :href="route('gift-box')" icon="gift">Build a Gift Box</x-button>
+                        <x-button :href="$giftLink" variant="secondary" :block="false">Ready-made sets</x-button>
+                    </div>
                 </div>
                 <a href="{{ route('productDetails', $gift->slug) }}" class="mx-auto block" tabindex="-1" aria-hidden="true">
                     <picture>

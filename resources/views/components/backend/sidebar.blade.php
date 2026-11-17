@@ -52,6 +52,13 @@
                 @endif
             </a>
 
+            {{-- Abandoned checkouts --}}
+            <a href="{{ route('admin.abandoned.index') }}"
+                class="nav-item nav-link {{ request()->routeIs('admin.abandoned.*') ? 'active' : '' }}">
+                <i class="fa fa-phone me-2"></i>
+                Follow-ups
+            </a>
+
             {{-- Store settings --}}
             <a href="{{ route('admin.settings.edit') }}"
                 class="nav-item nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">

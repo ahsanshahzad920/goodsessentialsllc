@@ -105,6 +105,15 @@ class CartController extends Controller
             return response()->json(['message' => 'Item is not in your cart.'], 404);
         }
 
+        // Respect tracked stock across all colour lines of this product.
+        $product = Product::find($cart[$key]['product_id'] ?? 0);
+        if ($product && \App\Support\Stock::tracked($product)) {
+            $inCart = collect($cart)->where('product_id', $product->id)->sum('quantity');
+            if ($inCart + 1 > $product->stock_quantity) {
+                return response()->json(['message' => "Only {$product->stock_quantity} in stock."], 422);
+            }
+        }
+
         $cart[$key]['quantity'] = min(self::MAX_QTY, $cart[$key]['quantity'] + 1);
         session()->put('cart', $cart);
 
@@ -142,6 +151,10 @@ class CartController extends Controller
         unset($cart[$key]);
         session()->put('cart', $cart);
 
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true, 'count' => collect($cart)->sum('quantity')]);
+        }
+
         return redirect()->back()->with('success', 'Product removed from your cart.');
     }
 
@@ -156,6 +169,13 @@ class CartController extends Controller
         return (string) ($request->input('item_key') ?: $request->input('product_id'));
     }
 
+    /** GET /cart/drawer — HTML for the slide-in cart (lines, free-delivery bar, add-ons). */
+    public function drawer()
+    {
+        return response()->view('partials.cart-drawer', \App\Support\CartDrawer::data())
+            ->header('Cache-Control', 'no-store');
+    }
+
     private function cartResponse(array $cart, string $key, string $message)
     {
         $grandTotal = 0;
@@ -168,6 +188,7 @@ class CartController extends Controller
             'quantity'   => $cart[$key]['quantity'],
             'total'      => $cart[$key]['quantity'] * $cart[$key]['product_price'],
             'grandTotal' => $grandTotal,
+            'count'      => collect($cart)->sum('quantity'),
         ]);
     }
 }
