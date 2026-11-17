@@ -63,6 +63,9 @@
             <h1 class="text-2xl font-bold leading-tight tracking-tight text-gray-900 sm:text-3xl">
                 {{ $product->product_title ?? 'Product Details' }}
             </h1>
+            @if ($product->sku)
+                <p class="-mt-2 text-xs text-gray-400">SKU: {{ $product->sku }}</p>
+            @endif
             {{-- Price --}}
             <div class="flex flex-wrap items-center gap-3">
                 <span class="text-2xl font-extrabold text-gray-900">
