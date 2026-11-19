@@ -194,6 +194,14 @@
             contents: orderContents.map(function (c) { return { id: c.content_id, quantity: c.quantity }; }),
             value: {{ (float) $order->total }},
             currency: 'PKR',
+        }, @js('purchase_' . $order->id)); // same id as the server-side Conversions API Purchase
+
+        // GA4 purchase (same one-shot guard)
+        gaEvent('purchase', {
+            transaction_id: @js($order->order_number),
+            value: {{ (float) $order->total }},
+            shipping: {{ (float) $order->shipping }},
+            items: orderContents.map(function (c) { return { item_id: c.content_id, item_name: c.content_name, price: c.price, quantity: c.quantity }; }),
         });
     @endif
 

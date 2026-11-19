@@ -427,6 +427,12 @@
             num_items: checkoutContents.reduce(function (n, c) { return n + c.quantity; }, 0),
             value: {{ (float) $subtotal }},
             currency: 'PKR',
+        }, @js($checkoutEventId ?? null));
+
+        // GA4 begin_checkout
+        gaEvent('begin_checkout', {
+            value: {{ (float) $subtotal }},
+            items: checkoutContents.map(function (c) { return { item_id: c.content_id, item_name: c.content_name, price: c.price, quantity: c.quantity }; }),
         });
 
         @if ($user && $user->email)

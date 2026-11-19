@@ -89,6 +89,13 @@ class ShopController extends Controller
 
         $product->loadMissing('images', 'category');
 
+        // ViewContent: same id for the CAPI event and the browser Pixel.
+        $viewEventId = \App\Services\MetaConversions::newEventId('vc');
+        \App\Services\MetaConversions::send('ViewContent', $viewEventId, [
+            'value' => (float) \App\Support\Price::final($product), 'content_type' => 'product',
+            'content_ids' => [(string) $product->id], 'content_name' => $product->product_title,
+        ], request());
+
         return view('product-details', [
             'product'         => $product,
             'products'        => $products,
@@ -96,6 +103,7 @@ class ShopController extends Controller
             'boughtTogether'  => \App\Support\ProductPage::boughtTogether($product),
             'description'     => \App\Support\ProductPage::descriptionSections($product->product_description),
             'deliveryWindow'  => \App\Support\ProductPage::deliveryWindow(),
+            'viewEventId'     => $viewEventId,
         ]);
     }
 

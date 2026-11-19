@@ -38,6 +38,16 @@ class CheckoutController extends Controller
             session()->flash('error', 'Some items in your cart are no longer available and were removed.');
         }
 
+        // InitiateCheckout: one id for the server (CAPI) and browser (Pixel) events.
+        $checkoutEventId = \App\Services\MetaConversions::newEventId('ic');
+        if ($lines) {
+            \App\Services\MetaConversions::send('InitiateCheckout', $checkoutEventId, [
+                'value' => (float) $subtotal, 'content_type' => 'product',
+                'content_ids' => collect($lines)->map(fn ($l) => (string) $l['product']->id)->values()->all(),
+                'num_items' => (int) collect($lines)->sum('quantity'),
+            ], request());
+        }
+
         return view('checkout', [
             'lines'          => $lines,
             'subtotal'       => $subtotal,
@@ -45,6 +55,7 @@ class CheckoutController extends Controller
             'total'          => round($subtotal + $shipping, 2),
             'paymentMethods' => $methods,
             'defaultMethod' => $defaultMethod,
+            'checkoutEventId' => $checkoutEventId,
         ]);
     }
 
@@ -203,6 +214,9 @@ class CheckoutController extends Controller
         } catch (\Throwable $e) {
             report($e);
         }
+
+        // Server-side Purchase; the success page fires the Pixel with the same id.
+        \App\Services\MetaConversions::purchase($order, $request);
 
         // Abandoned-checkout follow-up list: this phone/session has now ordered.
         \App\Models\AbandonedCheckout::markConverted($order, $request->session()->getId());

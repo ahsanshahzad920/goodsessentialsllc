@@ -104,21 +104,21 @@
 
         // Meta Pixel helper: same safe-no-op pattern as ttqTrack above, so
         // event call sites don't need their own typeof fbq guard.
-        window.fbqTrack = function (event, data) {
+        // eventId (optional) is shared with the server-side Conversions API
+        // event, so Meta deduplicates the pair (App\Services\MetaConversions).
+        window.fbqTrack = function (event, data, eventId) {
             if (typeof fbq === 'undefined') return;
-            fbq('track', event, data || {});
+            eventId ? fbq('track', event, data || {}, { eventID: eventId }) : fbq('track', event, data || {});
         };
 
-        // Hamburger menu
-        (function () {
-            var btn = document.getElementById('menu-toggle');
-            var menu = document.getElementById('mobile-menu');
-            if (!btn || !menu) return;
-            btn.addEventListener('click', function () {
-                menu.hidden = !menu.hidden;
-                btn.setAttribute('aria-expanded', String(!menu.hidden));
-            });
-        })();
+        // GA4 helper: safe no-op until GA4_MEASUREMENT_ID is set.
+        window.gaEvent = function (name, params) {
+            if (typeof gtag === 'function') gtag('event', name, Object.assign({ currency: 'PKR' }, params || {}));
+        };
+
+        window.newEventId = function (prefix) {
+            return prefix + '_' + ((window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '-' + Math.random().toString(36).slice(2)));
+        };
 
         // Wishlist hearts (same endpoint as before: POST /wishlist/toggle)
         document.addEventListener('click', async function (e) {
@@ -163,13 +163,19 @@
             var quantity = Number(form.querySelector('[name="quantity"]')?.value) || 1;
             if (!productId) return;
 
-            if (typeof gtag === 'function') {
-                gtag('event', 'add_to_cart', {
-                    items: [{ item_id: productId, quantity: quantity }]
-                });
-            }
-
             var price = Number(form.dataset.price) || 0;
+
+            // One id for the browser Pixel AND the server-side CAPI event
+            // (CartController reads it from this hidden field).
+            var eventId = newEventId('atc');
+            var hidden = form.querySelector('input[name="event_id"]');
+            if (!hidden) { hidden = document.createElement('input'); hidden.type = 'hidden'; hidden.name = 'event_id'; form.appendChild(hidden); }
+            hidden.value = eventId;
+
+            gaEvent('add_to_cart', {
+                value: price * quantity,
+                items: [{ item_id: productId, item_name: form.dataset.name || '', price: price, quantity: quantity }]
+            });
             ttqTrack('AddToCart', {
                 contents: [{
                     content_id: productId,
@@ -189,7 +195,7 @@
                 contents: [{ id: productId, quantity: quantity }],
                 value: price * quantity,
                 currency: 'PKR',
-            });
+            }, eventId);
         });
     </script>
 

@@ -28,6 +28,7 @@ class SettingsController extends Controller
             'announcement_enabled'    => ['nullable', 'boolean'],
             'recent_orders_enabled'   => ['nullable', 'boolean'],
             'deals_ends_at'           => ['nullable', 'date'],
+            'hero_cta_text'           => ['nullable', 'string', 'max:40'],
             'hero'                    => ['nullable', 'array', 'max:3'],
             'hero.*.product_id'       => ['nullable', 'integer', 'exists:products,id'],
             'hero.*.eyebrow'          => ['nullable', 'string', 'max:40'],
@@ -49,6 +50,7 @@ class SettingsController extends Controller
             'announcement_enabled'    => $request->boolean('announcement_enabled') ? '1' : '0',
             'recent_orders_enabled'   => $request->boolean('recent_orders_enabled') ? '1' : '0',
             'deals_ends_at'           => $data['deals_ends_at'] ?? null,
+            'hero_cta_text'           => trim($data['hero_cta_text'] ?? '') ?: null,
             'hero_slides'             => $hero ? json_encode($hero) : null,
         ]);
 

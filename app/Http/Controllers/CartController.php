@@ -72,6 +72,16 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
 
+        // Server-side twin of the browser AddToCart (same event_id => deduplicated).
+        $eventId = (string) $request->input('event_id');
+        if (preg_match('/^atc_[A-Za-z0-9-]{8,60}$/', $eventId)) {
+            \App\Services\MetaConversions::send('AddToCart', $eventId, [
+                'value' => round($price * $quantity, 2), 'content_type' => 'product',
+                'content_ids' => [(string) $product->id], 'content_name' => $product->product_title,
+                'contents' => [['id' => (string) $product->id, 'quantity' => $quantity, 'item_price' => (float) $price]],
+            ], $request);
+        }
+
         if ($request->boolean('buy_now')) {
             return redirect()->route('checkout');
         }

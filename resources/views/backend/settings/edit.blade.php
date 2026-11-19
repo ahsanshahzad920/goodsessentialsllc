@@ -72,6 +72,12 @@
                                 </div>
                             @endforeach
 
+                            <div class="form-group mb-4">
+                                <label for="hero_cta_text" class="fw-bold">Hero button text</label>
+                                <input type="text" name="hero_cta_text" id="hero_cta_text" maxlength="40" class="form-control" value="{{ old('hero_cta_text', $settings['hero_cta_text']) }}">
+                                <small class="text-muted">Change it to test which wording gets more orders. Empty = "Order Now — Cash on Delivery".</small>
+                            </div>
+
                             <h5 class="fw-bold mb-1 mt-4">Deals of the Week</h5>
                             <div class="form-group mb-4">
                                 <label for="deals_ends_at" class="fw-bold">Deal ends at</label>

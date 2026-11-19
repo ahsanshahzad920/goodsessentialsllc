@@ -29,6 +29,8 @@ class Settings
         'recent_orders_enabled'   => '1',
         // JSON list of up to 3 {product_id, eyebrow, badge, headline}; empty = sensible defaults (App\Support\HomePage).
         'hero_slides'             => null,
+        // Hero button label (editable for A/B tests without a deploy).
+        'hero_cta_text'           => 'Order Now — Cash on Delivery',
         // When the current "Deals of the Week" end (Y-m-d H:i, store time). Empty = no countdown.
         'deals_ends_at'           => null,
     ];

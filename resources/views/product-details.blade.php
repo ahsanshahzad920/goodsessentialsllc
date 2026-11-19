@@ -462,6 +462,12 @@
         contents: [{ id: @js((string) $product->id), quantity: 1 }],
         value: {{ (float) $currentPrice }},
         currency: 'PKR',
+    }, @js($viewEventId ?? null));
+
+    // GA4 view_item
+    gaEvent('view_item', {
+        value: {{ (float) $currentPrice }},
+        items: [{ item_id: @js((string) $product->id), item_name: @js($product->product_title), item_category: @js($product->category->name ?? ''), price: {{ (float) $currentPrice }}, quantity: 1 }],
     });
 </script>
 @endpush
