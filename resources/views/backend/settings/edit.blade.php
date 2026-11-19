@@ -41,6 +41,16 @@
                                 </label>
                             </div>
 
+                            <h5 class="fw-bold mb-3">Social proof</h5>
+                            <div class="form-check mb-4">
+                                <input type="hidden" name="recent_orders_enabled" value="0">
+                                <input class="form-check-input" type="checkbox" name="recent_orders_enabled" value="1" id="recent_orders_enabled"
+                                       @checked(old('recent_orders_enabled', $settings['recent_orders_enabled']) == '1')>
+                                <label class="form-check-label" for="recent_orders_enabled">
+                                    Show "Ayesha from Multan ordered …" pop-ups (real orders from the last 7 days; first name + city only, max 5 per visit)
+                                </label>
+                            </div>
+
                             <h5 class="fw-bold mb-1">Homepage hero slides</h5>
                             <p class="text-muted small mb-3">Up to 3 products. Price, discount and photo come from the product itself. Leave a slide's product empty to remove it; leave all empty to use the defaults (Character swaddle, top winter deal, gift set).</p>
                             @foreach ($heroSlides as $i => $slide)

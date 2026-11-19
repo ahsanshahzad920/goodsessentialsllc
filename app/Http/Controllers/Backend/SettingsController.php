@@ -26,6 +26,7 @@ class SettingsController extends Controller
         $data = $request->validate([
             'free_delivery_threshold' => ['nullable', 'numeric', 'min:1', 'max:1000000'],
             'announcement_enabled'    => ['nullable', 'boolean'],
+            'recent_orders_enabled'   => ['nullable', 'boolean'],
             'deals_ends_at'           => ['nullable', 'date'],
             'hero'                    => ['nullable', 'array', 'max:3'],
             'hero.*.product_id'       => ['nullable', 'integer', 'exists:products,id'],
@@ -46,12 +47,14 @@ class SettingsController extends Controller
         Settings::set([
             'free_delivery_threshold' => $data['free_delivery_threshold'] ?? null,
             'announcement_enabled'    => $request->boolean('announcement_enabled') ? '1' : '0',
+            'recent_orders_enabled'   => $request->boolean('recent_orders_enabled') ? '1' : '0',
             'deals_ends_at'           => $data['deals_ends_at'] ?? null,
             'hero_slides'             => $hero ? json_encode($hero) : null,
         ]);
 
         // Homepage caches that depend on these settings.
         Cache::forget('home.best_sellers');
+        Cache::forget('recent_orders_feed');
 
         return redirect()->route('admin.settings.edit')->with('success', 'Settings saved. They are live on the store now.');
     }

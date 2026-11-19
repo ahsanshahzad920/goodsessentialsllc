@@ -51,5 +51,15 @@
             </div>
         </div>
         <div class="mt-3">{{ $rows->links() }}</div>
+
+        <h4 class="heading mt-5">WhatsApp updates sign-ups <span class="text-muted fs-6">({{ $subscribers->count() }})</span></h4>
+        <p class="text-muted small">People who asked for new arrivals &amp; deals on WhatsApp (store footer). Copy the numbers into a WhatsApp broadcast list.</p>
+        <div class="card border-0"><div class="card-body">
+            @if ($subscribers->isEmpty())
+                <span class="text-muted">No sign-ups yet.</span>
+            @else
+                <textarea class="form-control" rows="4" readonly onclick="this.select()">{{ $subscribers->pluck('phone')->map(fn ($p) => \App\Support\PkPhone::display($p))->implode(", ") }}</textarea>
+            @endif
+        </div></div>
     </div>
 @endsection

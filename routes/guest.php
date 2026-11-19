@@ -41,6 +41,10 @@ Route::controller(ShopController::class)->group(function () {
 Route::get('gift-box', [\App\Http\Controllers\Frontend\GiftBoxController::class, 'show'])->name('gift-box');
 Route::post('gift-box', [\App\Http\Controllers\Frontend\GiftBoxController::class, 'store'])->name('gift-box.store')->middleware('throttle:20,1');
 
+// Social proof + WhatsApp updates opt-in.
+Route::get('recent-orders', [\App\Http\Controllers\Frontend\SocialProofController::class, 'recentOrders'])->name('recent-orders')->middleware('throttle:30,1');
+Route::post('subscribe', [\App\Http\Controllers\Frontend\SocialProofController::class, 'subscribe'])->name('subscribe')->middleware('throttle:5,1');
+
 // Customer reviews (held for admin approval).
 Route::post('product/{product:slug}/reviews', [\App\Http\Controllers\Frontend\ReviewController::class, 'store'])
     ->middleware('throttle:5,10')

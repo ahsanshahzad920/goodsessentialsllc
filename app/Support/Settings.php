@@ -25,6 +25,8 @@ class Settings
         // Empty = no free delivery, and the announcement bar does not claim it.
         'free_delivery_threshold' => null,
         'announcement_enabled'    => '1',
+        // "Ayesha from Multan ordered…" toasts from real orders of the last 7 days.
+        'recent_orders_enabled'   => '1',
         // JSON list of up to 3 {product_id, eyebrow, badge, headline}; empty = sensible defaults (App\Support\HomePage).
         'hero_slides'             => null,
         // When the current "Deals of the Week" end (Y-m-d H:i, store time). Empty = no countdown.

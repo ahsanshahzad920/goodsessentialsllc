@@ -15,6 +15,8 @@ class AbandonedCheckoutController extends Controller
             'rows' => AbandonedCheckout::whereNull('order_id')
                 ->where('updated_at', '<=', now()->subMinutes(30))
                 ->latest('updated_at')->paginate(30),
+            // WhatsApp-updates opt-ins from the store footer.
+            'subscribers' => \Illuminate\Support\Facades\DB::table('subscribers')->latest()->limit(200)->get(),
         ]);
     }
 
