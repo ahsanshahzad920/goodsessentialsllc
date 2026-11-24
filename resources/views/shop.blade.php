@@ -33,7 +33,7 @@
 <section class="border-b border-line bg-white/70">
     <div class="container-shop flex flex-wrap items-end justify-between gap-4 py-6">
         <div>
-            <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-500">Shop</p>
+            <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-600">Shop</p>
             <h1 class="mt-1 text-3xl font-bold">{{ $activeCategory->name ?? 'Shop' }}</h1>
             <p class="mt-0.5 text-xs text-muted">{{ number_format($total) }} {{ Str::plural('product', $total) }}</p>
         </div>
@@ -77,7 +77,7 @@
             <form id="filters-form" method="GET" action="{{ url()->current() }}" class="space-y-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-sm font-semibold">Filters</h2>
-                    <a href="{{ route('shop') }}" class="text-[11px] font-semibold text-muted hover:text-brand-500">Reset</a>
+                    <a href="{{ route('shop') }}" class="text-[11px] font-semibold text-muted hover:text-brand-600">Reset</a>
                 </div>
 
                 <div>
@@ -153,7 +153,7 @@
                         <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
                             @foreach ($visibleCategories as $c)
                                 <a href="{{ route('shop.category', $c->slug) }}"
-                                   class="rounded-full border border-line bg-white px-4 py-2 text-xs font-bold text-ink hover:border-brand-500 hover:text-brand-500">
+                                   class="rounded-full border border-line bg-white px-4 py-2 text-xs font-bold text-ink hover:border-brand-500 hover:text-brand-600">
                                     {{ $c->name }}
                                 </a>
                             @endforeach

@@ -3,7 +3,7 @@
 <tr>
     <td colspan="{{ $count }}">
         <div class="alert alert-info text-center" role="alert">
-            <i class="fas fa-info-circle"></i> No Records Found
+            <x-shop.icon name="info" class="size-4 shrink-0" /> No Records Found
         </div>
     </td>
 </tr>

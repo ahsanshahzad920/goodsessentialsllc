@@ -17,7 +17,7 @@
                 We've received your order.
             @endif
         </p>
-        <p class="mt-4 rounded-full bg-lavender-100 px-5 py-2 text-sm font-extrabold text-brand-500">Order {{ $order->order_number }}</p>
+        <p class="mt-4 rounded-full bg-lavender-100 px-5 py-2 text-sm font-extrabold text-brand-600">Order {{ $order->order_number }}</p>
 
         @if ($accountCreated ?? false)
             <p class="mt-4 max-w-md text-sm text-muted">Your account has been created and you're signed in, so you can follow your orders from "My Orders".</p>
@@ -51,7 +51,7 @@
             <div class="flex justify-between"><dt class="text-muted">Subtotal</dt><dd class="font-bold">{{ money($order->subtotal) }}</dd></div>
             <div class="flex justify-between"><dt class="text-muted">Shipping</dt><dd class="font-bold">{{ money($order->shipping) }}</dd></div>
             <div class="flex justify-between border-t border-line pt-3 text-base">
-                <dt class="font-bold">Total</dt><dd class="font-extrabold text-brand-500">{{ money($order->total) }}</dd>
+                <dt class="font-bold">Total</dt><dd class="font-extrabold text-brand-600">{{ money($order->total) }}</dd>
             </div>
         </dl>
     </section>
@@ -93,7 +93,7 @@
         </div>
 
         <a href="{{ route('shop') }}"
-           class="flex w-full items-center justify-center gap-2 rounded-full border border-line bg-white py-3 text-sm font-extrabold hover:border-brand-500 hover:text-brand-500">
+           class="flex w-full items-center justify-center gap-2 rounded-full border border-line bg-white py-3 text-sm font-extrabold hover:border-brand-500 hover:text-brand-600">
             Continue shopping <x-shop.icon name="arrow-right" class="size-4" />
         </a>
     </aside>

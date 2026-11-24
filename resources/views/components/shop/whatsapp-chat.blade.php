@@ -8,7 +8,7 @@
         aria-expanded="false"
         class="fixed bottom-4 right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-mint-100 sm:bottom-6 sm:right-6 sm:h-[60px] sm:w-[60px]"
     >
-        <i class="fa-brands fa-whatsapp"></i>
+        <x-shop.icon name="whatsapp" class="size-4 shrink-0" />
     </button>
 
     <!-- Chat Popup -->
@@ -97,7 +97,7 @@
                 rel="noopener noreferrer"
                 class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#1fbd5a] focus:outline-none focus:ring-4 focus:ring-mint-100"
             >
-                <i class="fa-brands fa-whatsapp text-xl"></i>
+                <x-shop.icon name="whatsapp" class="size-5 shrink-0" />
                 Chat with us on WhatsApp
             </a>
 

@@ -5,6 +5,9 @@
         'About Us | ' . config('app.name'),
         'Learn about Goods Essentials, a Pakistan-based baby and mom essentials store offering wholesale-rate pricing on quality products, with Cash on Delivery and fast delivery.',
     );
+
+    $testimonials = \App\Models\Review::approved()->featured()->latest()->take(6)->get();
+    $aboutTiles = \App\Models\Category::homeTiles();
 @endphp
 
 @section('content')
@@ -14,7 +17,7 @@
     <section class="relative isolate overflow-hidden rounded-3xl bg-blush-100 px-6 py-12 sm:px-10 sm:py-16 lg:px-16 lg:py-20">
         <div class="relative z-10 max-w-2xl">
             <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-blush-600 shadow-sm">
-                <i class="fa-solid fa-heart"></i>
+                <x-shop.icon name="heart" class="size-4 shrink-0 fill-current" />
                 Welcome to Goods Essentials
             </span>
 
@@ -33,7 +36,7 @@
                 <a href="{{ route('shop') }}"
                    class="inline-flex items-center justify-center gap-2 rounded-full bg-blush-600 px-7 py-3.5 text-sm font-bold text-white shadow-sm transition hover:brightness-90">
                     Explore Our Shop
-                    <i class="fa-solid fa-arrow-right"></i>
+                    <x-shop.icon name="arrow-right" class="size-4 shrink-0" />
                 </a>
 
                 <a href="#our-story"
@@ -48,10 +51,10 @@
         <div class="pointer-events-none absolute -bottom-16 right-20 -z-0 h-40 w-40 rounded-full bg-lilac-100 sm:h-52 sm:w-52"></div>
 
         <div class="pointer-events-none absolute right-10 top-10 hidden rotate-12 text-5xl text-blush-100 sm:block">
-            <i class="fa-solid fa-heart"></i>
+            <x-shop.icon name="heart" class="size-4 shrink-0 fill-current" />
         </div>
         <div class="pointer-events-none absolute bottom-10 right-20 hidden -rotate-12 text-4xl text-lilac-100 sm:block">
-            <i class="fa-solid fa-star"></i>
+            <x-shop.icon name="star" class="size-4 shrink-0 fill-current" />
         </div>
     </section>
 
@@ -72,7 +75,7 @@
             <div class="relative mx-4 -mt-8 rounded-2xl border border-line bg-white p-5 shadow-lg sm:mx-8">
                 <div class="flex items-center gap-4">
                     <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blush-100 text-blush-600">
-                        <i class="fa-solid fa-heart text-xl"></i>
+                        <x-shop.icon name="heart" class="size-5 shrink-0 fill-current" />
                     </div>
                     <div>
                         <h3 class="font-bold text-ink">Shopping Made Special</h3>
@@ -109,7 +112,7 @@
             <a href="{{ route('shop') }}"
                class="inline-flex items-center gap-2 font-bold text-blush-600 transition hover:gap-3">
                 Discover Our Products
-                <i class="fa-solid fa-arrow-right"></i>
+                <x-shop.icon name="arrow-right" class="size-4 shrink-0" />
             </a>
         </div>
     </section>
@@ -133,40 +136,32 @@
             <a href="{{ route('shop') }}"
                class="inline-flex items-center gap-2 text-sm font-bold text-blush-600 hover:brightness-90">
                 View All Products
-                <i class="fa-solid fa-arrow-right"></i>
+                <x-shop.icon name="arrow-right" class="size-4 shrink-0" />
             </a>
         </div>
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
-            @php
-                $aboutCategories = [
-                    ['slug' => 'baby-clothing', 'name' => 'Baby Clothing', 'tagline' => 'Little essentials, lots of love.', 'image' => 'category-3.jpg', 'icon' => 'fa-baby', 'bg' => 'bg-blush-100', 'iconColor' => 'text-blush-600'],
-                    ['slug' => 'feeding', 'name' => 'Feeding', 'tagline' => 'Breast pumps, bottles & bibs.', 'image' => 'category-2.jpg', 'icon' => 'fa-bottle-water', 'bg' => 'bg-sky-50', 'iconColor' => 'text-sky-600'],
-                    ['slug' => 'mom-care', 'name' => 'Mom Care', 'tagline' => 'Maternity & postpartum essentials.', 'image' => 'category-4.jpg', 'icon' => 'fa-wand-magic-sparkles', 'bg' => 'bg-lilac-100', 'iconColor' => 'text-lilac-600'],
-                    ['slug' => 'gift-boxes', 'name' => 'Gift Boxes', 'tagline' => 'Newborn gifts & aqiqa sets.', 'image' => 'category-1.webp', 'icon' => 'fa-gift', 'bg' => 'bg-sun-100', 'iconColor' => 'text-sun-600'],
-                ];
-            @endphp
-            @foreach ($aboutCategories as $cat)
+            @foreach ($aboutTiles as $cat)
                 <a href="{{ route('shop.category', $cat['slug']) }}"
-                   class="group relative isolate min-h-64 overflow-hidden rounded-3xl {{ $cat['bg'] }}">
-                    <img
-                        src="{{ asset('assets/img/' . $cat['image']) }}"
-                        alt="{{ $cat['name'] }}"
-                        class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                        loading="lazy"
-                    >
-                    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-
-                    <div class="absolute inset-x-0 bottom-0 p-5">
-                        <span class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 {{ $cat['iconColor'] }}">
-                            <i class="fa-solid {{ $cat['icon'] }}"></i>
+                   class="group flex min-h-64 flex-col overflow-hidden rounded-card bg-{{ $cat['tone'] }}-100 shadow-soft transition-transform duration-300 ease-soft hover:-translate-y-1">
+                    <div class="grid flex-1 place-items-center p-4">
+                        @if ($cat['image'])
+                            <img src="{{ $cat['image'] }}" alt="" width="200" height="200" loading="lazy"
+                                 class="size-40 rounded-img bg-white/60 object-contain p-2 mix-blend-multiply transition-transform duration-500 ease-soft group-hover:scale-105">
+                        @else
+                            <x-shop.icon :name="$cat['icon']" class="size-16 text-{{ $cat['tone'] }}-600" />
+                        @endif
+                    </div>
+                    <div class="bg-white/70 p-5">
+                        <span class="mb-3 inline-flex size-10 items-center justify-center rounded-full bg-white text-{{ $cat['tone'] }}-600">
+                            <x-shop.icon :name="$cat['icon']" class="size-5" />
                         </span>
-                        <h3 class="text-xl font-bold text-white">{{ $cat['name'] }}</h3>
-                        <p class="mt-1 text-sm text-white/85">{{ $cat['tagline'] }}</p>
-                        <span class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white">
+                        <h3 class="text-xl font-semibold text-ink">{{ $cat['label'] }}</h3>
+                        <p class="mt-1 text-sm text-muted">{{ $cat['text'] ?? ($cat['count'] . ' products') }}</p>
+                        <span class="mt-3 inline-flex items-center gap-2 text-sm font-extrabold text-{{ $cat['tone'] }}-600">
                             Explore Category
-                            <i class="fa-solid fa-arrow-right transition group-hover:translate-x-1"></i>
+                            <x-shop.icon name="arrow-right" class="size-4 transition-transform group-hover:translate-x-1" />
                         </span>
                     </div>
                 </a>
@@ -193,7 +188,7 @@
         <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div class="rounded-2xl bg-white p-6 text-center">
                 <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-mint-100 text-mint-600">
-                    <i class="fa-solid fa-tags text-2xl"></i>
+                    <x-shop.icon name="tags" class="size-6 shrink-0" />
                 </div>
                 <h3 class="mt-4 font-bold text-ink">Wholesale Pricing</h3>
                 <p class="mt-2 text-sm leading-6 text-muted">
@@ -203,7 +198,7 @@
 
             <div class="rounded-2xl bg-white p-6 text-center">
                 <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blush-100 text-blush-600">
-                    <i class="fa-solid fa-box-open text-2xl"></i>
+                    <x-shop.icon name="package" class="size-6 shrink-0" />
                 </div>
                 <h3 class="mt-4 font-bold text-ink">A Variety of Products</h3>
                 <p class="mt-2 text-sm leading-6 text-muted">
@@ -213,7 +208,7 @@
 
             <div class="rounded-2xl bg-white p-6 text-center">
                 <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-lilac-100 text-lilac-600">
-                    <i class="fa-solid fa-star text-2xl"></i>
+                    <x-shop.icon name="star" class="size-6 shrink-0 fill-current" />
                 </div>
                 <h3 class="mt-4 font-bold text-ink">Quality Focused</h3>
                 <p class="mt-2 text-sm leading-6 text-muted">
@@ -223,7 +218,7 @@
 
             <div class="rounded-2xl bg-white p-6 text-center">
                 <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-sun-100 text-sun-600">
-                    <i class="fa-solid fa-face-smile text-2xl"></i>
+                    <x-shop.icon name="smile" class="size-6 shrink-0" />
                 </div>
                 <h3 class="mt-4 font-bold text-ink">Customer Satisfaction</h3>
                 <p class="mt-2 text-sm leading-6 text-muted">
@@ -234,103 +229,15 @@
     </section>
 
 
-    {{-- Testimonials --}}
-    <section aria-label="Customer testimonials" class="space-y-6">
-        <div class="text-center">
-            <span class="text-sm font-bold uppercase tracking-wider text-blush-600">
-                Kind Words from Customers
-            </span>
-            <h2 class="mt-2 text-3xl font-extrabold tracking-tight text-ink">
-                What Our Customers Say
-            </h2>
-            <p class="mt-3 text-sm text-muted">
-                Feedback shared by customers about their shopping experiences.
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
-
-            <article class="flex flex-col rounded-3xl border border-line bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                <div class="flex items-center gap-1 text-sun-100" aria-label="5 out of 5 stars">
-                    @for ($i = 0; $i < 5; $i++)
-                        <i class="fa-solid fa-star text-sm"></i>
-                    @endfor
-                </div>
-
-                <i class="fa-solid fa-quote-left mt-5 text-2xl text-blush-100"></i>
-
-                <p class="mt-3 flex-1 text-sm leading-7 text-muted">
-                    I received my suit today, and I'm so happy with the fabric quality. The stitching is excellent and professional, and the delivery was fast. I'll be buying my suits for future events from Goods Essentials.
-                </p>
-
-                <div class="mt-6 flex items-center gap-3 border-t border-line pt-5">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-full bg-blush-100 font-bold text-blush-600">
-                        NC
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold text-ink">Sarah</h3>
-                        <p class="mt-1 text-xs text-muted">Pakpatan</p>
-                    </div>
-                </div>
-            </article>
-
-            <article class="flex flex-col rounded-3xl border border-line bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                <div class="flex items-center gap-1 text-sun-100" aria-label="5 out of 5 stars">
-                    @for ($i = 0; $i < 5; $i++)
-                        <i class="fa-solid fa-star text-sm"></i>
-                    @endfor
-                </div>
-
-                <i class="fa-solid fa-quote-left mt-5 text-2xl text-lilac-100"></i>
-
-                <p class="mt-3 flex-1 text-sm leading-7 text-muted">
-                    I had a wonderful experience with GoodsEssentials. Their customer service was awesome and patient while I added and removed items from my order. They made sure everything was perfect.
-                </p>
-
-                <div class="mt-6 flex items-center gap-3 border-t border-line pt-5">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-full bg-lilac-100 font-bold text-lilac-600">
-                        RS
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold text-ink">Ayesha Khan</h3>
-                        <p class="mt-1 text-xs text-muted">Gujranwala</p>
-                    </div>
-                </div>
-            </article>
-
-            <article class="flex flex-col rounded-3xl border border-line bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                <div class="flex items-center gap-1 text-sun-100" aria-label="5 out of 5 stars">
-                    @for ($i = 0; $i < 5; $i++)
-                        <i class="fa-solid fa-star text-sm"></i>
-                    @endfor
-                </div>
-
-                <i class="fa-solid fa-quote-left mt-5 text-2xl text-sun-100"></i>
-
-                <p class="mt-3 flex-1 text-sm leading-7 text-muted">
-                    Mera shopping experience bht bht axha rha. Products ky rates bht munasib hn, must buy thanks.
-                </p>
-
-                <div class="mt-6 flex items-center gap-3 border-t border-line pt-5">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-full bg-sun-100 font-bold text-sun-600">
-                        RP
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold text-ink">Guest-amir665</h3>
-                        <p class="mt-1 text-xs text-muted">Pattoki</p>
-                    </div>
-                </div>
-            </article>
-
-        </div>
-    </section>
+    {{-- Testimonials (real reviews) --}}
+    <x-shop.testimonials :reviews="$testimonials" />
 
 
     {{-- Call to action --}}
     <section class="rounded-3xl bg-blush-600 px-6 py-10 text-center sm:px-10 sm:py-12">
         <div class="mx-auto max-w-2xl">
             <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-white">
-                <i class="fa-solid fa-bag-shopping text-2xl"></i>
+                <x-shop.icon name="bag" class="size-6 shrink-0" />
             </div>
 
             <h2 class="mt-4 text-3xl font-extrabold text-white">
@@ -344,7 +251,7 @@
             <a href="{{ route('shop') }}"
                class="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-blush-600 transition hover:bg-blush-100">
                 Start Shopping
-                <i class="fa-solid fa-arrow-right"></i>
+                <x-shop.icon name="arrow-right" class="size-4 shrink-0" />
             </a>
         </div>
     </section>

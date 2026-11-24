@@ -18,7 +18,7 @@
 {{-- Page header --}}
 <section class="border-b border-line bg-white/70">
     <div class="container-shop py-6">
-        <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-500">Cart</p>
+        <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-600">Cart</p>
         <h1 class="mt-1 text-3xl font-bold">Your cart</h1>
         <p class="mt-0.5 text-xs text-muted"><span class="js-item-count">{{ $count }}</span> {{ \Illuminate\Support\Str::plural('item', $count) }}</p>
     </div>
@@ -28,7 +28,7 @@
     @if ($items->isEmpty())
         {{-- Empty state --}}
         <div class="mx-auto max-w-md rounded-3xl border border-line bg-white p-10 text-center">
-            <span class="mx-auto grid size-16 place-items-center rounded-full bg-lavender-100 text-brand-500">
+            <span class="mx-auto grid size-16 place-items-center rounded-full bg-lavender-100 text-brand-600">
                 <x-shop.icon name="cart" class="size-7" />
             </span>
             <h2 class="mt-5 text-xl font-semibold">Your cart is empty</h2>
@@ -123,10 +123,10 @@
                 </dl>
 
                 <a href="{{ route('checkout') }}"
-                   class="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-brand-500 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-600">
+                   class="btn btn-primary mt-5 w-full">
                     Proceed to checkout <x-shop.icon name="arrow-right" class="size-4" />
                 </a>
-                <a href="{{ route('shop') }}" class="mt-3 block text-center text-xs font-bold text-brand-500 hover:text-brand-600">Continue shopping</a>
+                <a href="{{ route('shop') }}" class="mt-3 block text-center text-xs font-bold text-brand-600 hover:text-brand-700">Continue shopping</a>
 
                 <p class="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-muted">
                     <x-shop.icon name="lock" class="size-3.5" /> Secure checkout. Taxes and shipping are finalised at checkout.

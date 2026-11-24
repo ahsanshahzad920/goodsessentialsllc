@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-shop space-y-8 py-8">
     <header class="text-center">
-        <p class="text-sm font-bold uppercase tracking-wider text-brand-500">Mom's Guide</p>
+        <p class="text-sm font-bold uppercase tracking-wider text-brand-600">Mom's Guide</p>
         <h1 class="mt-1 text-3xl font-bold sm:text-4xl">Baby & Parenting Tips for Pakistani Moms</h1>
         <p class="mx-auto mt-3 max-w-2xl text-sm text-muted">
             Practical, honest guides on baby clothing, feeding, gifts and everyday care — written for moms shopping in Pakistan.
@@ -23,12 +23,12 @@
                     <div class="flex flex-1 flex-col p-4">
                         <p class="text-xs text-muted">{{ $post->published_at->format('M j, Y') }}</p>
                         <h2 class="mt-1 text-base font-bold leading-snug">
-                            <a href="{{ route('blog.show', $post->slug) }}" class="hover:text-brand-500">{{ $post->title }}</a>
+                            <a href="{{ route('blog.show', $post->slug) }}" class="hover:text-brand-600">{{ $post->title }}</a>
                         </h2>
                         @if ($post->excerpt)
                             <p class="mt-2 line-clamp-3 text-sm text-muted">{{ $post->excerpt }}</p>
                         @endif
-                        <a href="{{ route('blog.show', $post->slug) }}" class="mt-auto pt-3 text-xs font-bold text-brand-500 hover:text-brand-600">Read more →</a>
+                        <a href="{{ route('blog.show', $post->slug) }}" class="mt-auto pt-3 text-xs font-bold text-brand-600 hover:text-brand-700">Read more →</a>
                     </div>
                 </article>
             @endforeach

@@ -34,7 +34,7 @@
                 <!-- Phone -->
                 <div class="rounded-2xl border border-blush-100 bg-blush-100 p-6 transition duration-300 hover:-translate-y-1 hover:shadow-lg">
                     <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-blush-100 text-blush-600">
-                        <i class="fa-solid fa-phone text-2xl"></i>
+                        <x-shop.icon name="phone" class="size-6 shrink-0" />
                     </div>
 
                     <h3 class="mb-2 text-xl font-bold text-ink">
@@ -50,7 +50,7 @@
                 <!-- Email -->
                 <div class="rounded-2xl border border-lilac-100 bg-lilac-100 p-6 transition duration-300 hover:-translate-y-1 hover:shadow-lg">
                     <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-lilac-100 text-lilac-600">
-                        <i class="fa-solid fa-envelope text-2xl"></i>
+                        <x-shop.icon name="mail" class="size-6 shrink-0" />
                     </div>
 
                     <h3 class="mb-2 text-xl font-bold text-ink">
@@ -68,7 +68,7 @@
                 <!-- Address -->
                 <div class="rounded-2xl border border-sky-100 bg-sky-100 p-6 transition duration-300 hover:-translate-y-1 hover:shadow-lg">
                     <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
-                        <i class="fa-solid fa-location-dot text-2xl"></i>
+                        <x-shop.icon name="map-pin" class="size-6 shrink-0" />
                     </div>
 
                     <h3 class="mb-2 text-xl font-bold text-ink">
@@ -83,7 +83,7 @@
                 <!-- Business Hours -->
                 <div class="rounded-2xl border border-mint-100 bg-mint-100 p-6 transition duration-300 hover:-translate-y-1 hover:shadow-lg sm:col-span-2 lg:col-span-1">
                     <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-mint-100 text-mint-600">
-                        <i class="fa-solid fa-clock text-2xl"></i>
+                        <x-shop.icon name="clock" class="size-6 shrink-0" />
                     </div>
 
                     <h3 class="mb-2 text-xl font-bold text-ink">
@@ -111,7 +111,7 @@
                     <div class="relative overflow-hidden bg-gradient-to-r from-blush-100 via-lilac-100 to-sky-100 px-6 py-8 md:px-9 md:py-10">
                         <div class="relative z-10">
                             <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-blush-600 shadow-sm">
-                                <i class="fa-solid fa-comments"></i>
+                                <x-shop.icon name="messages" class="size-4 shrink-0" />
                                 GET IN TOUCH
                             </div>
 
@@ -152,7 +152,7 @@
                                     <x-forms.label for="first_name" value="First Name" />
 
                                     <div class="relative mt-2">
-                                        <i class="fa-regular fa-user pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"></i>
+                                        <x-shop.icon name="user" class="size-4 shrink-0 pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
 
                                         <x-forms.field
                                             type="text"
@@ -172,7 +172,7 @@
                                     <x-forms.label for="last_name" value="Last Name" />
 
                                     <div class="relative mt-2">
-                                        <i class="fa-regular fa-user pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"></i>
+                                        <x-shop.icon name="user" class="size-4 shrink-0 pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
 
                                         <x-forms.field
                                             type="text"
@@ -192,7 +192,7 @@
                                     <x-forms.label for="email" value="Email Address" />
 
                                     <div class="relative mt-2">
-                                        <i class="fa-regular fa-envelope pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"></i>
+                                        <x-shop.icon name="mail" class="size-4 shrink-0 pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
 
                                         <x-forms.field
                                             type="email"
@@ -212,7 +212,7 @@
                                     <x-forms.label for="phone" value="Phone Number" />
 
                                     <div class="relative mt-2">
-                                        <i class="fa-solid fa-phone pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"></i>
+                                        <x-shop.icon name="phone" class="size-4 shrink-0 pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
 
                                         <x-forms.field
                                             type="tel"
@@ -232,7 +232,7 @@
                                     <x-forms.label for="address" value="Address" />
 
                                     <div class="relative mt-2">
-                                        <i class="fa-solid fa-location-dot pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"></i>
+                                        <x-shop.icon name="map-pin" class="size-4 shrink-0 pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
 
                                         <x-forms.field
                                             type="text"
@@ -252,7 +252,7 @@
                                     <x-forms.label for="note" value="Your Message" />
 
                                     <div class="relative mt-2">
-                                        <i class="fa-regular fa-message pointer-events-none absolute left-4 top-4 text-muted"></i>
+                                        <x-shop.icon name="message" class="size-4 shrink-0 pointer-events-none absolute left-4 top-4 text-muted" />
 
                                         <x-forms.textarea
                                             name="note"
@@ -273,11 +273,11 @@
                                         class="group inline-flex w-full items-center justify-center gap-3 rounded-xl bg-blush-600 px-8 py-4 font-bold text-white shadow-lg shadow-blush-100 transition duration-300 hover:-translate-y-0.5 hover:brightness-90 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blush-100 sm:w-auto"
                                     >
                                         <span>Send Message</span>
-                                        <i class="fa-solid fa-paper-plane transition-transform duration-300 group-hover:translate-x-1"></i>
+                                        <x-shop.icon name="send" class="size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
                                     </button>
 
                                     <p class="mt-4 flex items-center gap-2 text-xs leading-5 text-muted">
-                                        <i class="fa-solid fa-lock text-blush-600"></i>
+                                        <x-shop.icon name="lock" class="size-4 shrink-0 text-blush-600" />
                                         Your contact details will only be used to respond to your inquiry.
                                     </p>
                                 </div>
@@ -292,7 +292,7 @@
 
                     <div class="bg-gradient-to-r from-lilac-100 to-sky-100 p-6 md:p-7">
                         <span class="mb-3 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-blush-600">
-                            <i class="fa-solid fa-map-location-dot"></i>
+                            <x-shop.icon name="map" class="size-4 shrink-0" />
                             Our Location
                         </span>
 
@@ -317,7 +317,7 @@
                     <div class="p-6 md:p-7">
                         <div class="flex items-start gap-4 rounded-2xl border border-blush-100 bg-blush-100 p-4">
                             <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blush-100 text-blush-600">
-                                <i class="fa-solid fa-location-dot text-xl"></i>
+                                <x-shop.icon name="map-pin" class="size-5 shrink-0" />
                             </div>
 
                             <div>

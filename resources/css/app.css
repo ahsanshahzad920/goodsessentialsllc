@@ -2,44 +2,118 @@
 @import './hero-section';
 @source "../views";
 /* Pastel tone safelist so components can build classes like bg-{{ $tone }}-100 */
-@source inline("{bg,text}-{lavender,blush,mint,sun,peach,sky,lilac,leaf,mist}-{100,600}");
+@source inline("{bg,text,ring}-{lavender,blush,mint,sun,peach,sky,lilac,leaf,mist}-{100,600}");
 
+/*
+ * Goods Essentials design tokens (Phase 1).
+ *
+ * Every hue has a soft ACCENT shade (-500 / named pastels: fills, rings,
+ * progress bars, illustrations) and a deeper TEXT/CTA shade (-600/-700)
+ * chosen to pass WCAG AA 4.5:1 — the brief's coral #F26B5B is only 2.99:1
+ * behind white text, so filled CTAs use coral-600 (#C93F31, 4.95:1).
+ */
 @theme {
     --font-display: "Fredoka", ui-rounded, system-ui, sans-serif;
     --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
 
-    --color-cream: #fffbf5;
-    --color-ink: #2b2a4c;
-    --color-muted: #6f6d8c;
+    /* Neutrals */
+    --color-cream: #fff9f3;          /* page background */
+    --color-ink: #1f1b3a;            /* body text: 15.7:1 on cream */
+    --color-muted: #6b6880;          /* secondary text: 5.1:1 on cream */
     --color-line: #ece9f5;
     --color-star: #f59e0b;
+    --color-frame: #fff7f2;          /* product image frame */
 
-    --color-brand-50: #f3f1fc;
+    /* Primary: soft coral (CTAs) */
+    --color-coral-50:  #fff4f2;
+    --color-coral-100: #ffe3de;
+    --color-coral-500: #f26b5b;      /* accent only */
+    --color-coral-600: #c93f31;      /* CTA fill (white text 4.95:1), price text */
+    --color-coral-700: #b2362a;      /* CTA hover/active */
+
+    /* Secondary: lavender (brand accents, keeps the existing purple) */
+    --color-brand-50:  #f3f1fc;
     --color-brand-100: #ece7fb;
-    --color-brand-500: #7b6cd0;
-    --color-brand-600: #6a5bc2;
+    --color-brand-500: #7c6ce0;      /* accent only */
+    --color-brand-600: #6a5bc2;      /* links, outline buttons: 5.4:1 */
+    --color-brand-700: #5b4bc4;
 
-    /* pastel tones: -100 = background, -600 = foreground/icon/title */
-    --color-lavender-100: #ece7fb;  --color-lavender-600: #7b6cd0;
-    --color-blush-100:    #fbe1e7;  --color-blush-600:    #e5547a;
-    --color-mint-100:     #dcf1e7;  --color-mint-600:     #2e9a6b;
-    --color-sun-100:      #fff0c9;  --color-sun-600:      #d99a0b;
-    --color-peach-100:    #ffe4d9;  --color-peach-600:    #ee7b4d;
-    --color-sky-100:      #dbeafb;  --color-sky-600:      #3b82d6;
-    --color-lilac-100:    #f0e6fa;  --color-lilac-600:    #9b6fd0;
-    --color-leaf-100:     #e2f3df;  --color-leaf-600:     #4aa04a;
-    --color-mist-100:     #f1effa;  --color-mist-600:     #2b2a4c;
+    /* Named pastels from the brief, for decorative blocks */
+    --color-mint:   #bdebdd;
+    --color-butter: #ffe7a3;
+    --color-blush:  #ffd9de;
+
+    /* Status */
+    --color-success-500: #16a34a;    /* icons */
+    --color-success-600: #15803d;    /* text / filled badge: 5.0:1 */
+
+    /* Pastel tones: -100 = surface, -600 = text/icon on that surface (AA) */
+    --color-lavender-100: #ece7fb;  --color-lavender-600: #5f50be;
+    --color-blush-100:    #fbe1e7;  --color-blush-600:    #b8325a;
+    --color-mint-100:     #dcf1e7;  --color-mint-600:     #1b6e4b;
+    --color-sun-100:      #fff0c9;  --color-sun-600:      #8a5300;
+    --color-peach-100:    #ffe4d9;  --color-peach-600:    #a8481c;
+    --color-sky-100:      #dbeafb;  --color-sky-600:      #1f5aa6;
+    --color-lilac-100:    #f0e6fa;  --color-lilac-600:    #7445ae;
+    --color-leaf-100:     #e2f3df;  --color-leaf-600:     #2d6e2d;
+    --color-mist-100:     #f1effa;  --color-mist-600:     #1f1b3a;
+
+    /* Shape */
+    --radius-card: 20px;             /* rounded-card */
+    --radius-img: 16px;              /* rounded-img */
+
+    /* Depth: soft, lavender-tinted, layered */
+    --shadow-soft: 0 8px 24px -12px rgb(124 108 224 / .25);
+    --shadow-lift: 0 2px 6px -2px rgb(31 27 58 / .06), 0 16px 32px -16px rgb(124 108 224 / .35);
+
+    /* Motion: transform/opacity only, 200–400ms */
+    --ease-soft: cubic-bezier(.2, .8, .2, 1);
 }
 
 @layer base {
-    html { scroll-behavior: smooth; }
-    body { @apply bg-cream font-sans text-ink antialiased; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body { @apply bg-cream font-sans text-base/[1.6] text-ink antialiased; }
     h1, h2, h3, h4 { @apply font-display; }
-    :focus-visible { @apply outline-2 outline-offset-2 outline-brand-500; }
+    :focus-visible { @apply outline-2 outline-offset-2 outline-brand-600; }
+
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .01ms !important;
+        }
+    }
 }
 
 @layer components {
     .container-shop { @apply mx-auto w-full max-w-7xl px-4 sm:px-6; }
+
+    /* Buttons — use <x-button>; classes exist for JS-built markup. */
+    .btn {
+        @apply relative inline-flex min-h-12 select-none items-center justify-center gap-2 rounded-full px-6
+               text-[15px] font-extrabold leading-none whitespace-nowrap
+               transition-[transform,background-color,border-color,color,box-shadow] duration-200 ease-soft
+               focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600
+               active:scale-[.97] disabled:pointer-events-none disabled:opacity-50
+               aria-disabled:pointer-events-none aria-disabled:opacity-50;
+    }
+    .btn-sm { @apply min-h-10 px-4 text-[13px]; }
+    .btn-lg { @apply min-h-14 px-8 text-base; }
+    .btn-primary { @apply bg-coral-600 text-white shadow-soft hover:bg-coral-700; }
+    .btn-secondary { @apply border-2 border-brand-600 bg-white text-brand-600 hover:bg-brand-50; }
+    .btn-soft { @apply bg-brand-100 text-brand-700 hover:bg-brand-500 hover:text-white; }
+    .btn-ghost { @apply text-brand-600 hover:bg-brand-50; }
+    .btn-whatsapp { @apply bg-[#0e7a3f] text-white hover:bg-[#0b6634]; }
+
+    /* Loading state: label stays for width, spinner overlays it. */
+    .btn[data-loading] { @apply pointer-events-none text-transparent; }
+    .btn[data-loading]::after {
+        content: "";
+        @apply absolute size-5 animate-spin rounded-full border-2 border-current border-r-transparent;
+        color: var(--btn-spinner, #fff);
+    }
+    .btn-secondary[data-loading], .btn-soft[data-loading], .btn-ghost[data-loading] { --btn-spinner: var(--color-brand-600); }
+
+    .card { @apply rounded-card border border-line bg-white shadow-soft; }
 }
-
-

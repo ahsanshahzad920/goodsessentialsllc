@@ -101,7 +101,7 @@
             @foreach ([['Home', 'index'], ['About', 'about'], ['Shop', 'shop'], ['Contact', 'contacts.index']] as [$label, $name])
                 <li>
                     <a href="{{ route($name) }}"
-                       class="block rounded-xl px-3 py-2 {{ request()->routeIs($name) ? 'bg-brand-50 text-brand-500' : 'hover:bg-brand-50' }}">{{ $label }}</a>
+                       class="block rounded-xl px-3 py-2 {{ request()->routeIs($name) ? 'bg-brand-50 text-brand-600' : 'hover:bg-brand-50' }}">{{ $label }}</a>
                 </li>
             @endforeach
         </ul>

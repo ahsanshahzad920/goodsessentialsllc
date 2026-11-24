@@ -11,6 +11,6 @@
         <span class="font-display text-3xl font-bold tracking-wide">
             @foreach (str_split(strtoupper($name)) as $i => $char)<span class="{{ $tones[$i % count($tones)] }}">{{ $char }}</span>@endforeach
         </span>
-        <span class="mt-0.5 text-[10px] font-bold text-brand-500">{{ config('shop.tagline') }}</span>
+        <span class="mt-0.5 text-[10px] font-bold text-brand-600">{{ config('shop.tagline') }}</span>
     @endif
 </a>

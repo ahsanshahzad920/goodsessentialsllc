@@ -6,7 +6,7 @@
 
         {{-- Heading --}}
         <div class="mb-8">
-            <p class="mb-2 text-sm font-bold uppercase tracking-wider text-brand-500">
+            <p class="mb-2 text-sm font-bold uppercase tracking-wider text-brand-600">
                 My Account
             </p>
             <h1 class="text-3xl font-extrabold text-ink sm:text-4xl">
@@ -48,7 +48,7 @@
                             class="size-28 rounded-full border-4 border-brand-50 object-cover"
                         >
                     @else
-                        <div class="grid size-28 place-items-center rounded-full bg-brand-50 text-brand-500">
+                        <div class="grid size-28 place-items-center rounded-full bg-brand-50 text-brand-600">
                             <x-shop.icon name="user" class="size-14" />
                         </div>
                     @endif
@@ -112,7 +112,7 @@
                                     class="size-16 rounded-full object-cover"
                                 >
                             @else
-                                <div class="grid size-16 place-items-center rounded-full bg-brand-50 text-brand-500">
+                                <div class="grid size-16 place-items-center rounded-full bg-brand-50 text-brand-600">
                                     <x-shop.icon name="user" class="size-8" />
                                 </div>
                             @endif
