@@ -3,6 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{-- The page's LCP image (<x-preload-image>), requested before anything else. --}}
+    @stack('preload')
+    {{-- Self-hosted Latin variable fonts (SIL OFL): no third-party DNS/TLS
+         round trips and no render-blocking Google Fonts stylesheet. --}}
+    <link rel="preload" href="{{ asset('fonts/nunito-latin-var.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('fonts/fredoka-latin-var.woff2') }}" as="font" type="font/woff2" crossorigin>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {!! \Artesaos\SEOTools\Facades\SEOMeta::generate() !!}
     {!! \Artesaos\SEOTools\Facades\OpenGraph::generate() !!}
@@ -10,13 +16,16 @@
     {!! \App\Services\SeoService::renderSchemas() !!}
     <link rel="shortcut icon" href="{{ asset('img/fav.png') }}">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    {{-- display=swap: text renders immediately in the fallback font. css2 serves
-         unicode-range subsets, so browsers only fetch the Latin files they need.
-         Font Awesome is no longer loaded on the storefront: all icons are inline
-         Lucide SVGs via <x-shop.icon> (one consistent set, no extra request). --}}
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    {{-- font-display: swap = text paints at once in the fallback font. Icons are
+         inline Lucide SVGs via <x-shop.icon> (no icon font). --}}
+    <style>
+        @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 200 1000; font-display: swap;
+            src: url('{{ asset('fonts/nunito-latin-var.woff2') }}') format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+        @font-face { font-family: 'Fredoka'; font-style: normal; font-weight: 300 700; font-display: swap;
+            src: url('{{ asset('fonts/fredoka-latin-var.woff2') }}') format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+    </style>
     <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}">
 
     @if ($code = config('tracking.google_site_verification'))
@@ -31,7 +40,16 @@
     {{-- Arm scroll-reveal before first paint (no flicker); only when it can run and motion is welcome. --}}
     <script>if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js-reveal');</script>
 
-    @vite(['resources/css/app.css'])
+    {{-- The whole stylesheet (~17 KB brotli) is inlined: shoppers arrive from
+         ads and mostly view 1–3 pages, so removing the render-blocking request
+         beats caching it. It has no url() references, so inlining is safe.
+         Falls back to the normal <link> if the built file can't be read. --}}
+    @php $inlineCss = rescue(fn () => \Illuminate\Support\Facades\Vite::content('resources/css/app.css'), null, false); @endphp
+    @if ($inlineCss)
+        <style>{!! $inlineCss !!}</style>
+    @else
+        @vite(['resources/css/app.css'])
+    @endif
     @stack('style')
 
     {{-- Analytics: each snippet is fully inert until its ID is set in .env (see config/tracking.php). --}}
@@ -213,10 +231,17 @@
                     c.style.setProperty('--reveal-delay', Math.min(i, 6) * 60 + 'ms');
                 });
             });
+            // Whatever is already on screen at load shows at once (no fade), so the
+            // first viewport is complete immediately; only later sections animate.
+            var initial = true;
             var io = new IntersectionObserver(function (entries) {
                 entries.forEach(function (e) {
-                    if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+                    if (!e.isIntersecting) return;
+                    if (initial) e.target.style.transition = 'none';
+                    e.target.classList.add('is-in');
+                    io.unobserve(e.target);
                 });
+                initial = false;
             }, { rootMargin: '0px 0px -8% 0px' });
             document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
             // Printing / save-as-PDF: show everything.
@@ -233,10 +258,11 @@
             var lastY = window.scrollY, ticking = false;
 
             function update() {
+                // All layout reads first, then the class writes (no forced reflow).
                 var y = window.scrollY;
+                var nearEnd = bottom ? window.innerHeight + y >= document.documentElement.scrollHeight - 80 : false;
                 if (slot) slot.classList.toggle('is-stuck', y > 8);
                 if (bottom) {
-                    var nearEnd = window.innerHeight + y >= document.documentElement.scrollHeight - 80;
                     if (y > lastY + 4 && y > 120 && !nearEnd) bottom.classList.add('translate-y-full');
                     else if (y < lastY - 4 || y <= 120 || nearEnd) bottom.classList.remove('translate-y-full');
                 }
@@ -254,9 +280,9 @@
             window.addEventListener('scroll', function () {
                 if (!ticking) { ticking = true; requestAnimationFrame(update); }
             }, { passive: true });
-            update();
-            // The WhatsApp button is rendered after this script; apply state once it exists.
-            document.addEventListener('DOMContentLoaded', update);
+            // First run in a frame (not mid-parse, where reading scrollHeight forces
+            // a synchronous layout); by then the WhatsApp button below exists too.
+            requestAnimationFrame(update);
         })();
     </script>
     @stack('script')

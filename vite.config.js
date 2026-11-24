@@ -16,4 +16,8 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    build: {
+        // Every browser we target supports <link rel="modulepreload">; skip the polyfill.
+        modulePreload: { polyfill: false },
+    },
 });
