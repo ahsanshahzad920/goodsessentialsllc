@@ -131,6 +131,7 @@
             if (!q) return;
             if (window.fbqTrack) fbqTrack('Search', { search_string: q });
             if (window.ttqTrack) ttqTrack('Search', { query: q });
+            if (window.gaEvent) gaEvent('search', { search_term: q });
         });
     }
 

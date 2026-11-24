@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+
+    // WhatsApp/SMS order confirmations (App\Listeners\SendOrderConfirmationMessage). Empty = log only.
+    'order_messages' => [
+        'driver' => env('ORDER_MESSAGE_DRIVER'),
+    ],
 ];

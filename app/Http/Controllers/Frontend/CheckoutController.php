@@ -38,6 +38,16 @@ class CheckoutController extends Controller
             session()->flash('error', 'Some items in your cart are no longer available and were removed.');
         }
 
+        // InitiateCheckout: one id for the server (CAPI) and browser (Pixel) events.
+        $checkoutEventId = \App\Services\MetaConversions::newEventId('ic');
+        if ($lines) {
+            \App\Services\MetaConversions::send('InitiateCheckout', $checkoutEventId, [
+                'value' => (float) $subtotal, 'content_type' => 'product',
+                'content_ids' => collect($lines)->map(fn ($l) => (string) $l['product']->id)->values()->all(),
+                'num_items' => (int) collect($lines)->sum('quantity'),
+            ], request());
+        }
+
         return view('checkout', [
             'lines'          => $lines,
             'subtotal'       => $subtotal,
@@ -45,6 +55,7 @@ class CheckoutController extends Controller
             'total'          => round($subtotal + $shipping, 2),
             'paymentMethods' => $methods,
             'defaultMethod' => $defaultMethod,
+            'checkoutEventId' => $checkoutEventId,
         ]);
     }
 
@@ -67,14 +78,23 @@ class CheckoutController extends Controller
         $wantsAccount = ! Auth::check() && $request->boolean('create_account');
         $methods      = PaymentManager::methods();
 
+        // Phase 6: one "Full name" box instead of first/last (split here), and a
+        // Pakistani mobile number normalised to 03XXXXXXXXX before validation.
+        if ($request->filled('full_name')) {
+            $parts = preg_split('/\s+/', trim((string) $request->input('full_name')), 2);
+            $request->merge(['first_name' => $parts[0] ?? '', 'last_name' => $parts[1] ?? '']);
+        }
+        $request->merge(['phone' => \App\Support\PkPhone::normalize($request->input('phone'))]);
+
         $rules = [
             'first_name'     => ['required', 'string', 'max:100'],
-            'last_name'      => ['required', 'string', 'max:100'],
-            'phone'          => ['required', 'string', 'max:30'],
-            'email'          => ['required', 'email', 'max:255'],
-            'address'        => ['required', 'string', 'max:255'],
+            'last_name'      => ['nullable', 'string', 'max:100'],
+            'phone'          => ['required', 'regex:' . \App\Support\PkPhone::PATTERN],
+            // Optional: COD shoppers often have no email. Needed only for an account.
+            'email'          => [$wantsAccount ? 'required' : 'nullable', 'email', 'max:255'],
+            'address'        => ['required', 'string', 'min:8', 'max:255'],
             'city'           => ['required', 'string', 'max:120'],
-            'zip_code'       => ['required', 'string', 'max:20'],
+            'zip_code'       => ['nullable', 'string', 'max:20'],
             'notes'          => ['nullable', 'string', 'max:1000'],
             'payment_method' => ['required', Rule::in(array_keys($methods))],
             'terms'          => ['accepted'],
@@ -86,11 +106,20 @@ class CheckoutController extends Controller
         }
 
         $data = $request->validate($rules, [
+            'first_name.required'     => 'Please enter your name.',
+            'phone.required'          => 'Please enter your mobile number.',
+            'phone.regex'             => 'Please enter a Pakistani mobile number like 0300-1234567.',
+            'address.min'             => 'Please enter your full address (house, street, area).',
             'email.unique'            => 'An account with this email already exists. Please log in, or untick "Create an account" to check out as a guest.',
             'terms.accepted'          => 'Please accept the Terms & Conditions to place your order.',
             'payment_method.required' => 'Please choose a payment method.',
             'payment_method.in'       => 'That payment method is not available right now.',
         ]);
+
+        // orders.email / last_name / zip_code are NOT NULL columns: store '' when empty.
+        $data['last_name'] = $data['last_name'] ?? '';
+        $data['email']     = $data['email'] ?? '';
+        $data['zip_code']  = $data['zip_code'] ?? '';
 
         $shipping = $this->shippingFor($lines, $data['payment_method'], $subtotal);
         $total    = round($subtotal + $shipping, 2);
@@ -116,6 +145,9 @@ class CheckoutController extends Controller
 
                 Area::heal($user); // gives the new account the `customer` role
             }
+
+            // Tracked products: lock, verify, decrement (rolls back with the order on failure).
+            \App\Support\Stock::reserve($lines);
 
             $order = Order::create([
                 'order_number'   => Order::generateNumber(),
@@ -165,7 +197,7 @@ class CheckoutController extends Controller
             $request->session()->regenerate();
         }
 
-        session()->forget('cart');
+        session()->forget(['cart', 'checkout_note']);
         session()->put('last_order_id', $order->id);
         session()->put('account_created', $wantsAccount);
         // Consumed exactly once on the order-success page (session()->pull()),
@@ -174,12 +206,23 @@ class CheckoutController extends Controller
 
         // and send a hidden copy to the admin.
         try {
-            Mail::to($order->email)
-                ->bcc(config('shop.admin_emails'))
-                ->queue(new OrderConfirmationMail($order));
+            // Email is optional at checkout: without one, only the admin copy goes out.
+            $mail = $order->email !== ''
+                ? Mail::to($order->email)->bcc(config('shop.admin_emails'))
+                : Mail::to(config('shop.admin_emails'));
+            $mail->queue(new OrderConfirmationMail($order));
         } catch (\Throwable $e) {
             report($e);
         }
+
+        // Server-side Purchase; the success page fires the Pixel with the same id.
+        \App\Services\MetaConversions::purchase($order, $request);
+
+        // Abandoned-checkout follow-up list: this phone/session has now ordered.
+        \App\Models\AbandonedCheckout::markConverted($order, $request->session()->getId());
+
+        // Integration point for WhatsApp / SMS confirmations (see App\Listeners\SendOrderConfirmationMessage).
+        rescue(fn () => event(new \App\Events\OrderPlaced($order)), report: true);
 
         // Card orders go to the gateway; cash on delivery is complete.
         if ($order->payment_method === 'card') {
@@ -210,6 +253,12 @@ class CheckoutController extends Controller
             // and PaymentController::applyResult() for where each is set.
             'firePlaceAnOrder'    => (bool) session()->pull('ttq_pending_place_order_' . $order->id, false),
             'fireCompletePayment' => (bool) session()->pull('ttq_pending_complete_payment_' . $order->id, false),
+            // "Complete the set": other in-stock products from the same categories.
+            'completeSet' => Product::withCardData()->forBabySections()
+                ->whereIn('category_id', Product::whereIn('id', $order->items->pluck('product_id')->filter())->pluck('category_id'))
+                ->whereNotIn('id', $order->items->pluck('product_id')->filter())
+                ->where(fn ($q) => $q->whereNull('stock_quantity')->orWhere('stock_quantity', '>', 0))
+                ->take(4)->get(),
         ]);
     }
 

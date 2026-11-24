@@ -10,7 +10,7 @@
     <ul class="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-6 sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
         @foreach ($categories as $c)
             <li class="w-[5.75rem] shrink-0 snap-start sm:w-28">
-                <a href="{{ route('shop.category', $c['slug']) }}" class="group flex flex-col items-center gap-2 text-center">
+                <a href="{{ route('shop.category', $c['slug']) }}" class="bubble-tap group flex flex-col items-center gap-2 text-center">
                     {{-- Gradient ring = pastel tone; inner white gap; photo --}}
                     <span class="rounded-full bg-gradient-to-tr from-{{ $c['tone'] }}-600/60 via-coral-500/50 to-butter p-[3px] transition-transform duration-300 ease-soft group-hover:scale-105 group-active:scale-95">
                         <span class="block rounded-full bg-white p-[3px]">

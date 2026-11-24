@@ -1,147 +1,140 @@
 @props(['product'])
 
+{{--
+    Product gallery: swipeable (scroll-snap) main images with dots, thumbnails
+    from sm up, and a tap-to-open lightbox where pinch-zoom works natively.
+    First image is the LCP element: eager + fetchpriority=high, WebP when present.
+--}}
 @php
-    $images = $product->images->pluck('path')->map(fn ($path) => asset('storage/' . $path))->values();
+    use App\Support\WebpImage;
 
-    // products without gallery rows: fall back to the single cover image, then to a placeholder
-    if ($images->isEmpty() && $product->product_image) {
-        $images = collect([asset('storage/' . $product->product_image)]);
+    $paths = $product->images->pluck('path')->values();
+    if ($paths->isEmpty() && $product->product_image) {
+        $paths = collect([$product->product_image]);
     }
+    $images = $paths->map(fn ($p) => ['src' => asset('storage/' . $p), 'webp' => WebpImage::url($p)])->values();
     if ($images->isEmpty()) {
-        $images = collect([asset('images/product-placeholder.svg')]);
+        $images = collect([['src' => asset('images/product-placeholder.svg'), 'webp' => null]]);
     }
-
-    $alt   = $product->product_title ?? 'Product image';
+    $alt = $product->product_title ?? 'Product image';
     $multi = $images->count() > 1;
 @endphp
 
-<div data-gallery class="space-y-3">
-    <div data-gallery-stage @if ($multi) tabindex="0" @endif
-         style="touch-action: pan-y;"
-         aria-roledescription="carousel" aria-label="Product images"
-         class="relative overflow-hidden rounded-2xl border border-line bg-white p-2 outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 sm:p-3">
-
-        <div class="flex min-h-[240px] items-center justify-center rounded-2xl bg-mist-100 p-3 sm:min-h-[320px] lg:min-h-[350px]">
-            <img data-gallery-main src="{{ $images->first() }}" alt="{{ $alt }}" draggable="false"
-                class="max-h-[280px] w-full select-none object-contain transition-opacity duration-150 sm:max-h-[320px] lg:max-h-[340px]" fetchpriority="high">
-        </div>
+<div data-pgallery class="min-w-0 space-y-3">
+    <div class="relative overflow-hidden rounded-card border border-line bg-frame">
+        <ul data-pg-track class="flex snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            aria-label="Product images" @if ($multi) aria-roledescription="carousel" @endif>
+            @foreach ($images as $i => $img)
+                <li class="w-full shrink-0 snap-center" @if ($multi) aria-label="Image {{ $i + 1 }} of {{ $images->count() }}" @endif>
+                    <button type="button" data-pg-zoom="{{ $i }}" class="block w-full cursor-zoom-in" aria-label="Zoom image {{ $i + 1 }}">
+                        <picture>
+                            @if ($img['webp']) <source type="image/webp" srcset="{{ $img['webp'] }}"> @endif
+                            <img src="{{ $img['src'] }}" alt="{{ $i === 0 ? $alt : '' }}" width="800" height="800" decoding="async" draggable="false"
+                                 @if ($i === 0) loading="eager" fetchpriority="high" @else loading="lazy" @endif
+                                 class="aspect-square max-h-[42vh] w-full select-none object-contain p-4 mix-blend-multiply sm:max-h-none sm:p-6">
+                        </picture>
+                    </button>
+                </li>
+            @endforeach
+        </ul>
 
         @if ($multi)
-            <button type="button" data-gallery-prev aria-label="Previous image"
-                    class="absolute left-3 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-md transition hover:bg-brand-500 hover:text-white focus-visible:ring-2 focus-visible:ring-brand-500/40 sm:left-5 sm:size-11">
-                <x-shop.icon name="chevron-down" class="size-5 rotate-90" />
+            <div class="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center gap-1.5" aria-hidden="true">
+                @foreach ($images as $i => $img)
+                    <span data-pg-dot class="h-2 rounded-full transition-[width,background-color] duration-300 {{ $i === 0 ? 'w-5 bg-ink/60' : 'w-2 bg-ink/20' }}"></span>
+                @endforeach
+            </div>
+            <button type="button" data-pg-prev aria-label="Previous image"
+                    class="absolute left-3 top-1/2 hidden size-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-soft hover:bg-white sm:grid">
+                <x-shop.icon name="chevron-left" class="size-5" />
             </button>
-
-            <button type="button" data-gallery-next aria-label="Next image"
-                    class="absolute right-3 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-md transition hover:bg-brand-500 hover:text-white focus-visible:ring-2 focus-visible:ring-brand-500/40 sm:right-5 sm:size-11">
-                <x-shop.icon name="chevron-down" class="size-5 -rotate-90" />
+            <button type="button" data-pg-next aria-label="Next image"
+                    class="absolute right-3 top-1/2 hidden size-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-soft hover:bg-white sm:grid">
+                <x-shop.icon name="chevron-right" class="size-5" />
             </button>
-
-            <span data-gallery-count aria-live="polite"
-                  class="absolute bottom-4 right-4 rounded-full bg-black/60 px-3 py-1 text-[11px] font-bold text-white sm:bottom-6 sm:right-6">
-                1 / {{ $images->count() }}
-            </span>
         @endif
+        <span class="pointer-events-none absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-white/90 text-ink shadow-sm" aria-hidden="true">
+            <x-shop.icon name="search" class="size-4" />
+        </span>
     </div>
 
     @if ($multi)
-        <ul class="flex flex-wrap gap-2" aria-label="Product thumbnails">
-            @foreach ($images as $i => $src)
+        <ul class="hidden gap-2 overflow-x-auto sm:flex" aria-label="Product thumbnails">
+            @foreach ($images as $i => $img)
                 <li>
-                    <button type="button" data-gallery-thumb data-src="{{ $src }}"
-                            aria-label="Show image {{ $i + 1 }}" aria-current="{{ $i === 0 ? 'true' : 'false' }}"
-                            class="block size-16 overflow-hidden rounded-xl border-2 border-line bg-white transition hover:border-brand-500/50 aria-[current=true]:border-brand-500 sm:size-20">
-                        <img src="{{ $src }}" alt="" loading="lazy" class="size-full object-cover">
+                    <button type="button" data-pg-thumb="{{ $i }}" aria-label="Show image {{ $i + 1 }}" aria-current="{{ $i === 0 ? 'true' : 'false' }}"
+                            class="block size-16 overflow-hidden rounded-xl border-2 border-line bg-frame transition hover:border-brand-500/50 aria-[current=true]:border-brand-600 md:size-20">
+                        <img src="{{ $img['webp'] ?? $img['src'] }}" alt="" loading="lazy" width="80" height="80" class="size-full object-contain p-1 mix-blend-multiply">
                     </button>
                 </li>
             @endforeach
         </ul>
     @endif
+
+    {{-- Lightbox: native pinch-zoom on phones, scroll to zoom out on desktop --}}
+    <dialog data-pg-lightbox aria-label="Product images, zoomed"
+            class="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none bg-white p-0 backdrop:bg-ink/60 [&:not([open])]:hidden">
+        <div class="flex h-full flex-col">
+            <div class="flex shrink-0 items-center justify-between px-3 py-2">
+                <span class="text-sm font-bold text-muted">Pinch or tap to zoom</span>
+                <button type="button" data-pg-close class="grid size-11 place-items-center rounded-full hover:bg-mist-100" aria-label="Close">
+                    <x-shop.icon name="x" class="size-6" />
+                </button>
+            </div>
+            <ul data-pg-ltrack class="flex min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                @foreach ($images as $img)
+                    <li class="grid w-full shrink-0 snap-center place-items-center overflow-auto [touch-action:pan-x_pan-y_pinch-zoom]">
+                        <img src="{{ $img['src'] }}" alt="" loading="lazy" data-pg-big
+                             class="max-h-full w-full cursor-zoom-in object-contain transition-[width] duration-200">
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </dialog>
 </div>
 
 @pushOnce('script')
 <script>
-    (function () {
-        function thumbsOf(gallery) {
-            return Array.prototype.slice.call(gallery.querySelectorAll('[data-gallery-thumb]'));
+(function () {
+    document.querySelectorAll('[data-pgallery]').forEach(function (g) {
+        var track = g.querySelector('[data-pg-track]');
+        var dots = g.querySelectorAll('[data-pg-dot]');
+        var thumbs = g.querySelectorAll('[data-pg-thumb]');
+        var box = g.querySelector('[data-pg-lightbox]');
+        var ltrack = box.querySelector('[data-pg-ltrack]');
+        var n = track.children.length, cur = 0;
+
+        function go(i, smooth) { cur = (i + n) % n; track.scrollTo({ left: cur * track.clientWidth, behavior: smooth === false ? 'auto' : 'smooth' }); }
+        function mark() {
+            cur = Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+            dots.forEach(function (d, k) { d.classList.toggle('w-5', k === cur); d.classList.toggle('bg-ink/60', k === cur); d.classList.toggle('w-2', k !== cur); d.classList.toggle('bg-ink/20', k !== cur); });
+            thumbs.forEach(function (t, k) { t.setAttribute('aria-current', k === cur ? 'true' : 'false'); });
         }
+        var t; track.addEventListener('scroll', function () { clearTimeout(t); t = setTimeout(mark, 60); }, { passive: true });
+        thumbs.forEach(function (b) { b.addEventListener('click', function () { go(+b.dataset.pgThumb); }); });
+        var prev = g.querySelector('[data-pg-prev]'), next = g.querySelector('[data-pg-next]');
+        if (prev) prev.addEventListener('click', function () { go(cur - 1); });
+        if (next) next.addEventListener('click', function () { go(cur + 1); });
 
-        function currentIndex(thumbs) {
-            for (var i = 0; i < thumbs.length; i++) {
-                if (thumbs[i].getAttribute('aria-current') === 'true') return i;
-            }
-            return 0;
-        }
-
-        function show(gallery, index) {
-            var thumbs = thumbsOf(gallery);
-            if (!thumbs.length) return;
-
-            index = (index + thumbs.length) % thumbs.length; // wrap around
-            var thumb = thumbs[index];
-            var main = gallery.querySelector('[data-gallery-main]');
-
-            // preload, then swap with a small fade
-            main.style.opacity = '0.4';
-            var preload = new Image();
-            preload.onload = function () { main.src = thumb.dataset.src; main.style.opacity = '1'; };
-            preload.onerror = function () { main.src = thumb.dataset.src; main.style.opacity = '1'; };
-            preload.src = thumb.dataset.src;
-
-            thumbs.forEach(function (t, i) { t.setAttribute('aria-current', i === index ? 'true' : 'false'); });
-
-            var counter = gallery.querySelector('[data-gallery-count]');
-            if (counter) counter.textContent = (index + 1) + ' / ' + thumbs.length;
-
-            thumb.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        }
-
-        function step(gallery, direction) {
-            show(gallery, currentIndex(thumbsOf(gallery)) + direction);
-        }
-
-        // Click: thumbnails and arrow buttons
-        document.addEventListener('click', function (e) {
-            var gallery = e.target.closest('[data-gallery]');
-            if (!gallery) return;
-
-            var thumb = e.target.closest('[data-gallery-thumb]');
-            if (thumb) { show(gallery, thumbsOf(gallery).indexOf(thumb)); return; }
-
-            if (e.target.closest('[data-gallery-prev]')) step(gallery, -1);
-            if (e.target.closest('[data-gallery-next]')) step(gallery, 1);
+        g.querySelectorAll('[data-pg-zoom]').forEach(function (b) {
+            b.addEventListener('click', function () {
+                box.showModal();
+                ltrack.scrollTo({ left: (+b.dataset.pgZoom) * ltrack.clientWidth, behavior: 'auto' });
+            });
         });
-
-        // Keyboard: left / right arrows while the image area is focused
-        document.addEventListener('keydown', function (e) {
-            var stage = e.target.closest && e.target.closest('[data-gallery-stage]');
-            if (!stage) return;
-
-            if (e.key === 'ArrowLeft')  { e.preventDefault(); step(stage.closest('[data-gallery]'), -1); }
-            if (e.key === 'ArrowRight') { e.preventDefault(); step(stage.closest('[data-gallery]'), 1); }
+        box.querySelector('[data-pg-close]').addEventListener('click', function () { box.close(); });
+        // Desktop: click to toggle a 2x zoom (phones pinch natively).
+        box.querySelectorAll('[data-pg-big]').forEach(function (img) {
+            img.addEventListener('click', function () {
+                var on = img.style.width === '200%';
+                img.style.width = on ? '' : '200%';
+                img.style.maxHeight = on ? '' : 'none';
+                img.classList.toggle('cursor-zoom-in', on); img.classList.toggle('cursor-zoom-out', !on);
+            });
         });
-
-        // Touch: swipe left / right
-        var startX = null, startY = null;
-
-        document.addEventListener('touchstart', function (e) {
-            if (!e.target.closest('[data-gallery-stage]')) { startX = null; return; }
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-        }, { passive: true });
-
-        document.addEventListener('touchend', function (e) {
-            if (startX === null) return;
-
-            var stage = e.target.closest('[data-gallery-stage]');
-            var dx = e.changedTouches[0].clientX - startX;
-            var dy = e.changedTouches[0].clientY - startY;
-            startX = null;
-
-            if (!stage || Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return; // ignore taps and vertical scrolls
-
-            step(stage.closest('[data-gallery]'), dx < 0 ? 1 : -1);
-        });
-    })();
+        // Variant pickers can ask the gallery to show an image.
+        g.addEventListener('pgallery:show', function (e) { go(e.detail || 0); });
+    });
+})();
 </script>
 @endPushOnce

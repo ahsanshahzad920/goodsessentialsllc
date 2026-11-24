@@ -122,6 +122,19 @@
                     </div>
                 </dl>
 
+                @php $fd = \App\Support\CartDrawer::data(); @endphp
+                @if ($fd['threshold'])
+                    <div class="mt-4 rounded-2xl bg-mint-100 p-3">
+                        <p class="text-xs font-bold text-ink">
+                            @if ($fd['remaining']) Add <span class="text-mint-600">{{ money($fd['remaining']) }}</span> more for <strong>FREE delivery</strong> 🎉
+                            @else You've unlocked <strong class="text-mint-600">FREE delivery</strong> 🎉 @endif
+                        </p>
+                        <div class="mt-2 h-2 overflow-hidden rounded-full bg-white" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $fd['progress'] }}" aria-label="Progress to free delivery">
+                            <div class="h-full origin-left rounded-full bg-mint-600" style="transform: scaleX({{ $fd['progress'] / 100 }})"></div>
+                        </div>
+                    </div>
+                @endif
+
                 <a href="{{ route('checkout') }}"
                    class="btn btn-primary mt-5 w-full">
                     Proceed to checkout <x-shop.icon name="arrow-right" class="size-4" />

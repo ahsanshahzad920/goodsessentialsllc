@@ -13,6 +13,7 @@
         ['bg' => 'bg-sky-100',      'blob' => 'bg-white',     'blob2' => 'bg-mint',   'eyebrow' => 'text-sky-600'],
         ['bg' => 'bg-blush-100',    'blob' => 'bg-blush',     'blob2' => 'bg-butter', 'eyebrow' => 'text-blush-600'],
     ];
+    $ctaText = \App\Support\Settings::get('hero_cta_text', 'Order Now — Cash on Delivery');
     $ticks = ['Cash on Delivery', 'Open parcel before paying', '1–3 day delivery'];
 @endphp
 
@@ -65,10 +66,10 @@
                                     <input type="hidden" name="product_id" value="{{ $s['product']->id }}">
                                     <input type="hidden" name="quantity" value="1">
                                     @if ($s['color']) <input type="hidden" name="color" value="{{ $s['color'] }}"> @endif
-                                    <x-button name="buy_now" value="1" icon="zap" class="w-full sm:w-auto md:min-h-14 md:px-8 md:text-base">Order Now — Cash on Delivery</x-button>
+                                    <x-button name="buy_now" value="1" icon="zap" class="w-full sm:w-auto md:min-h-14 md:px-8 md:text-base">{{ $ctaText }}</x-button>
                                 </form>
                             @else
-                                <x-button :href="$s['url']" icon="zap" class="w-full sm:w-auto md:min-h-14 md:px-8 md:text-base">Order Now — Cash on Delivery</x-button>
+                                <x-button :href="$s['url']" icon="zap" class="w-full sm:w-auto md:min-h-14 md:px-8 md:text-base">{{ $ctaText }}</x-button>
                             @endif
                             <a href="{{ $s['url'] }}" class="hidden min-h-11 items-center px-3 text-sm font-extrabold text-brand-700 hover:underline sm:inline-flex">View details</a>
                         </div>
@@ -83,6 +84,11 @@
             </li>
         @endforeach
     </ul>
+
+    {{-- Decorative 3D layer (Phase 7). Stays empty unless resources/js/hero3d.js
+         decides the device can afford it; the static hero above is the fallback. --}}
+    <div data-hero-3d class="pointer-events-none absolute inset-x-0 top-0 h-[38%] overflow-hidden rounded-t-card md:left-[52%] md:h-[calc(100%-3.75rem)] md:rounded-l-none md:rounded-r-card" aria-hidden="true"></div>
+    @vite('resources/js/hero3d.js')
 
     @if ($slides->count() > 1)
         <div class="mt-3 flex items-center justify-center gap-1" data-hero-dots>

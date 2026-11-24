@@ -9,13 +9,14 @@ use Illuminate\Support\Str;
 class Review extends Model
 {
     protected $fillable = [
-        'product_id', 'order_id', 'name', 'city', 'rating', 'body', 'photo', 'is_featured', 'is_approved',
+        'product_id', 'order_id', 'name', 'city', 'rating', 'body', 'photo', 'is_featured', 'is_approved', 'is_verified',
     ];
 
     protected $casts = [
         'rating'      => 'integer',
         'is_featured' => 'boolean',
         'is_approved' => 'boolean',
+        'is_verified' => 'boolean',
     ];
 
     public function product()

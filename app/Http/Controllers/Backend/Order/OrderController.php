@@ -62,7 +62,20 @@ class OrderController extends Controller
             $data['paid_at'] = now();
         }
 
-        $order->update($data);
+        // Inventory follows cancellations: cancelling returns the units to
+        // tracked products; re-activating a cancelled order takes them again.
+        \Illuminate\Support\Facades\DB::transaction(function () use ($order, $data) {
+            $wasCancelled = $order->status === 'cancelled';
+            $isCancelled  = $data['status'] === 'cancelled';
+
+            $order->update($data);
+
+            if (! $wasCancelled && $isCancelled) {
+                \App\Support\Stock::adjustForOrder($order->loadMissing('items'), +1);
+            } elseif ($wasCancelled && ! $isCancelled) {
+                \App\Support\Stock::adjustForOrder($order->loadMissing('items'), -1);
+            }
+        });
 
         return redirect()->route('orders.show', $order)->with('success', "Order {$order->order_number} updated.");
     }

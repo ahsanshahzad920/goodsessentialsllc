@@ -6,10 +6,35 @@
         type="button"
         aria-label="Open customer support chat"
         aria-expanded="false"
-        class="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-mint-100 md:bottom-6 sm:right-6 sm:h-[60px] sm:w-[60px]"
+        class="fixed {{ request()->routeIs('gift-box') ? 'bottom-[calc(10rem+env(safe-area-inset-bottom))] md:bottom-24' : 'bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-6' }} right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-mint-100 sm:right-6 sm:h-[60px] sm:w-[60px]"
     >
         <x-shop.icon name="whatsapp" class="size-8 shrink-0" />
     </button>
+
+    {{-- Pre-chat nudge: once per session, 15s after arrival, never while the button is hidden --}}
+    <div id="wa-nudge" hidden
+         class="fixed bottom-[calc(9.25rem+env(safe-area-inset-bottom))] right-4 z-[9998] max-w-[15rem] translate-y-2 rounded-2xl rounded-br-sm bg-white py-3 pl-4 pr-9 text-sm font-bold text-ink opacity-0 shadow-lift transition-[transform,opacity] duration-300 ease-soft md:bottom-[5.75rem] sm:right-6">
+        <button type="button" data-wa-nudge-open class="text-left">Need help choosing? <span class="text-[#0e7a3f]">Chat with us</span> 👋</button>
+        <button type="button" data-wa-nudge-close class="absolute right-1 top-1 grid size-8 place-items-center rounded-full text-muted hover:bg-mist-100" aria-label="Dismiss">&times;</button>
+    </div>
+    <script>
+        (function () {
+            var n = document.getElementById('wa-nudge'), btn = document.getElementById('wa-toggle');
+            try { if (sessionStorage.getItem('wa-nudged')) return; } catch (e) {}
+            if (/\/(checkout|order\/success)/.test(location.pathname)) return;
+            setTimeout(function () {
+                // Skip if the WhatsApp button is currently hidden (e.g. over the homepage hero).
+                if (!btn || getComputedStyle(btn).opacity === '0' || btn.getAttribute('aria-expanded') === 'true') return;
+                try { sessionStorage.setItem('wa-nudged', '1'); } catch (e) {}
+                n.hidden = false;
+                requestAnimationFrame(function () { n.classList.remove('translate-y-2', 'opacity-0'); });
+                setTimeout(close, 12000);
+            }, 15000);
+            function close() { n.classList.add('translate-y-2', 'opacity-0'); setTimeout(function () { n.hidden = true; }, 300); }
+            n.querySelector('[data-wa-nudge-close]').addEventListener('click', close);
+            n.querySelector('[data-wa-nudge-open]').addEventListener('click', function () { close(); btn.click(); });
+        })();
+    </script>
 
     <!-- Chat Popup -->
     <div

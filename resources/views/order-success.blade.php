@@ -19,6 +19,25 @@
         </p>
         <p class="mt-4 rounded-full bg-lavender-100 px-5 py-2 text-sm font-extrabold text-brand-600">Order {{ $order->order_number }}</p>
 
+        @unless ($order->needsOnlinePayment())
+            @php [$from, $to] = \App\Support\ProductPage::deliveryWindow($order->created_at); @endphp
+            <div class="mt-5 grid w-full max-w-xl gap-3 text-left sm:grid-cols-2">
+                <p class="flex items-start gap-3 rounded-card bg-mint-100 p-4 text-sm text-ink">
+                    <x-shop.icon name="truck" class="mt-0.5 size-5 shrink-0 text-mint-600" />
+                    <span>Expected delivery<br><strong>{{ $from->format('D, j M') }} – {{ $to->format('D, j M') }}</strong></span>
+                </p>
+                <p class="flex items-start gap-3 rounded-card bg-lavender-100 p-4 text-sm text-ink">
+                    <x-shop.icon name="whatsapp" class="mt-0.5 size-5 shrink-0 text-[#0e7a3f]" />
+                    <span>We'll confirm your order on WhatsApp / call at <strong>{{ \App\Support\PkPhone::display($order->phone) }}</strong></span>
+                </p>
+            </div>
+        @endunless
+
+        <a href="https://wa.me/?text={{ rawurlencode('I just ordered baby essentials from Goods Essentials — Cash on Delivery all over Pakistan: ' . route('index')) }}"
+           target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm mt-5">
+            <x-shop.icon name="whatsapp" class="size-4" /> Share with a friend
+        </a>
+
         @if ($accountCreated ?? false)
             <p class="mt-4 max-w-md text-sm text-muted">Your account has been created and you're signed in, so you can follow your orders from "My Orders".</p>
         @endif
@@ -98,6 +117,17 @@
         </a>
     </aside>
 </div>
+
+@if (($completeSet ?? collect())->isNotEmpty())
+    <section aria-labelledby="set-title" class="container-shop space-y-4 pb-12">
+        <x-section-header id="set-title" eyebrow="Complete the set" title="Moms also picked" />
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @foreach ($completeSet as $p)
+                <x-product-card :product="$p" />
+            @endforeach
+        </div>
+    </section>
+@endif
 @endsection
 
 @push('script')
@@ -105,12 +135,39 @@
     // Hashed server-side (plain SHA-256 hex digest) so the raw email/phone
     // never reaches the page source — real customer data, known for certain
     // at this point regardless of guest vs. logged-in checkout.
-    ttqIdentify({
-        email: @js(hash('sha256', strtolower(trim($order->email)))),
-        phone_number: @js(hash('sha256', preg_replace('/[^0-9]/', '', $order->phone)))
-    });
+    // Email is optional since Phase 6 — never send the hash of an empty string.
+    ttqIdentify(@js(array_filter([
+        'email'        => $order->email !== '' ? hash('sha256', strtolower(trim($order->email))) : null,
+        'phone_number' => hash('sha256', preg_replace('/[^0-9]/', '', $order->phone)),
+    ])));
 
     @if ($firePlaceAnOrder ?? false)
+        // Confetti, once per order (same one-shot flag as the Purchase event). ~1KB, no library.
+        (function () {
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            var c = document.createElement('canvas'), x = c.getContext('2d');
+            c.setAttribute('aria-hidden', 'true');
+            c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:80';
+            document.body.appendChild(c);
+            var W = c.width = innerWidth, H = c.height = innerHeight;
+            var colors = ['#f26b5b', '#7c6ce0', '#bdebdd', '#ffe7a3', '#ffd9de'];
+            var bits = Array.from({ length: 120 }, function () {
+                return { x: W / 2, y: H / 3, vx: (Math.random() - .5) * 14, vy: Math.random() * -12 - 4, s: 4 + Math.random() * 6,
+                         r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: colors[(Math.random() * colors.length) | 0] };
+            });
+            var start = performance.now();
+            (function tick(now) {
+                var t = now - start;
+                x.clearRect(0, 0, W, H);
+                bits.forEach(function (b) {
+                    b.vy += .35; b.vx *= .99; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+                    x.save(); x.translate(b.x, b.y); x.rotate(b.r); x.globalAlpha = Math.max(0, 1 - t / 2200);
+                    x.fillStyle = b.c; x.fillRect(-b.s / 2, -b.s / 4, b.s, b.s / 2); x.restore();
+                });
+                t < 2200 ? requestAnimationFrame(tick) : c.remove();
+            })(start);
+        })();
+
         // Fires once (session flag consumed in CheckoutController::success()),
         // so refreshing this page never double-counts the same order.
         var orderContents = @js($order->items->map(fn ($item) => [
@@ -137,6 +194,14 @@
             contents: orderContents.map(function (c) { return { id: c.content_id, quantity: c.quantity }; }),
             value: {{ (float) $order->total }},
             currency: 'PKR',
+        }, @js('purchase_' . $order->id)); // same id as the server-side Conversions API Purchase
+
+        // GA4 purchase (same one-shot guard)
+        gaEvent('purchase', {
+            transaction_id: @js($order->order_number),
+            value: {{ (float) $order->total }},
+            shipping: {{ (float) $order->shipping }},
+            items: orderContents.map(function (c) { return { item_id: c.content_id, item_name: c.content_name, price: c.price, quantity: c.quantity }; }),
         });
     @endif
 

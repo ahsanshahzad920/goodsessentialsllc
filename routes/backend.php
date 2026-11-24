@@ -36,6 +36,11 @@ Route::middleware(['auth', 'verified', 'area:admin'])
         Route::resource('products', ProductController::class);
         Route::resource('orders', OrderController::class)->only(['index', 'show', 'update']);
 
+        Route::resource('reviews', \App\Http\Controllers\Backend\ReviewController::class)->only(['index', 'update', 'destroy'])->names('admin.reviews');
+
+        Route::get('abandoned-checkouts', [\App\Http\Controllers\Backend\AbandonedCheckoutController::class, 'index'])->name('admin.abandoned.index');
+        Route::post('abandoned-checkouts/{abandoned}/contacted', [\App\Http\Controllers\Backend\AbandonedCheckoutController::class, 'contacted'])->name('admin.abandoned.contacted');
+
         Route::get('settings', [\App\Http\Controllers\Backend\SettingsController::class, 'edit'])->name('admin.settings.edit');
         Route::put('settings', [\App\Http\Controllers\Backend\SettingsController::class, 'update'])->name('admin.settings.update');
 

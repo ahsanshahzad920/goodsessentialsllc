@@ -21,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(RedirectOldUrls::class);
         $middleware->validateCsrfTokens(except: ['payment/webhook']);
         $middleware->trustProxies(at: '*');
+        // Set by the Meta Pixel in the browser (plain text); read by the Conversions API.
+        $middleware->encryptCookies(except: ['_fbp', '_fbc']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

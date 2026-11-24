@@ -29,3 +29,16 @@
     </div>
     <small class="text-muted fw-normal">Used for "Shop by Age" on the homepage. Only fill this in when you know the right age range.</small>
 </div>
+
+{{-- Optional inventory. Empty = not tracked (no stock labels, no limits). --}}
+<div class="form-group mb-4 fw-bold">
+    <label for="stock_quantity">Stock quantity</label>
+    <input type="number" min="0" step="1" name="stock_quantity" id="stock_quantity" class="form-control"
+           placeholder="Leave empty if you don't track stock for this product"
+           value="{{ old('stock_quantity', $product->stock_quantity ?? '') }}">
+    <small class="text-muted fw-normal d-block mt-1">
+        When set: the store shows "Only N left" at {{ \App\Support\Stock::LOW }} or fewer, "Sold out" at 0, and every order
+        reduces it automatically (cancelled orders give it back).
+    </small>
+    @error('stock_quantity') <div class="text-danger">{{ $message }}</div> @enderror
+</div>

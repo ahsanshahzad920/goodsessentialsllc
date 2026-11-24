@@ -124,10 +124,57 @@ html.ann-off .announcement { display: none; }
 
 @theme {
     --animate-cart-bounce: cart-bounce .6s var(--ease-soft) 1;
+    --animate-heart-pop: heart-pop .45s var(--ease-soft) 1;
+    @keyframes heart-pop {
+        0%, 100% { transform: scale(1); }
+        35% { transform: scale(1.3); }
+        65% { transform: scale(.9); }
+    }
     @keyframes cart-bounce {
         0%, 100% { transform: scale(1); }
         30% { transform: scale(1.35); }
         55% { transform: scale(.9); }
         75% { transform: scale(1.1); }
+    }
+}
+
+/* ------------------------------------------------------------------
+   Phase 7: motion. transform/opacity only; the global reduced-motion
+   rule in @layer base shortens all of these to ~0.
+   ------------------------------------------------------------------ */
+
+/* Scroll reveal: only armed when JS ran (html.js-reveal), so content is
+   never hidden for no-JS visitors or crawlers. */
+html.js-reveal [data-reveal]:not(.is-in) { opacity: 0; transform: translateY(16px); }
+[data-reveal] { transition: opacity .4s var(--ease-soft), transform .4s var(--ease-soft); transition-delay: var(--reveal-delay, 0ms); }
+
+/* Product-card 3D tilt + glare (desktop pointers; set by x-shop.card-script). */
+@media (hover: hover) and (pointer: fine) {
+    .tilt { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .3s var(--ease-soft), box-shadow .3s var(--ease-soft); will-change: transform; }
+    .tilt.is-tilting { transition-duration: .08s; }
+    .tilt::after {
+        content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+        background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgb(255 255 255 / .45), transparent 55%);
+        transition: opacity .3s var(--ease-soft);
+    }
+    .tilt.is-tilting::after { opacity: 1; }
+}
+
+/* Category bubble: small flip/scale on tap. */
+.bubble-tap:active > span:first-child { transform: perspective(400px) rotateY(18deg) scale(.94); }
+
+@theme {
+    --animate-truck: truck-bob 1.6s var(--ease-soft) infinite;
+    @keyframes truck-bob {
+        0%, 100% { transform: translateX(0) translateY(0); }
+        40% { transform: translateX(2px) translateY(-1.5px); }
+        60% { transform: translateX(3px) translateY(0); }
+    }
+    --animate-draw: draw .45s var(--ease-soft) .1s both;
+    @keyframes draw { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+    --animate-lid: lid-open 3.2s var(--ease-soft) infinite;
+    @keyframes lid-open {
+        0%, 55%, 100% { transform: translateY(0) rotate(0); }
+        70%, 85% { transform: translateY(-14px) rotate(-12deg); }
     }
 }

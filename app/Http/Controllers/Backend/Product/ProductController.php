@@ -48,6 +48,7 @@ class ProductController extends Controller
                 'dis_price'           => $request->dis_price,
                 'suggested_min_age_months' => $request->input('suggested_min_age_months'),
                 'suggested_max_age_months' => $request->input('suggested_max_age_months'),
+                'stock_quantity'      => $request->filled('stock_quantity') ? (int) $request->input('stock_quantity') : null,
                 'colors'              => $this->cleanColors($request),
                 'created_by'          => Auth::id(),
                 'updated_by'          => Auth::id(),
@@ -126,6 +127,7 @@ class ProductController extends Controller
                 'dis_price'           => $request->dis_price,
                 'suggested_min_age_months' => $request->input('suggested_min_age_months'),
                 'suggested_max_age_months' => $request->input('suggested_max_age_months'),
+                'stock_quantity'      => $request->filled('stock_quantity') ? (int) $request->input('stock_quantity') : null,
                 'colors'              => $this->cleanColors($request),
                 'updated_by'          => Auth::id(),
             ]);
@@ -208,6 +210,7 @@ class ProductController extends Controller
             'colors.*.hex'        => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'suggested_min_age_months' => 'nullable|integer|min:0|max:216',
             'suggested_max_age_months' => 'nullable|integer|min:1|max:216',
+            'stock_quantity'      => 'nullable|integer|min:0|max:100000',
         ];
     }
 

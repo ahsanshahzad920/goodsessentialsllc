@@ -80,21 +80,43 @@
                         @auth Ordering as {{ $user->email }}. @else No account needed. Just fill in your details below. @endauth
                     </p>
 
+                    @php
+                        $fieldCls = 'mt-1.5 block min-h-12 w-full rounded-xl border border-line bg-white px-4 text-base text-ink placeholder:text-muted focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 aria-[invalid=true]:border-coral-600';
+                        $pkCities = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Hyderabad', 'Gujranwala', 'Sialkot', 'Bahawalpur', 'Sargodha', 'Sukkur', 'Larkana', 'Sheikhupura', 'Rahim Yar Khan', 'Jhang', 'Dera Ghazi Khan', 'Gujrat', 'Sahiwal', 'Wah Cantt', 'Mardan', 'Kasur', 'Okara', 'Mingora', 'Nawabshah', 'Chiniot', 'Kamoke', 'Sadiqabad', 'Burewala', 'Jacobabad', 'Muzaffargarh', 'Abbottabad', 'Mirpur Khas', 'Khanewal', 'Hafizabad', 'Kohat', 'Dera Ismail Khan', 'Khanpur', 'Mandi Bahauddin', 'Pakpattan', 'Jhelum', 'Vehari', 'Attock', 'Bahawalnagar', 'Pattoki', 'Chishtian', 'Muzaffarabad', 'Mirpur (AJK)', 'Gilgit', 'Skardu', 'Lodhran', 'Toba Tek Singh', 'Narowal', 'Mianwali', 'Bhakkar', 'Layyah', 'Khushab', 'Chakwal'];
+                        sort($pkCities);
+                        $fullName = old('full_name', trim($firstName . ' ' . $lastName));
+                    @endphp
                     <div class="mt-5 grid gap-4 sm:grid-cols-2">
-                        <x-shop.input name="first_name" label="First name" :value="$firstName" :required="true" autocomplete="given-name" placeholder="Enter first name" />
-                        <x-shop.input name="last_name"  label="Last name"  :value="$lastName"  :required="true" autocomplete="family-name" placeholder="Enter last name" />
-                        <x-shop.input name="phone" type="tel"   label="Phone number"  :value="$user->phone ?? ''" :required="true" autocomplete="tel" placeholder="Enter phone number" />
-                        <x-shop.input name="email" type="email" label="Email address" :value="$user->email ?? ''" :required="true" autocomplete="email" placeholder="example@email.com" />
-                        <x-shop.input name="address" label="Street address" :required="true" autocomplete="street-address" placeholder="House number and street name" class="sm:col-span-2" />
-                        <x-shop.input name="city" label="City" :required="true" autocomplete="address-level2" placeholder="Enter city" />
-                        <x-shop.input name="zip_code" label="ZIP / Postal code" :required="true" autocomplete="postal-code" placeholder="Enter postal code" />
+                        <label class="block text-sm font-bold text-ink sm:col-span-2">Full name
+                            <input name="full_name" required autocomplete="name" value="{{ $fullName }}" placeholder="e.g. Ayesha Khan" class="{{ $fieldCls }}" @error('first_name') aria-invalid="true" @enderror>
+                            @error('first_name') <span class="mt-1 block text-xs font-bold text-coral-700">{{ $message }}</span> @enderror
+                        </label>
+                        <label class="block text-sm font-bold text-ink">Mobile number
+                            <input name="phone" type="tel" inputmode="tel" required autocomplete="tel" data-pk-phone
+                                   value="{{ old('phone', $user->phone ?? '') }}" placeholder="03XX-XXXXXXX" class="{{ $fieldCls }}" @error('phone') aria-invalid="true" @enderror>
+                            <span class="mt-1 block text-xs font-normal text-muted" data-phone-hint>We'll confirm your order on this number (WhatsApp/call).</span>
+                            @error('phone') <span class="mt-1 block text-xs font-bold text-coral-700">{{ $message }}</span> @enderror
+                        </label>
+                        <label class="block text-sm font-bold text-ink">City
+                            <input name="city" required autocomplete="address-level2" list="pk-cities" value="{{ old('city') }}" placeholder="Start typing your city" class="{{ $fieldCls }}" @error('city') aria-invalid="true" @enderror>
+                            <datalist id="pk-cities">@foreach ($pkCities as $c)<option value="{{ $c }}">@endforeach</datalist>
+                            @error('city') <span class="mt-1 block text-xs font-bold text-coral-700">{{ $message }}</span> @enderror
+                        </label>
+                        <label class="block text-sm font-bold text-ink sm:col-span-2">Full address
+                            <input name="address" required autocomplete="street-address" value="{{ old('address') }}" placeholder="House no., street, area / mohalla, nearby landmark" class="{{ $fieldCls }}" @error('address') aria-invalid="true" @enderror>
+                            @error('address') <span class="mt-1 block text-xs font-bold text-coral-700">{{ $message }}</span> @enderror
+                        </label>
+                        <label class="block text-sm font-bold text-ink sm:col-span-2">Email <span class="font-normal text-muted">(optional — for an order confirmation email)</span>
+                            <input name="email" type="email" autocomplete="email" value="{{ old('email', $user->email ?? '') }}" placeholder="example@email.com" class="{{ $fieldCls }}" @error('email') aria-invalid="true" @enderror>
+                            @error('email') <span class="mt-1 block text-xs font-bold text-coral-700">{{ $message }}</span> @enderror
+                        </label>
 
                         <div class="sm:col-span-2">
                             <label for="f-notes" class="mb-1.5 block text-sm font-semibold">
                                 Additional notes <span class="font-normal text-muted">(optional)</span>
                             </label>
                             <textarea id="f-notes" name="notes" rows="3" placeholder="Delivery instructions or special requests..."
-                                      class="block w-full resize-y rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink placeholder:text-muted focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/15">{{ old('notes') }}</textarea>
+                                      class="block w-full resize-y rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink placeholder:text-muted focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/15">{{ old('notes', session('checkout_note')) }}</textarea>
                             @error('notes') <p class="mt-1 text-xs font-semibold text-blush-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
@@ -196,22 +218,27 @@
                 </div>
             </div>
 
-            {{-- Order summary --}}
-            <aside class="overflow-hidden rounded-2xl border border-line bg-white shadow-sm lg:sticky lg:top-28" aria-label="Order summary">
-                <div class="bg-lavender-100 px-5 py-4">
-                    <h2 class="text-lg font-semibold">Your order</h2>
-                    <p class="text-xs text-muted">{{ count($lines) }} {{ \Illuminate\Support\Str::plural('product', count($lines)) }}</p>
-                </div>
-
-                <div class="space-y-4 p-5">
-                    <ul class="max-h-72 space-y-3 overflow-y-auto pr-1">
+            {{-- Order summary: collapsible on phones, sticky on desktop --}}
+            <aside class="overflow-hidden rounded-card border border-line bg-white shadow-soft lg:sticky lg:top-24" aria-label="Order summary">
+                <details class="group" data-summary>
+                    <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 bg-lavender-100 px-5 py-3 lg:pointer-events-none [&::-webkit-details-marker]:hidden">
+                        <span>
+                            <span class="block font-display text-lg font-semibold">Your order</span>
+                            <span class="block text-xs text-muted">{{ count($lines) }} {{ \Illuminate\Support\Str::plural('item', count($lines)) }} · <span class="lg:hidden group-open:hidden">tap to see</span></span>
+                        </span>
+                        <span class="flex items-center gap-2 font-extrabold text-coral-600">
+                            <span data-summary-total>{{ $money($total) }}</span>
+                            <x-shop.icon name="chevron-down" class="size-5 text-muted transition-transform group-open:rotate-180 lg:hidden" />
+                        </span>
+                    </summary>
+                    <ul class="max-h-72 space-y-3 overflow-y-auto border-b border-line p-5">
                         @foreach ($lines as $line)
                             @php
                                 $p = $line['product'];
-                                $img = $p->product_image ? asset('storage/' . $p->product_image) : asset('images/product-placeholder.svg');
+                                $img = \App\Support\WebpImage::url($p->product_image) ?? ($p->product_image ? asset('storage/' . $p->product_image) : asset('images/product-placeholder.svg'));
                             @endphp
                             <li class="flex items-start gap-3">
-                                <img src="{{ $img }}" alt="" class="size-12 shrink-0 rounded-xl bg-mist-100 object-cover">
+                                <img src="{{ $img }}" alt="" width="48" height="48" class="size-12 shrink-0 rounded-xl bg-frame object-contain p-0.5">
                                 <div class="min-w-0 flex-1">
                                     <p class="line-clamp-2 text-sm font-bold leading-snug">{{ $p->product_title }}</p>
                                     <p class="mt-0.5 text-xs text-muted">Qty {{ $line['quantity'] }} × {{ $money($line['price']) }}</p>
@@ -223,47 +250,50 @@
                             </li>
                         @endforeach
                     </ul>
+                </details>
+                <script>
+                    // Open by default on desktop (the summary is always useful there).
+                    if (window.matchMedia('(min-width: 1024px)').matches) document.querySelector('[data-summary]').open = true;
+                </script>
 
-                    <dl class="space-y-3 border-t border-dashed border-line pt-4 text-sm">
+                <div class="space-y-4 p-5">
+                    <dl class="space-y-2.5 text-sm">
                         <div class="flex justify-between">
                             <dt class="text-muted">Subtotal</dt>
-                            <dd class="font-bold">{{ $money($subtotal) }}
-                            </dd>
+                            <dd class="font-bold">{{ $money($subtotal) }}</dd>
                         </div>
                         <div class="flex justify-between">
-                            <dt class="text-muted">Shipping</dt>
+                            <dt class="text-muted">Delivery</dt>
                             <dd id="shipping-amount" class="font-bold">{{ $shipping > 0 ? $money($shipping) : 'FREE' }}</dd>
                         </div>
                         <div class="flex items-center justify-between border-t border-line pt-3">
                             <dt class="text-base font-bold">Total</dt>
-                            <div class="flex items-center justify-between border-t border-line pt-3">
-                            <dt class="text-base font-bold">Total</dt>
-                            <dd id="total-amount"
-                                class="text-2xl font-extrabold text-brand-600"
-                                data-subtotal="{{ $subtotal }}">
-                                {{ $money($total) }}
-                            </dd>
-                        </div>
+                            <dd id="total-amount" class="text-2xl font-extrabold text-coral-600" data-subtotal="{{ $subtotal }}">{{ $money($total) }}</dd>
                         </div>
                     </dl>
 
-                    <div class="rounded-2xl bg-mist-100 p-4">
-                        <label for="terms" class="flex cursor-pointer items-start gap-3">
-                            <input type="checkbox" id="terms" name="terms" value="1" required @checked(old('terms'))
-                                   class="mt-0.5 size-4 rounded border-line accent-brand-500">
-                            <span class="text-xs leading-5 text-muted">
-                                I have read and accept the <a href="#" class="font-bold text-brand-600 underline">Terms &amp; Conditions</a>.
-                            </span>
-                        </label>
-                        @error('terms') <p class="mt-2 text-xs font-semibold text-blush-600">{{ $message }}</p> @enderror
-                    </div>
+                    <label for="terms" class="flex cursor-pointer items-start gap-3 rounded-2xl bg-mist-100 p-3">
+                        <input type="checkbox" id="terms" name="terms" value="1" required @checked(old('terms'))
+                               class="mt-0.5 size-5 rounded border-line accent-brand-600">
+                        <span class="text-xs leading-5 text-muted">
+                            I accept the <a href="{{ route('terms-and-conditions') }}" target="_blank" class="font-bold text-brand-600 underline">Terms &amp; Conditions</a>.
+                        </span>
+                    </label>
+                    @error('terms') <p class="text-xs font-bold text-coral-700">{{ $message }}</p> @enderror
+                    @error('stock') <p class="rounded-xl bg-coral-50 p-3 text-xs font-bold text-coral-700" role="alert">{{ $message }}</p> @enderror
 
-                    <button type="submit" id="place-order"
-                            class="btn btn-primary btn-lg w-full disabled:cursor-wait">
-                        <span id="place-order-label">Place Order</span>
-                        <x-shop.icon name="arrow-right" class="size-4" />
+                    <button type="submit" id="place-order" class="btn btn-primary btn-lg w-full disabled:cursor-wait">
+                        <x-shop.icon name="lock" class="size-5" />
+                        <span id="place-order-label">Confirm Order — Pay on Delivery</span>
                     </button>
                     <p id="payment-hint" class="text-center text-xs text-muted" aria-live="polite"></p>
+
+                    <ul class="grid grid-cols-2 gap-2 text-[11px] font-bold text-ink">
+                        <li class="flex items-center gap-1.5 rounded-xl bg-mint-100 px-2.5 py-2"><x-shop.icon name="banknote" class="size-4 text-mint-600" /> Pay cash on delivery</li>
+                        <li class="flex items-center gap-1.5 rounded-xl bg-mint-100 px-2.5 py-2"><x-shop.icon name="package" class="size-4 text-mint-600" /> Open parcel first</li>
+                        <li class="flex items-center gap-1.5 rounded-xl bg-mint-100 px-2.5 py-2"><x-shop.icon name="truck" class="size-4 text-mint-600" /> 1–3 day delivery</li>
+                        <li class="flex items-center gap-1.5 rounded-xl bg-mint-100 px-2.5 py-2"><x-shop.icon name="rotate-ccw" class="size-4 text-mint-600" /> 14-day returns</li>
+                    </ul>
 
                     <a href="{{ route('cart') }}" class="block text-center text-xs font-bold text-muted hover:text-brand-600">Back to cart</a>
                 </div>
@@ -326,7 +356,7 @@
             if (label) {
                 label.textContent = checked.value === 'card'
                     ? 'Continue to Payment'
-                    : 'Place Order';
+                    : 'Confirm Order — Pay on Delivery';
             }
 
             // Update payment hint
@@ -347,6 +377,8 @@
 
                 shippingAmount.textContent = shipping === 0 ? 'FREE' : formatMoney(shipping);
                 totalAmount.textContent = formatMoney(subtotal + shipping);
+                var st = document.querySelector('[data-summary-total]');
+                if (st) st.textContent = formatMoney(subtotal + shipping);
             }
         }
 
@@ -395,6 +427,12 @@
             num_items: checkoutContents.reduce(function (n, c) { return n + c.quantity; }, 0),
             value: {{ (float) $subtotal }},
             currency: 'PKR',
+        }, @js($checkoutEventId ?? null));
+
+        // GA4 begin_checkout
+        gaEvent('begin_checkout', {
+            value: {{ (float) $subtotal }},
+            items: checkoutContents.map(function (c) { return { item_id: c.content_id, item_name: c.content_name, price: c.price, quantity: c.quantity }; }),
         });
 
         @if ($user && $user->email)
@@ -412,3 +450,50 @@
     </script>
     @endpush
 @endif
+
+@push('script')
+<script>
+    // Pakistani mobile number: live hint + capture for follow-up once valid.
+    (function () {
+        var input = document.querySelector('[data-pk-phone]');
+        if (!input) return;
+        var hint = document.querySelector('[data-phone-hint]');
+        var form = document.getElementById('checkout-form');
+        var sent = '';
+
+        function normalize(v) {
+            var d = (v || '').replace(/\D/g, '');
+            if (d.indexOf('0092') === 0) d = d.slice(4);
+            else if (d.indexOf('92') === 0 && d.length === 12) d = d.slice(2);
+            if (d.length === 10 && d[0] === '3') d = '0' + d;
+            return d;
+        }
+        function check() {
+            var d = normalize(input.value), ok = /^03\d{9}$/.test(d);
+            input.setAttribute('aria-invalid', input.value && !ok && d.length >= 11 ? 'true' : 'false');
+            if (hint) hint.textContent = ok ? '✓ ' + d.slice(0, 4) + '-' + d.slice(4) + ' — we' + "'" + 'll confirm your order on this number.'
+                                            : 'Format: 03XX-XXXXXXX';
+            return ok ? d : null;
+        }
+        function capture() {
+            var d = check();
+            if (!d || d === sent) return;
+            sent = d;
+            var body = new FormData();
+            body.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+            body.append('phone', d);
+            body.append('name', (form.querySelector('[name="full_name"]') || {}).value || '');
+            body.append('city', (form.querySelector('[name="city"]') || {}).value || '');
+            fetch(@json(route('checkout.capture')), { method: 'POST', body: body, keepalive: true }).catch(function () {});
+        }
+        input.addEventListener('input', check);
+        input.addEventListener('blur', capture);
+        // Refresh name/city on the captured row if they are filled in after the phone.
+        ['full_name', 'city'].forEach(function (n) {
+            var el = form.querySelector('[name="' + n + '"]');
+            if (el) el.addEventListener('change', function () { sent = ''; capture(); });
+        });
+        if (input.value) check();
+    })();
+</script>
+@endpush

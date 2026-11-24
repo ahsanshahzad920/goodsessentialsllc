@@ -19,7 +19,7 @@ class ShopController extends Controller
         $categoryName = $request->input('category');
         $age = \App\Support\AgeRange::valid($request->input('age')) ? $request->input('age') : null;
 
-        $products = Product::search($search)
+        $products = Product::withCardData()->search($search)
             ->forAge($age)
             ->when($categoryName, function ($query, $categoryName) {
                 $query->whereHas('category', function ($query) use ($categoryName) {
@@ -57,7 +57,7 @@ class ShopController extends Controller
             ? $category->children->pluck('id')->push($category->id)
             : [$category->id];
 
-        $products = Product::whereIn('category_id', $categoryIds)
+        $products = Product::withCardData()->whereIn('category_id', $categoryIds)
             ->search($search)
             ->tap(fn ($q) => $this->applySort($q, $request->input('sort')))
             ->paginate(12)
@@ -76,7 +76,9 @@ class ShopController extends Controller
 
     public function productDetails(Product $product)
     {
-        $products = Product::where('category_id', $product->category_id)->get();
+        // Related products for "You may also like" (cards need gallery + review data).
+        $products = Product::withCardData()->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)->take(8)->get();
 
         SeoService::forProduct($product);
         SeoService::faq([
@@ -85,7 +87,24 @@ class ShopController extends Controller
             'How long will delivery take?' => config('shop.delivery.message'),
         ]);
 
-        return view('product-details', compact('product', 'products'));
+        $product->loadMissing('images', 'category');
+
+        // ViewContent: same id for the CAPI event and the browser Pixel.
+        $viewEventId = \App\Services\MetaConversions::newEventId('vc');
+        \App\Services\MetaConversions::send('ViewContent', $viewEventId, [
+            'value' => (float) \App\Support\Price::final($product), 'content_type' => 'product',
+            'content_ids' => [(string) $product->id], 'content_name' => $product->product_title,
+        ], request());
+
+        return view('product-details', [
+            'product'         => $product,
+            'products'        => $products,
+            'reviewData'      => \App\Support\ProductPage::reviews($product),
+            'boughtTogether'  => \App\Support\ProductPage::boughtTogether($product),
+            'description'     => \App\Support\ProductPage::descriptionSections($product->product_description),
+            'deliveryWindow'  => \App\Support\ProductPage::deliveryWindow(),
+            'viewEventId'     => $viewEventId,
+        ]);
     }
 
     /**
