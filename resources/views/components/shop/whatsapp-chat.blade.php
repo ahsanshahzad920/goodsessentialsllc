@@ -6,7 +6,7 @@
         type="button"
         aria-label="Open customer support chat"
         aria-expanded="false"
-        class="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-mint-100 md:bottom-6 sm:right-6 sm:h-[60px] sm:w-[60px]"
+        class="fixed {{ request()->routeIs('gift-box') ? 'bottom-[calc(10rem+env(safe-area-inset-bottom))] md:bottom-24' : 'bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-6' }} right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-mint-100 sm:right-6 sm:h-[60px] sm:w-[60px]"
     >
         <x-shop.icon name="whatsapp" class="size-8 shrink-0" />
     </button>
