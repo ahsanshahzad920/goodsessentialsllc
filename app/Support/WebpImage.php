@@ -22,7 +22,8 @@ class WebpImage
     public const MAX_EDGE = 1200;
     public const QUALITY = 80;
     public const WIDTHS = [240, 480, 800];
-    public const VARIANT_QUALITY = 76;
+    // 70 keeps the 480px LCP-sized files around 15 KB with no visible loss on product shots.
+    public const VARIANT_QUALITY = 70;
 
     public static function siblingPath(string $path): string
     {
@@ -82,6 +83,29 @@ class WebpImage
         $c = self::candidates($path);
 
         return $c ? implode(', ', array_map(fn ($u, $w) => "$u {$w}w", array_keys($c), $c)) : null;
+    }
+
+    /**
+     * Everything an <img> (and its preload) needs: a WebP src (the 480px
+     * variant, or the largest smaller one) plus the srcset. Null when no
+     * WebP exists yet, so callers fall back to the original upload.
+     *
+     * @return array{src: string, srcset: string}|null
+     */
+    public static function responsive(?string $path): ?array
+    {
+        $c = self::candidates($path);
+        if (! $c) {
+            return null;
+        }
+        $src = array_key_first($c);
+        foreach ($c as $url => $w) {
+            if ($w <= 480) {
+                $src = $url;
+            }
+        }
+
+        return ['src' => $src, 'srcset' => self::srcset($path)];
     }
 
     /**

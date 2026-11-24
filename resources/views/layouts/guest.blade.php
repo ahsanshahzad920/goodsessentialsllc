@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{-- The page's LCP image (<x-preload-image>), requested before anything else. --}}
     @stack('preload')
-    {{-- Self-hosted Latin variable fonts (SIL OFL): no third-party DNS/TLS
-         round trips and no render-blocking Google Fonts stylesheet. --}}
-    <link rel="preload" href="{{ asset('fonts/nunito-latin-var.woff2') }}" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="{{ asset('fonts/fredoka-latin-var.woff2') }}" as="font" type="font/woff2" crossorigin>
+    {{-- Fonts are self-hosted (@font-face below) but deliberately NOT preloaded:
+         68 KB of preloaded fonts competed with the LCP image for bandwidth.
+         font-display: swap paints text at once in the fallback font. --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {!! \Artesaos\SEOTools\Facades\SEOMeta::generate() !!}
     {!! \Artesaos\SEOTools\Facades\OpenGraph::generate() !!}
