@@ -120,7 +120,7 @@
                 href="#"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#1fbd5a] focus:outline-none focus:ring-4 focus:ring-mint-100"
+                class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0e7a3f] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#0b6533] focus:outline-none focus:ring-4 focus:ring-mint-100"
             >
                 <x-shop.icon name="whatsapp" class="size-5 shrink-0" />
                 Chat with us on WhatsApp

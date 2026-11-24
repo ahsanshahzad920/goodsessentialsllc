@@ -11,7 +11,7 @@
  * Every hue has a soft ACCENT shade (-500 / named pastels: fills, rings,
  * progress bars, illustrations) and a deeper TEXT/CTA shade (-600/-700)
  * chosen to pass WCAG AA 4.5:1 — the brief's coral #F26B5B is only 2.99:1
- * behind white text, so filled CTAs use coral-600 (#C93F31, 4.95:1).
+ * behind white text, so filled CTAs use coral-600 (#B3372A, 6.0:1).
  */
 @theme {
     --font-display: "Fredoka", ui-rounded, system-ui, sans-serif;
@@ -20,7 +20,7 @@
     /* Neutrals */
     --color-cream: #fff9f3;          /* page background */
     --color-ink: #1f1b3a;            /* body text: 15.7:1 on cream */
-    --color-muted: #6b6880;          /* secondary text: 5.1:1 on cream */
+    --color-muted: #5f5c74;          /* secondary text: 6.4:1 on white, >=5.2:1 on every pastel -100 tint */
     --color-line: #ece9f5;
     --color-star: #f59e0b;
     --color-frame: #fff7f2;          /* product image frame */
@@ -29,15 +29,15 @@
     --color-coral-50:  #fff4f2;
     --color-coral-100: #ffe3de;
     --color-coral-500: #f26b5b;      /* accent only */
-    --color-coral-600: #c93f31;      /* CTA fill (white text 4.95:1), price text */
-    --color-coral-700: #b2362a;      /* CTA hover/active */
+    --color-coral-600: #b3372a;      /* CTA fill (white text 6.0:1), price text (>=4.8:1 on pastel tints) */
+    --color-coral-700: #9a2e23;      /* CTA hover/active */
 
     /* Secondary: lavender (brand accents, keeps the existing purple) */
     --color-brand-50:  #f3f1fc;
     --color-brand-100: #ece7fb;
     --color-brand-500: #7c6ce0;      /* accent only */
-    --color-brand-600: #6a5bc2;      /* links, outline buttons: 5.4:1 */
-    --color-brand-700: #5b4bc4;
+    --color-brand-600: #5e4fbf;      /* links, outline buttons, filled buttons: 6.3:1 on white, >=5:1 on tints */
+    --color-brand-700: #4b3dab;
 
     /* Named pastels from the brief, for decorative blocks */
     --color-mint:   #bdebdd;
