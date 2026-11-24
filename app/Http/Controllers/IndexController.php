@@ -27,7 +27,7 @@ class IndexController extends Controller
             'newArrivals'  => HomePage::newArrivals(),
             'ageBuckets'   => HomePage::ageBuckets(),
             'giftProducts' => HomePage::giftProducts(),
-            'testimonials' => Review::approved()->featured()->with('product')->latest()->take(6)->get(),
+            'testimonials' => Review::showcase()->with('product')->take(6)->get(),
             'homeFaqs'     => $homeFaqs,
         ]);
     }

@@ -49,6 +49,11 @@ Route::post('subscribe', [\App\Http\Controllers\Frontend\SocialProofController::
 Route::post('product/{product:slug}/reviews', [\App\Http\Controllers\Frontend\ReviewController::class, 'store'])
     ->middleware('throttle:5,10')
     ->name('reviews.store');
+// Store-wide reviews page + "Leave a review" form (also held for approval).
+Route::get('reviews', [\App\Http\Controllers\Frontend\StoreReviewController::class, 'index'])->name('store-reviews.index');
+Route::post('reviews', [\App\Http\Controllers\Frontend\StoreReviewController::class, 'store'])
+    ->middleware('throttle:5,10')
+    ->name('store-reviews.store');
 
 // Instant results for the header search box (debounced client-side, 250ms).
 Route::get('search/suggest', \App\Http\Controllers\Frontend\SearchSuggestController::class)

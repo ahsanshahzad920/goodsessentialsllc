@@ -120,7 +120,7 @@
     @endif
 
     {{-- 8. Customer love: real reviews --}}
-    <x-shop.testimonials :reviews="$testimonials" />
+    <x-shop.testimonials :reviews="$testimonials" :empty-state="true" data-reveal />
 
     @if ($social)
         <section aria-label="Follow us" class="flex flex-wrap items-center justify-center gap-3 rounded-card bg-white p-5 text-center shadow-soft">

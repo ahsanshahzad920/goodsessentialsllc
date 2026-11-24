@@ -6,7 +6,7 @@
         'Learn about Goods Essentials, a Pakistan-based baby and mom essentials store offering wholesale-rate pricing on quality products, with Cash on Delivery and fast delivery.',
     );
 
-    $testimonials = \App\Models\Review::approved()->featured()->latest()->take(6)->get();
+    $testimonials = \App\Models\Review::showcase()->with('product')->take(6)->get();
     $aboutTiles = \App\Models\Category::homeTiles();
 @endphp
 

@@ -48,6 +48,22 @@ class Review extends Model
         return $name !== '' ? Str::title($name) : 'Customer';
     }
 
+    /** Homepage / About showcase: approved only; "Show on homepage" ones first, then newest. */
+    public function scopeShowcase(Builder $q): Builder
+    {
+        return $q->approved()->orderByDesc('is_featured')->latest();
+    }
+
+    /** "Ayesha Khan" -> "Ayesha K."; a single name stays as it is. */
+    public function getShortNameAttribute(): string
+    {
+        $words = preg_split('/\s+/', $this->cleanName());
+
+        return count($words) > 1
+            ? $words[0] . ' ' . Str::upper(mb_substr(end($words), 0, 1)) . '.'
+            : $words[0];
+    }
+
     /** First name only, for public display. */
     public function getDisplayNameAttribute(): string
     {

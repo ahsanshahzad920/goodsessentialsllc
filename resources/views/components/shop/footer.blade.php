@@ -66,6 +66,7 @@
             <h3 class="text-base font-semibold">Help</h3>
             <ul class="mt-3 space-y-1 text-sm text-muted">
                 <li><a href="{{ route('about') }}" class="inline-flex min-h-8 items-center hover:text-brand-600">About us</a></li>
+                <li><a href="{{ route('store-reviews.index') }}" class="inline-flex min-h-8 items-center hover:text-brand-600">Customer reviews</a></li>
                 <li><a href="{{ route('blog.index') }}" class="inline-flex min-h-8 items-center hover:text-brand-600">Mom's Guide</a></li>
                 <li><a href="{{ route('contacts.index') }}" class="inline-flex min-h-8 items-center hover:text-brand-600">Contact us</a></li>
                 <li><a href="{{ route('privacy-policy') }}" class="inline-flex min-h-8 items-center hover:text-brand-600">Privacy Policy</a></li>
