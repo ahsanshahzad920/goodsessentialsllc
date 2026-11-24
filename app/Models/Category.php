@@ -15,6 +15,7 @@ class Category extends Model
         'name',
         'slug',
         'description',
+        'image',
         'created_by',
         'updated_by',
         'parent_id',
@@ -83,6 +84,62 @@ class Category extends Model
                 })
                 ->values();
         });
+    }
+
+    /**
+     * Homepage collection tiles, built from real categories (the old tiles
+     * came from config/shop.php and pointed at categories that don't exist,
+     * with stock textures as images). Image priority: admin-uploaded
+     * categories.image -> best-selling product in the category (by units
+     * ordered) -> newest product with an image. Non-baby categories listed in
+     * shop.homepage_exclude_categories are skipped.
+     *
+     * @return \Illuminate\Support\Collection<int, array{name:string, slug:string, label:string, icon:string, tone:string, text:?string, image:?string, count:int}>
+     */
+    public static function homeTiles(int $limit = 4): \Illuminate\Support\Collection
+    {
+        return Cache::remember('shop.home_tiles', 300, function () use ($limit) {
+            $configured = collect(config('shop.categories', []))->keyBy(fn ($c) => strtolower($c['name']));
+            $excluded = config('shop.homepage_exclude_categories', []);
+
+            return static::withoutGlobalScope('latest')->withProducts()
+                ->whereNotIn('slug', $excluded)
+                ->orderByDesc('products_count')->orderBy('name')
+                ->take($limit)->get()
+                ->map(function (self $category) use ($configured) {
+                    $settings = $configured->get(strtolower($category->name), []);
+
+                    $image = $category->image;
+                    if (! $image) {
+                        $image = Product::withoutGlobalScopes()
+                            ->where('products.category_id', $category->id)
+                            ->whereNotNull('products.product_image')
+                            ->leftJoin('order_items', 'order_items.product_id', '=', 'products.id')
+                            ->groupBy('products.id', 'products.product_image', 'products.created_at')
+                            ->orderByRaw('COALESCE(SUM(order_items.quantity), 0) DESC')
+                            ->orderByDesc('products.created_at')
+                            ->value('products.product_image');
+                    }
+
+                    return [
+                        'name'  => $category->name,
+                        'slug'  => $category->slug,
+                        'label' => $settings['label'] ?? $category->name,
+                        'icon'  => $settings['icon'] ?? 'tag',
+                        'tone'  => $settings['tone'] ?? 'lavender',
+                        'text'  => $settings['text'] ?? null,
+                        'image' => $image ? asset('storage/' . $image) : null,
+                        'count' => (int) $category->products_count,
+                    ];
+                })
+                ->values();
+        });
+    }
+
+    public static function forgetCaches(): void
+    {
+        Cache::forget('shop.visible_categories');
+        Cache::forget('shop.home_tiles');
     }
 
     // Query Scope

@@ -1,4 +1,4 @@
-@props(['product', 'wishlisted' => false])
+@props(['product', 'wishlisted' => false, 'priority' => false])
 
 @php
     $price = (float) str_replace(',', '', (string) ($product->price ?? 0));
@@ -16,6 +16,7 @@
     }
 
     $image   = $product->product_image ? asset('storage/' . $product->product_image) : asset('images/product-placeholder.svg');
+    $webp    = \App\Support\WebpImage::url($product->product_image);
     $url     = route('productDetails', $product->slug);
     $rating  = $product->rating ?? null;
     $reviews = $product->reviews_count ?? null;
@@ -25,10 +26,18 @@
 @endphp
 
 <article class="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-sm transition hover:shadow-md">
-    <div class="relative bg-mist-100">
+    {{-- Same normalized 1:1 frame as x-shop.product-card. --}}
+    <div class="relative bg-[#FFF7F2]">
         <a href="{{ $url }}" class="block overflow-hidden">
-            <img src="{{ $image }}" alt="{{ $product->product_title }}" loading="lazy"
-                 class="aspect-square w-full object-cover transition duration-300 group-hover:scale-105">
+            <picture>
+                @if ($webp)
+                    <source type="image/webp" srcset="{{ $webp }}">
+                @endif
+                <img src="{{ $image }}" alt="{{ $product->product_title }}"
+                     width="600" height="600" decoding="async"
+                     @if ($priority) loading="eager" fetchpriority="high" @else loading="lazy" @endif
+                     class="aspect-square w-full object-contain p-3 mix-blend-multiply transition duration-300 group-hover:scale-105">
+            </picture>
         </a>
 
         @if ($badge)

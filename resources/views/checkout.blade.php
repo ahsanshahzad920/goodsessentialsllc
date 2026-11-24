@@ -13,7 +13,7 @@
     $selectedMethod = old('payment_method', $defaultMethod ?? 'cod');
 
     $ttqContents = collect($lines ?? [])->map(fn ($line) => [
-        'content_id'   => $line['product']->sku ?: (string) $line['product']->id,
+        'content_id'   => (string) $line['product']->id,
         'content_type' => 'product',
         'content_name' => $line['product']->product_title,
         'quantity'     => $line['quantity'],

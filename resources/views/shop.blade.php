@@ -135,7 +135,7 @@
             @if ($products->count())
                 <div class="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
                     @foreach ($products as $product)
-                        <x-shop.product-tile :product="$product" :wishlisted="in_array($product->id, $wishlistIds)" />
+                        <x-shop.product-tile :product="$product" :wishlisted="in_array($product->id, $wishlistIds)" :priority="$loop->index < 2" />
                     @endforeach
                 </div>
 

@@ -63,6 +63,9 @@
             <h1 class="text-2xl font-bold leading-tight tracking-tight text-gray-900 sm:text-3xl">
                 {{ $product->product_title ?? 'Product Details' }}
             </h1>
+            @if ($product->sku)
+                <p class="-mt-2 text-xs text-gray-400">SKU: {{ $product->sku }}</p>
+            @endif
             {{-- Price --}}
             <div class="flex flex-wrap items-center gap-3">
                 <span class="text-2xl font-extrabold text-gray-900">
@@ -313,7 +316,7 @@
     // TikTok ViewContent: one real event per product page load.
     ttqTrack('ViewContent', {
         contents: [{
-            content_id: @json($product->sku ?: (string) $product->id),
+            content_id: @json((string) $product->id),
             content_type: 'product',
             content_name: @json($product->product_title),
             quantity: 1,
@@ -325,10 +328,10 @@
 
     // Meta Pixel ViewContent: one real event per product page load.
     fbqTrack('ViewContent', {
-        content_ids: [@js($product->sku ?: (string) $product->id)],
+        content_ids: [@js((string) $product->id)],
         content_type: 'product',
         content_name: @js($product->product_title),
-        contents: [{ id: @js($product->sku ?: (string) $product->id), quantity: 1 }],
+        contents: [{ id: @js((string) $product->id), quantity: 1 }],
         value: {{ (float) $currentPrice }},
         currency: 'PKR',
     });
