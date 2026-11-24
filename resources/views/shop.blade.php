@@ -33,8 +33,16 @@
 <section class="border-b border-line bg-white/70">
     <div class="container-shop flex flex-wrap items-end justify-between gap-4 py-6">
         <div>
-            <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-600">Shop</p>
-            <h1 class="mt-1 text-3xl font-bold">{{ $activeCategory->name ?? 'Shop' }}</h1>
+            <p class="text-[11px] font-extrabold uppercase tracking-wider text-brand-600">{{ $searchQuery ? 'Search results' : 'Shop' }}</p>
+            <h1 class="mt-1 text-3xl font-bold">
+                @if ($searchQuery)
+                    “{{ $searchQuery }}”@if ($activeCategory) <span class="text-muted">in {{ $activeCategory->name }}</span>@endif
+                @elseif (! empty($age))
+                    For {{ \App\Support\AgeRange::label($age) }}
+                @else
+                    {{ $activeCategory->name ?? 'Shop' }}
+                @endif
+            </h1>
             <p class="mt-0.5 text-xs text-muted">{{ number_format($total) }} {{ Str::plural('product', $total) }}</p>
         </div>
 
@@ -141,6 +149,23 @@
 
                 <div class="mt-8">
                     {{ $products->links('vendor.pagination.shop') }}
+                </div>
+            @elseif ($searchQuery)
+                {{-- A search with no matches is not an empty category. --}}
+                <div class="rounded-card border border-line bg-white p-10 text-center">
+                    <p class="text-lg font-semibold">No products found for “{{ $searchQuery }}”{{ $activeCategory ? ' in ' . $activeCategory->name : '' }}</p>
+                    <p class="mt-1 text-sm text-muted">Try a shorter word, check the spelling, or browse a category:</p>
+                    @if ($visibleCategories->isNotEmpty())
+                        <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
+                            @foreach ($visibleCategories as $c)
+                                <a href="{{ route('shop.category', $c->slug) }}" class="inline-flex min-h-10 items-center rounded-full bg-brand-50 px-4 text-sm font-bold text-brand-700 hover:bg-brand-100">{{ $c->name }}</a>
+                            @endforeach
+                        </div>
+                    @endif
+                    <a href="https://wa.me/{{ ltrim(config('shop.contact.whatsapp'), '+') }}?text={{ rawurlencode('Hi, I am looking for: ' . $searchQuery) }}" target="_blank" rel="noopener"
+                       class="btn btn-whatsapp mt-6">
+                        <x-shop.icon name="whatsapp" class="size-5" /> Ask us on WhatsApp
+                    </a>
                 </div>
             @elseif ($activeCategory)
                 {{-- Direct visit to a category with no products yet: a friendly

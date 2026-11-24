@@ -207,6 +207,14 @@
                     if (y > lastY + 4 && y > 120 && !nearEnd) bottom.classList.add('translate-y-full');
                     else if (y < lastY - 4 || y <= 120 || nearEnd) bottom.classList.remove('translate-y-full');
                 }
+                // Homepage, phones: keep the floating WhatsApp button off the hero's
+                // "Order Now" button until the shopper scrolls past it.
+                var wa = document.getElementById('wa-toggle');
+                if (wa && document.querySelector('[data-hero]')) {
+                    ['max-md:translate-x-24', 'max-md:opacity-0', 'max-md:pointer-events-none'].forEach(function (c) {
+                        wa.classList.toggle(c, y < 400);
+                    });
+                }
                 lastY = y;
                 ticking = false;
             }
@@ -214,6 +222,8 @@
                 if (!ticking) { ticking = true; requestAnimationFrame(update); }
             }, { passive: true });
             update();
+            // The WhatsApp button is rendered after this script; apply state once it exists.
+            document.addEventListener('DOMContentLoaded', update);
         })();
     </script>
     @stack('script')
