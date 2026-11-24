@@ -21,6 +21,9 @@
             <ul class="list-disc space-y-1 pl-6">
                 <li>Prepaid orders: PKR 200 delivery charge.</li>
                 <li>Cash on Delivery (COD) orders: PKR 250 delivery charge.</li>
+                @if ($freeFrom = \App\Support\Settings::freeDeliveryThreshold())
+                    <li>Free delivery on orders with a subtotal of {{ money($freeFrom) }} or more.</li>
+                @endif
             </ul>
             <p class="mt-2">Any applicable delivery charges will be shown during checkout before you place your order.</p>
         </section>

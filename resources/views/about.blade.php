@@ -51,10 +51,10 @@
         <div class="pointer-events-none absolute -bottom-16 right-20 -z-0 h-40 w-40 rounded-full bg-lilac-100 sm:h-52 sm:w-52"></div>
 
         <div class="pointer-events-none absolute right-10 top-10 hidden rotate-12 text-5xl text-blush-100 sm:block">
-            <x-shop.icon name="heart" class="size-4 shrink-0 fill-current" />
+            <x-shop.icon name="heart" class="size-12 shrink-0 fill-current" />
         </div>
         <div class="pointer-events-none absolute bottom-10 right-20 hidden -rotate-12 text-4xl text-lilac-100 sm:block">
-            <x-shop.icon name="star" class="size-4 shrink-0 fill-current" />
+            <x-shop.icon name="star" class="size-9 shrink-0 fill-current" />
         </div>
     </section>
 

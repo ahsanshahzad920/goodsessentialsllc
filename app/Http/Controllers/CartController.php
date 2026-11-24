@@ -67,7 +67,7 @@ class CartController extends Controller
             return redirect()->route('checkout');
         }
 
-        return redirect()->back()->with('success', 'Product added to cart!');
+        return redirect()->back()->with('success', 'Product added to cart!')->with('cart_added', true);
     }
 
     public function incrementSession(Request $request)

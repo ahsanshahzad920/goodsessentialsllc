@@ -1,3 +1,5 @@
+@props(['imgClass' => 'h-15 w-auto'])
+
 @php
     $image = config('shop.logo_image');
     $name  = config('shop.name', config('app.name'));
@@ -6,7 +8,7 @@
 
 <a href="{{ route('index') }}" {{ $attributes->merge(['class' => 'inline-flex flex-col leading-none']) }} aria-label="{{ $name }} home">
     @if ($image)
-        <img src="{{ asset($image) }}" alt="{{ $name }}" class="h-15 w-auto">
+        <img src="{{ asset($image) }}" alt="{{ $name }}" width="250" height="80" class="{{ $imgClass }}">
     @else
         <span class="font-display text-3xl font-bold tracking-wide">
             @foreach (str_split(strtoupper($name)) as $i => $char)<span class="{{ $tones[$i % count($tones)] }}">{{ $char }}</span>@endforeach
