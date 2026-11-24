@@ -37,7 +37,7 @@
                         <span class="rounded-full bg-{{ $t }}-100 px-3 py-1 text-[11px] font-extrabold capitalize text-{{ $t }}-600">{{ $order->status }}</span>
                         <span class="text-base font-extrabold">{{ $money($order->total) }}</span>
                         <a href="{{ route('account.orders.show', $order) }}"
-                           class="inline-flex items-center gap-1 rounded-full bg-lavender-100 px-4 py-2 text-xs font-extrabold text-brand-600 hover:bg-brand-500 hover:text-white">
+                           class="inline-flex items-center gap-1 rounded-full bg-lavender-100 px-4 py-2 text-xs font-extrabold text-brand-600 hover:bg-brand-600 hover:text-white">
                             View <x-shop.icon name="arrow-right" class="size-3.5" />
                         </a>
                     </div>
@@ -54,7 +54,7 @@
             <h2 class="mt-5 text-xl font-semibold">No orders yet</h2>
             <p class="mt-1 text-sm text-muted">When you place an order it will show up here.</p>
             <a href="{{ route('shop') }}"
-               class="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-600">
+               class="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-700">
                 Start shopping <x-shop.icon name="arrow-right" class="size-4" />
             </a>
         </div>

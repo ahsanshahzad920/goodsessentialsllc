@@ -12,10 +12,12 @@
     if ($paths->isEmpty() && $product->product_image) {
         $paths = collect([$product->product_image]);
     }
-    $images = $paths->map(fn ($p) => ['src' => asset('storage/' . $p), 'webp' => WebpImage::url($p)])->values();
+    $images = $paths->map(fn ($p) => ['path' => $p, 'src' => asset('storage/' . $p), 'thumb' => WebpImage::fit($p, 240)])->values();
     if ($images->isEmpty()) {
-        $images = collect([['src' => asset('images/product-placeholder.svg'), 'webp' => null]]);
+        $images = collect([['path' => null, 'src' => asset('images/product-placeholder.svg'), 'thumb' => asset('images/product-placeholder.svg')]]);
     }
+    // Full width on phones; about half the container from md up (max ~600px).
+    $sizes = '(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw';
     $alt = $product->product_title ?? 'Product image';
     $multi = $images->count() > 1;
 @endphp
@@ -27,12 +29,10 @@
             @foreach ($images as $i => $img)
                 <li class="w-full shrink-0 snap-center" @if ($multi) aria-label="Image {{ $i + 1 }} of {{ $images->count() }}" @endif>
                     <button type="button" data-pg-zoom="{{ $i }}" class="block w-full cursor-zoom-in" aria-label="Zoom image {{ $i + 1 }}">
-                        <picture>
-                            @if ($img['webp']) <source type="image/webp" srcset="{{ $img['webp'] }}"> @endif
-                            <img src="{{ $img['src'] }}" alt="{{ $i === 0 ? $alt : '' }}" width="800" height="800" decoding="async" draggable="false"
-                                 @if ($i === 0) loading="eager" fetchpriority="high" @else loading="lazy" @endif
-                                 class="aspect-square max-h-[42vh] w-full select-none object-contain p-4 mix-blend-multiply sm:max-h-none sm:p-6">
-                        </picture>
+                        @if ($i === 0) <x-preload-image :path="$img['path']" :sizes="$sizes" /> @endif
+                        <x-picture :path="$img['path']" :sizes="$sizes" :priority="$i === 0" :alt="$i === 0 ? $alt : ''"
+                                   width="800" height="800" draggable="false"
+                                   class="aspect-square max-h-[42vh] w-full select-none object-contain p-4 mix-blend-multiply sm:max-h-none sm:p-6" />
                     </button>
                 </li>
             @endforeach
@@ -64,7 +64,7 @@
                 <li>
                     <button type="button" data-pg-thumb="{{ $i }}" aria-label="Show image {{ $i + 1 }}" aria-current="{{ $i === 0 ? 'true' : 'false' }}"
                             class="block size-16 overflow-hidden rounded-xl border-2 border-line bg-frame transition hover:border-brand-500/50 aria-[current=true]:border-brand-600 md:size-20">
-                        <img src="{{ $img['webp'] ?? $img['src'] }}" alt="" loading="lazy" width="80" height="80" class="size-full object-contain p-1 mix-blend-multiply">
+                        <img src="{{ $img['thumb'] }}" alt="" loading="lazy" width="80" height="80" class="size-full object-contain p-1 mix-blend-multiply">
                     </button>
                 </li>
             @endforeach

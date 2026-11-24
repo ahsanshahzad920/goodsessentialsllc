@@ -34,7 +34,7 @@
             <h2 class="mt-5 text-xl font-semibold">Your cart is empty</h2>
             <p class="mt-1 text-sm text-muted">Looks like you haven't added anything yet.</p>
             <a href="{{ route('shop') }}"
-               class="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-600">
+               class="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-700">
                 Start shopping <x-shop.icon name="arrow-right" class="size-4" />
             </a>
         </div>

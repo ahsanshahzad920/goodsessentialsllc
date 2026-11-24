@@ -53,8 +53,7 @@ class SearchSuggestController extends Controller
                 return [
                     'title' => $p->product_title,
                     'url'   => route('productDetails', $p->slug),
-                    'image' => WebpImage::url($p->product_image)
-                        ?? ($p->product_image ? asset('storage/' . $p->product_image) : asset('images/product-placeholder.svg')),
+                    'image' => WebpImage::fit($p->product_image, 240) ?? asset('images/product-placeholder.svg'),
                     'price' => money($final ?: $price),
                     'was'   => $final > 0 && $final < $price ? money($price) : null,
                 ];

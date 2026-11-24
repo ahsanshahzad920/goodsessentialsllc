@@ -63,7 +63,7 @@
             </div>
 
             <button type="submit"
-                    class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-2.5 text-xs font-extrabold text-white shadow-md shadow-brand-500/30 transition hover:bg-brand-600">
+                    class="inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-md shadow-brand-500/30 transition hover:bg-brand-700">
                 <x-shop.icon name="refresh" class="size-3.5" /> Update
             </button>
         </form>
@@ -132,7 +132,7 @@
                 </x-shop.select>
 
                 <button type="submit"
-                        class="flex w-full items-center justify-center gap-2 rounded-full bg-brand-500 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-600">
+                        class="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-700">
                     <x-shop.icon name="filter" class="size-4" /> Apply Filters
                 </button>
             </form>
@@ -141,6 +141,10 @@
         {{-- Products --}}
         <div>
             @if ($products->count())
+                {{-- Keeps the heading outline h1 → h2 → h3 (cards) on phones, where the Filters h2 is hidden. --}}
+                <h2 class="sr-only">Products</h2>
+                @php $lcp = $products->first(); $lcpPath = $lcp->relationLoaded('images') && $lcp->images->isNotEmpty() ? $lcp->images->first()->path : $lcp->product_image; @endphp
+                <x-preload-image :path="$lcpPath" sizes="(min-width: 1280px) 280px, (min-width: 1024px) 23vw, (min-width: 640px) 31vw, 46vw" />
                 <div class="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
                     @foreach ($products as $product)
                         <x-shop.product-tile :product="$product" :wishlisted="in_array($product->id, $wishlistIds)" :priority="$loop->index < 2" />
@@ -184,13 +188,13 @@
                             @endforeach
                         </div>
                     @endif
-                    <a href="{{ route('shop') }}" class="mt-5 inline-flex rounded-full bg-brand-500 px-5 py-2.5 text-xs font-extrabold text-white hover:bg-brand-600">Browse All Products</a>
+                    <a href="{{ route('shop') }}" class="mt-5 inline-flex rounded-full bg-brand-600 px-5 py-2.5 text-xs font-extrabold text-white hover:bg-brand-700">Browse All Products</a>
                 </div>
             @else
                 <div class="rounded-2xl border border-line bg-white p-10 text-center">
                     <p class="text-lg font-semibold">No products found</p>
                     <p class="mt-1 text-sm text-muted">Try changing or clearing your filters.</p>
-                    <a href="{{ route('shop') }}" class="mt-4 inline-flex rounded-full bg-brand-500 px-5 py-2.5 text-xs font-extrabold text-white hover:bg-brand-600">Reset filters</a>
+                    <a href="{{ route('shop') }}" class="mt-4 inline-flex rounded-full bg-brand-600 px-5 py-2.5 text-xs font-extrabold text-white hover:bg-brand-700">Reset filters</a>
                 </div>
             @endif
         </div>

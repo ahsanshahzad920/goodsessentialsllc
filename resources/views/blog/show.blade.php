@@ -33,7 +33,7 @@
 
         <div class="mt-8 border-t border-line pt-6">
             <a href="{{ route('shop') }}"
-               class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-3 text-sm font-extrabold text-white hover:bg-brand-600">
+               class="inline-flex items-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-extrabold text-white hover:bg-brand-700">
                 Shop Baby & Mom Essentials
             </a>
         </div>

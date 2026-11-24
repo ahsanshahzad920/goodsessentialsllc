@@ -81,6 +81,7 @@ class HomePage
             'url'       => route('productDetails', $p->slug),
             'image'     => $image ? asset('storage/' . $image) : asset('images/product-placeholder.svg'),
             'webp'      => WebpImage::url($image),
+            'path'      => $image,
             // One-tap COD order when there is nothing to choose (0 or 1 colour).
             'quick_buy' => count($colors) <= 1,
             'color'     => count($colors) === 1 ? $colors[0]['hex'] : null,

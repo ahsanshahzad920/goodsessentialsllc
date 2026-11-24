@@ -119,7 +119,8 @@ class Category extends Model
                         'icon'  => $settings['icon'] ?? 'tag',
                         'tone'  => $settings['tone'] ?? 'lavender',
                         'text'  => $settings['text'] ?? null,
-                        'image' => $image ? asset('storage/' . $image) : null,
+                        // 96px bubble at up to 2.6x density.
+                        'image' => $image ? \App\Support\WebpImage::fit($image, 240) : null,
                         'count' => (int) $category->products_count,
                     ];
                 })
@@ -163,14 +164,14 @@ class Category extends Model
 
                 return $nav + [
                     'count'    => (int) $category->products_count,
-                    'image'    => $image ? asset('storage/' . $image) : null,
+                    'image'    => $image ? \App\Support\WebpImage::fit($image, 480) : null,
                     'products' => $products->map(function (Product $p) {
                         $price = (float) str_replace(',', '', (string) $p->price);
                         $final = (float) calculateDiscountPrice($price, (float) $p->dis_price);
                         return [
                             'title' => $p->product_title,
                             'url'   => route('productDetails', $p->slug),
-                            'image' => \App\Support\WebpImage::url($p->product_image) ?? asset('storage/' . $p->product_image),
+                            'image' => \App\Support\WebpImage::fit($p->product_image, 240),
                             'price' => $final ?: $price,
                             'was'   => $final > 0 && $final < $price ? $price : null,
                         ];

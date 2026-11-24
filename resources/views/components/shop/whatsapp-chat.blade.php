@@ -6,8 +6,8 @@
         type="button"
         aria-label="Open customer support chat"
         aria-expanded="false"
-        class="fixed {{ request()->routeIs('gift-box') ? 'bottom-[calc(10rem+env(safe-area-inset-bottom))] md:bottom-24' : 'bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-6' }} right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-mint-100 sm:right-6 sm:h-[60px] sm:w-[60px]"
-    >
+        class="fixed {{ request()->routeIs('gift-box') ? 'bottom-[calc(10rem+env(safe-area-inset-bottom))] md:bottom-24' : 'bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-6' }} right-4 z-[9998] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-lg transition duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-mint-100 sm:right-6 sm:h-[60px] sm:w-[60px] {{ request()->routeIs('index') ? 'max-md:translate-x-24 max-md:opacity-0 max-md:pointer-events-none' : '' }}"
+    >{{-- Homepage phones: starts hidden (server-side, no flash) off the hero's "Order Now"; the layout's scroll handler reveals it past 400px. --}}
         <x-shop.icon name="whatsapp" class="size-8 shrink-0" />
     </button>
 
@@ -120,7 +120,7 @@
                 href="#"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#1fbd5a] focus:outline-none focus:ring-4 focus:ring-mint-100"
+                class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0e7a3f] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#0b6533] focus:outline-none focus:ring-4 focus:ring-mint-100"
             >
                 <x-shop.icon name="whatsapp" class="size-5 shrink-0" />
                 Chat with us on WhatsApp

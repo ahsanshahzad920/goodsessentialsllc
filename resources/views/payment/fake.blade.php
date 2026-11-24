@@ -15,7 +15,7 @@
         <form method="POST" action="{{ route('payment.callback', $order->order_number) }}" class="mt-6 space-y-3">
             @csrf
             <button type="submit" name="outcome" value="success"
-                    class="w-full rounded-full bg-brand-500 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 hover:bg-brand-600">
+                    class="w-full rounded-full bg-brand-600 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 hover:bg-brand-700">
                 Simulate successful payment
             </button>
             <button type="submit" name="outcome" value="failed"

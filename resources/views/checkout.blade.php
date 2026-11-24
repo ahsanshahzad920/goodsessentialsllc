@@ -52,7 +52,7 @@
             <h2 class="mt-5 text-xl font-semibold">Your cart is empty</h2>
             <p class="mt-1 text-sm text-muted">Add something lovely before checking out.</p>
             <a href="{{ route('shop') }}"
-               class="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-600">
+               class="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-700">
                 Explore the shop <x-shop.icon name="arrow-right" class="size-4" />
             </a>
         </div>
@@ -141,9 +141,9 @@
                             'card' => [
                                 'card'  => 'hover:border-brand-500/40 peer-checked:border-brand-500 peer-checked:bg-lavender-100 peer-checked:shadow-brand-500/20',
                                 'idle'  => 'bg-lavender-100 text-brand-600',
-                                'icon'  => 'group-has-[:checked]/pay:bg-brand-500 group-has-[:checked]/pay:text-white',
+                                'icon'  => 'group-has-[:checked]/pay:bg-brand-600 group-has-[:checked]/pay:text-white',
                                 'title' => 'group-has-[:checked]/pay:text-brand-600',
-                                'dot'   => 'group-has-[:checked]/pay:border-brand-500 group-has-[:checked]/pay:bg-brand-500',
+                                'dot'   => 'group-has-[:checked]/pay:border-brand-500 group-has-[:checked]/pay:bg-brand-600',
                                 'hint'  => "You'll be taken to our secure payment page next.",
                             ],
                         ];
@@ -235,7 +235,7 @@
                         @foreach ($lines as $line)
                             @php
                                 $p = $line['product'];
-                                $img = \App\Support\WebpImage::url($p->product_image) ?? ($p->product_image ? asset('storage/' . $p->product_image) : asset('images/product-placeholder.svg'));
+                                $img = \App\Support\WebpImage::fit($p->product_image, 240) ?? asset('images/product-placeholder.svg');
                             @endphp
                             <li class="flex items-start gap-3">
                                 <img src="{{ $img }}" alt="" width="48" height="48" class="size-12 shrink-0 rounded-xl bg-frame object-contain p-0.5">

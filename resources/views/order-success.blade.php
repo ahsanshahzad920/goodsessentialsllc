@@ -86,7 +86,7 @@
                 <p class="mt-3 border-t border-line pt-3 text-xs text-muted">Please keep {{ money($order->total) }} ready for when your order arrives.</p>
             @elseif ($order->needsOnlinePayment())
                 <a href="{{ route('payment.start', $order->order_number) }}"
-                   class="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-brand-500 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-600">
+                   class="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 py-3 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-700">
                     <x-shop.icon name="credit-card" class="size-4" /> Complete payment
                 </a>
             @endif

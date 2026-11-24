@@ -262,7 +262,7 @@
                     <div class="border-t border-line pt-5">
                         <button
                             type="submit"
-                            class="w-full rounded-full bg-brand-500 px-6 py-3 font-bold text-white transition hover:bg-brand-600 sm:w-auto"
+                            class="w-full rounded-full bg-brand-600 px-6 py-3 font-bold text-white transition hover:bg-brand-700 sm:w-auto"
                         >
                             Save Changes
                         </button>

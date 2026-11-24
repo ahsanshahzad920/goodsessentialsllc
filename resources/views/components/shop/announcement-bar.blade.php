@@ -50,12 +50,15 @@
                 var n = items[next];
                 n.classList.remove('-translate-y-full');
                 n.classList.add('translate-y-full', 'opacity-0');
-                void n.offsetWidth; // restart from below
-                n.classList.remove('translate-y-full', 'opacity-0');
+                // Restart from below on the next frame (no forced synchronous layout).
+                requestAnimationFrame(function () { requestAnimationFrame(function () {
+                    n.classList.remove('translate-y-full', 'opacity-0');
+                }); });
                 n.removeAttribute('aria-hidden');
                 i = next;
             }
-            function start() { if (!reduce && items.length > 1 && !timer) timer = setInterval(function () { show((i + 1) % items.length); }, 4000); }
+            var armed = false;
+            function start() { if (armed && !reduce && items.length > 1 && !timer) timer = setInterval(function () { show((i + 1) % items.length); }, 4000); }
             function stop() { clearInterval(timer); timer = null; }
 
             bar.addEventListener('mouseenter', stop);
@@ -63,7 +66,15 @@
             bar.addEventListener('focusin', stop);
             bar.addEventListener('focusout', start);
             document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
-            start();
+            // Rotation begins after the shopper's first scroll/tap/key, so the
+            // page is visually still while it loads (first message stays put).
+            function arm() {
+                if (armed) return;
+                armed = true;
+                ['scroll', 'pointerdown', 'keydown'].forEach(function (ev) { window.removeEventListener(ev, arm); });
+                start();
+            }
+            ['scroll', 'pointerdown', 'keydown'].forEach(function (ev) { window.addEventListener(ev, arm, { passive: true }); });
 
             bar.querySelector('[data-ann-close]').addEventListener('click', function () {
                 stop();

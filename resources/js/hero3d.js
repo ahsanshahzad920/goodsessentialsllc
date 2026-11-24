@@ -30,5 +30,17 @@ function boot() {
     'requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 2500 }) : setTimeout(start, 1200);
 }
 
-if (document.readyState === 'complete') boot();
-else window.addEventListener('load', boot, { once: true });
+// Three.js (~125 KB gzipped) is only fetched once the shopper shows intent
+// (first pointer move, tap, scroll or key) — never during the initial load,
+// so it costs nothing for first paint, LCP or main-thread time.
+const INTENT = ['pointermove', 'pointerdown', 'scroll', 'keydown', 'touchstart'];
+function onIntent() {
+    INTENT.forEach((ev) => window.removeEventListener(ev, onIntent));
+    boot();
+}
+function arm() {
+    INTENT.forEach((ev) => window.addEventListener(ev, onIntent, { passive: true, once: true }));
+}
+
+if (document.readyState === 'complete') arm();
+else window.addEventListener('load', arm, { once: true });
