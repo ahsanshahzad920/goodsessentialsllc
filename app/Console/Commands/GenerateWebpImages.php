@@ -20,9 +20,10 @@ class GenerateWebpImages extends Command
         }
 
         $made = $skipped = 0;
-        foreach (['products', 'categories'] as $dir) {
+        foreach (['products', 'categories', 'reviews'] as $dir) {
             foreach (Storage::disk('public')->allFiles($dir) as $path) {
-                if (str_ends_with($path, '.webp')) {
+                // Skip generated files (abc.jpg.webp, abc.jpg.w480.webp); real .webp uploads still get width variants.
+                if (preg_match('/\.(jpe?g|png|webp)(\.w\d+)?\.webp$/i', $path)) {
                     continue;
                 }
                 WebpImage::generate($path, (bool) $this->option('force')) ? $made++ : $skipped++;

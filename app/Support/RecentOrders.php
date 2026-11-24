@@ -42,7 +42,7 @@ class RecentOrders
                     'product' => $i->product_title,
                     'ago'     => $i->order->created_at->diffForHumans(),
                     'url'     => route('productDetails', $i->product->slug),
-                    'image'   => WebpImage::url($i->product->product_image) ?? asset('storage/' . $i->product->product_image),
+                    'image'   => WebpImage::fit($i->product->product_image, 240),
                 ])
                 ->values()->all();
         });

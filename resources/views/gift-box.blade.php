@@ -15,6 +15,9 @@
         @csrf
         @error('items') <p class="mb-4 rounded-2xl bg-coral-50 p-3 text-sm font-bold text-coral-700" role="alert">{{ $message }}</p> @enderror
 
+        <h2 class="sr-only">Choose your items</h2>
+        @php $gbSizes = '(min-width: 1024px) 23vw, (min-width: 640px) 31vw, 46vw'; @endphp
+        @if ($products->isNotEmpty()) <x-preload-image :path="$products->first()->product_image" :sizes="$gbSizes" /> @endif
         <fieldset>
             <legend class="sr-only">Choose {{ $min }} to {{ $max }} items</legend>
             <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -25,8 +28,9 @@
                             <input type="checkbox" name="items[]" value="{{ $p->id }}" data-price="{{ $pay }}" class="peer sr-only"
                                    @checked(in_array($p->id, old('items', [])))>
                             <span class="block overflow-hidden rounded-card border-2 border-line bg-white transition peer-checked:border-coral-600 peer-checked:shadow-lift peer-focus-visible:ring-4 peer-focus-visible:ring-brand-100">
-                                <img src="{{ \App\Support\WebpImage::url($p->product_image) ?? asset('storage/' . $p->product_image) }}" alt="" width="300" height="300" loading="lazy"
-                                     class="aspect-square w-full bg-frame object-contain p-3 mix-blend-multiply">
+                                {{-- The first card is the LCP on phones: preloaded above, never lazy. --}}
+                                <x-picture :path="$p->product_image" :sizes="$gbSizes" :priority="$loop->first" width="300" height="300"
+                                           class="aspect-square w-full bg-frame object-contain p-3 mix-blend-multiply" />
                                 <span class="block p-3">
                                     <span class="line-clamp-2 min-h-[2.6em] text-[13px] font-bold leading-[1.3] text-ink">{{ $p->product_title }}</span>
                                     <span class="mt-1 block text-sm font-extrabold text-coral-600">{{ money($pay) }}</span>

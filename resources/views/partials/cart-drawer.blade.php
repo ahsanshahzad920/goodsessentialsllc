@@ -30,7 +30,7 @@
 
         <ul class="divide-y divide-line">
             @foreach ($lines as $line)
-                @php $img = $line['product_image'] ? (WebpImage::url($line['product_image']) ?? asset('storage/' . $line['product_image'])) : asset('images/product-placeholder.svg'); @endphp
+                @php $img = $line['product_image'] ? (WebpImage::fit($line['product_image'], 240)) : asset('images/product-placeholder.svg'); @endphp
                 <li class="flex gap-3 py-3" data-line="{{ $line['key'] }}">
                     <a href="{{ route('productDetails', $line['product_slug'] ?? '') }}" class="shrink-0">
                         <img src="{{ $img }}" alt="" width="72" height="72" class="size-18 rounded-xl bg-frame object-contain p-1">
@@ -68,7 +68,7 @@
                             $c = $p->colors ?? [];
                         @endphp
                         <li class="flex items-center gap-3 rounded-2xl bg-frame p-2">
-                            <img src="{{ WebpImage::url($p->product_image) ?? asset('storage/' . $p->product_image) }}" alt="" width="48" height="48" loading="lazy" class="size-12 shrink-0 rounded-xl bg-white object-contain p-0.5">
+                            <img src="{{ WebpImage::fit($p->product_image, 240) }}" alt="" width="48" height="48" loading="lazy" class="size-12 shrink-0 rounded-xl bg-white object-contain p-0.5">
                             <div class="min-w-0 flex-1">
                                 <p class="line-clamp-1 text-xs font-bold text-ink">{{ $p->product_title }}</p>
                                 <p class="text-xs font-extrabold text-coral-600">{{ money($pay) }}</p>

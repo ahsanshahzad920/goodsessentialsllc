@@ -98,7 +98,7 @@
                         <rect x="10" y="30" width="44" height="28" rx="5" fill="#f26b5b"/>
                         <rect x="29" y="30" width="6" height="28" fill="#ffe7a3"/>
                         <g class="animate-lid [transform-box:fill-box] [transform-origin:0%_100%]">
-                            <rect x="6" y="20" width="52" height="12" rx="4" fill="#c93f31"/>
+                            <rect x="6" y="20" width="52" height="12" rx="4" fill="#b3372a"/>
                             <rect x="29" y="20" width="6" height="12" fill="#ffe7a3"/>
                             <path d="M32 20c-4-9-14-10-14-4s8 4 14 4zm0 0c4-9 14-10 14-4s-8 4-14 4z" fill="#ffe7a3" stroke="#d99a0b" stroke-width="1.5"/>
                         </g>
@@ -112,11 +112,8 @@
                     </div>
                 </div>
                 <a href="{{ route('productDetails', $gift->slug) }}" class="mx-auto block" tabindex="-1" aria-hidden="true">
-                    <picture>
-                        @if ($w = \App\Support\WebpImage::url($gift->product_image)) <source type="image/webp" srcset="{{ $w }}"> @endif
-                        <img src="{{ asset('storage/' . $gift->product_image) }}" alt="" width="400" height="400" loading="lazy" decoding="async"
-                             class="h-56 w-auto -rotate-3 rounded-card bg-white object-contain p-3 shadow-lift md:h-72">
-                    </picture>
+                    <x-picture :path="$gift->product_image" sizes="(min-width: 768px) 288px, 224px" width="400" height="400"
+                               class="h-56 w-auto -rotate-3 rounded-card bg-white object-contain p-3 shadow-lift md:h-72" />
                 </a>
             </div>
         </section>

@@ -11,10 +11,10 @@
       - .js-wishlist + data-product-id / data-url / data-login     -> wishlist toggle
       - [data-card-gallery] / [data-card-dot]                      -> swipe dots, hover swap
 --}}
-@props(['product', 'wishlisted' => false, 'priority' => false, 'sold' => null])
+@props(['product', 'wishlisted' => false, 'priority' => false, 'sold' => null, 'sizes' => null])
 
 @php
-    use App\Support\{Stock, WebpImage};
+    use App\Support\Stock;
 
     $price = (float) str_replace(',', '', (string) ($product->price ?? 0));
     $final = (float) str_replace(',', '', (string) (calculateDiscountPrice($product->price, $product->dis_price) ?? $price));
@@ -26,8 +26,10 @@
     $paths = $product->relationLoaded('images') && $product->images->isNotEmpty()
         ? $product->images->pluck('path')->take(3)->all()
         : array_filter([$product->product_image]);
-    $gallery = array_map(fn ($p) => ['src' => asset('storage/' . $p), 'webp' => WebpImage::url($p)], $paths)
-        ?: [['src' => asset('images/product-placeholder.svg'), 'webp' => null]];
+    $gallery = array_map(fn ($p) => ['path' => $p], $paths) ?: [['path' => null]];
+    // Card width: 2 columns on phones, 3 on tablets, ~4 (max 280px) on desktop;
+    // carousels (homepage rails) are about the same width.
+    $sizes = $sizes ?? '(min-width: 1280px) 280px, (min-width: 1024px) 23vw, (min-width: 640px) 31vw, 46vw';
 
     $rating  = $product->reviews_count ? $product->reviews_avg_rating : null;
     $reviews = $product->reviews_count ?: null;
@@ -49,13 +51,9 @@
              @if (count($gallery) > 1) data-card-gallery @endif>
             @foreach ($gallery as $i => $img)
                 <a href="{{ $url }}" class="block w-full shrink-0 snap-center" tabindex="-1" aria-hidden="true">
-                    <picture>
-                        @if ($img['webp']) <source type="image/webp" srcset="{{ $img['webp'] }}"> @endif
-                        <img src="{{ $img['src'] }}" alt="{{ $i === 0 ? $product->product_title : '' }}"
-                             width="600" height="600" decoding="async"
-                             @if ($priority && $i === 0) loading="eager" fetchpriority="high" @else loading="lazy" @endif
-                             class="aspect-square w-full object-contain p-3 mix-blend-multiply {{ $soldOut ? 'opacity-50 grayscale' : '' }}">
-                    </picture>
+                    <x-picture :path="$img['path']" :sizes="$sizes" :priority="$priority && $i === 0"
+                               :alt="$i === 0 ? $product->product_title : ''"
+                               class="aspect-square w-full object-contain p-3 mix-blend-multiply {{ $soldOut ? 'opacity-50 grayscale' : '' }}" />
                 </a>
             @endforeach
         </div>

@@ -15,14 +15,17 @@
     ];
     $ctaText = \App\Support\Settings::get('hero_cta_text', 'Order Now — Cash on Delivery');
     $ticks = ['Cash on Delivery', 'Open parcel before paying', '1–3 day delivery'];
+    // Rendered height is 10.5rem on phones / 22rem on desktop, on square images.
+    $heroSizes = '(min-width: 768px) 352px, 170px';
 @endphp
 
 @if ($slides->isNotEmpty())
 <section class="hero relative" aria-roledescription="carousel" aria-label="Featured products" data-hero>
-    <ul class="flex snap-x snap-mandatory overflow-x-auto rounded-card [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-hero-track>
+    {{-- Slides are role=group (not list items), so the track is a plain div. --}}
+    <div class="flex snap-x snap-mandatory overflow-x-auto rounded-card [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-hero-track>
         @foreach ($slides as $i => $s)
             @php $t = $tones[$i % count($tones)]; $first = $i === 0; @endphp
-            <li class="relative w-full shrink-0 snap-center overflow-hidden {{ $t['bg'] }}"
+            <div class="relative w-full shrink-0 snap-center overflow-hidden {{ $t['bg'] }}"
                 role="group" aria-roledescription="slide" aria-label="{{ $i + 1 }} of {{ $slides->count() }}" data-hero-slide>
                 {{-- Soft decorative shapes (pure CSS; the 3D layer arrives in Phase 7) --}}
                 <span class="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full {{ $t['blob'] }} opacity-70 md:size-96" aria-hidden="true"></span>
@@ -32,13 +35,9 @@
                     {{-- Image: first on mobile, right on desktop --}}
                     <a href="{{ $s['url'] }}" class="relative mx-auto block md:order-2" tabindex="-1" aria-hidden="true">
                         <span class="absolute inset-[8%] rounded-full bg-white/70 blur-2xl" aria-hidden="true"></span>
-                        <picture>
-                            @if ($s['webp']) <source type="image/webp" srcset="{{ $s['webp'] }}"> @endif
-                            <img src="{{ $s['image'] }}" alt="{{ $s['product']->product_title }}"
-                                 width="600" height="600" decoding="async"
-                                 @if ($first) loading="eager" fetchpriority="high" @else loading="lazy" @endif
-                                 class="relative h-[min(24vh,10.5rem)] w-auto object-contain mix-blend-multiply drop-shadow-xl md:h-[22rem]">
-                        </picture>
+                        @if ($first) <x-preload-image :path="$s['path']" :sizes="$heroSizes" /> @endif
+                        <x-picture :path="$s['path']" :sizes="$heroSizes" :priority="$first" :alt="$s['product']->product_title"
+                                   class="relative h-[min(24vh,10.5rem)] w-auto object-contain mix-blend-multiply drop-shadow-xl md:h-[22rem]" />
                         @if ($s['badge'])
                             <span class="absolute right-0 top-2 grid size-14 rotate-12 place-items-center rounded-full bg-coral-600 text-center text-[10px] font-extrabold leading-tight text-white shadow-soft md:size-20 md:text-sm">{{ $s['badge'] }}</span>
                         @endif
@@ -81,9 +80,9 @@
                         </ul>
                     </div>
                 </div>
-            </li>
+            </div>
         @endforeach
-    </ul>
+    </div>
 
     {{-- Decorative 3D layer (Phase 7). Stays empty unless resources/js/hero3d.js
          decides the device can afford it; the static hero above is the fallback. --}}
@@ -143,8 +142,18 @@
                 document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
                 window.addEventListener('resize', function () { go(cur); });
 
-                mark();
-                start();
+                requestAnimationFrame(mark); // not mid-parse: reading scrollLeft would force layout
+                // Autoplay waits for the shopper's first scroll/tap/key: the hero
+                // stays still while the page loads (no repaint during first paint
+                // or Speed Index), and nothing moves for someone who is just reading.
+                var armed = false;
+                function arm() {
+                    if (armed) return;
+                    armed = true;
+                    ['scroll', 'pointerdown', 'keydown'].forEach(function (ev) { window.removeEventListener(ev, arm); });
+                    setTimeout(start, 4000);
+                }
+                ['scroll', 'pointerdown', 'keydown'].forEach(function (ev) { window.addEventListener(ev, arm, { passive: true, once: true }); });
             })();
         </script>
     @endif
