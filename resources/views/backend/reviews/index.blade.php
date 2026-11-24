@@ -8,6 +8,34 @@
             <div class="alert alert-success mt-3">{{ session('success') }}</div>
         @endif
 
+        @if ($errors->any())
+            <div class="alert alert-danger mt-3">{{ $errors->first() }}</div>
+        @endif
+
+        <details class="card border-0 mt-3" @if ($errors->any()) open @endif>
+            <summary class="card-body py-2 fw-bold" style="cursor:pointer">+ Add a review you received (WhatsApp, phone, Instagram…)</summary>
+            <form action="{{ route('admin.reviews.store') }}" method="POST" class="card-body pt-0">
+                @csrf
+                <p class="small text-muted mb-3">Only enter real reviews from real customers, in their own words. It goes live immediately. The name is shown as first name + last initial.</p>
+                <div class="row g-3">
+                    <div class="col-md-4"><label class="form-label">Customer name *</label><input name="name" class="form-control" required maxlength="60" value="{{ old('name') }}"></div>
+                    <div class="col-md-4"><label class="form-label">City</label><input name="city" class="form-control" maxlength="60" value="{{ old('city') }}"></div>
+                    <div class="col-md-4"><label class="form-label">Rating *</label>
+                        <select name="rating" class="form-select" required>
+                            @for ($i = 5; $i >= 1; $i--) <option value="{{ $i }}" @selected(old('rating', 5) == $i)>{{ $i }} ★</option> @endfor
+                        </select>
+                    </div>
+                    <div class="col-12"><label class="form-label">Review *</label><textarea name="body" class="form-control" rows="3" required minlength="10" maxlength="1500">{{ old('body') }}</textarea></div>
+                    <div class="col-12 form-check ms-2">
+                        <input type="hidden" name="is_verified" value="0">
+                        <input type="checkbox" name="is_verified" value="1" id="rv-verified" class="form-check-input" @checked(old('is_verified'))>
+                        <label for="rv-verified" class="form-check-label">This person ordered from us (show "Verified buyer")</label>
+                    </div>
+                    <div class="col-12"><button class="btn btn-primary">Add review</button></div>
+                </div>
+            </form>
+        </details>
+
         <div class="btn-group my-3">
             @foreach (['pending' => "Waiting for approval ($pending)", 'approved' => 'Approved', 'all' => 'All'] as $key => $label)
                 <a href="{{ route('admin.reviews.index', ['filter' => $key]) }}" class="btn btn-sm {{ $filter === $key ? 'btn-primary' : 'btn-outline-primary' }}">{{ $label }}</a>
@@ -43,7 +71,7 @@
                                 <td class="text-center">{{ $review->rating }} ★</td>
                                 <td>
                                     {!! $review->is_approved ? '<span class="badge bg-success">Visible</span>' : '<span class="badge bg-warning text-dark">Pending</span>' !!}
-                                    @if ($review->is_featured) <span class="badge bg-info text-dark">Homepage</span> @endif
+                                    @if ($review->is_featured) <span class="badge bg-info text-dark">Pinned</span> @endif
                                 </td>
                                 <td class="text-end text-nowrap">
                                     <form action="{{ route('admin.reviews.update', $review) }}" method="POST" class="d-inline">
@@ -54,7 +82,7 @@
                                     <form action="{{ route('admin.reviews.update', $review) }}" method="POST" class="d-inline">
                                         @csrf @method('PUT')
                                         <input type="hidden" name="is_featured" value="{{ $review->is_featured ? 0 : 1 }}">
-                                        <button class="btn btn-sm btn-outline-info">{{ $review->is_featured ? 'Remove from homepage' : 'Show on homepage' }}</button>
+                                        <button class="btn btn-sm btn-outline-info">{{ $review->is_featured ? 'Unpin' : 'Pin to top of homepage' }}</button>
                                     </form>
                                     <form action="{{ route('admin.reviews.destroy', $review) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this review?')">
                                         @csrf @method('DELETE')

@@ -27,6 +27,35 @@ class ReviewController extends Controller
         ]);
     }
 
+    /**
+     * Add a real review the store received elsewhere (WhatsApp, phone, Instagram).
+     * Goes live at once because the admin is entering it; only tick
+     * "Verified buyer" when this person really ordered.
+     */
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'name'        => ['required', 'string', 'max:60'],
+            'city'        => ['nullable', 'string', 'max:60'],
+            'rating'      => ['required', 'integer', 'between:1,5'],
+            'body'        => ['required', 'string', 'min:10', 'max:1500'],
+            'is_verified' => ['sometimes', 'boolean'],
+        ]);
+
+        Review::create([
+            'product_id'  => null,
+            'name'        => strip_tags($data['name']),
+            'city'        => isset($data['city']) ? strip_tags($data['city']) : null,
+            'rating'      => $data['rating'],
+            'body'        => strip_tags($data['body']),
+            'is_approved' => true,
+            'is_featured' => false,
+            'is_verified' => $request->boolean('is_verified'),
+        ]);
+
+        return redirect()->route('admin.reviews.index', ['filter' => 'approved'])->with('success', 'Review added and visible on the site.');
+    }
+
     public function update(Request $request, Review $review)
     {
         $data = $request->validate([
